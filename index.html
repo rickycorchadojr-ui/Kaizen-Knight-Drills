@@ -303,7 +303,7 @@ function saveState(){
   localStorage.setItem("kaizenKnight",JSON.stringify(state));
 }
 
-function playBeep(freq=440,duration=100){
+function playBeep(freq=440,duration=100,volume=.08){
   const audioCtx=new (window.AudioContext||window.webkitAudioContext)();
   const oscillator=audioCtx.createOscillator();
   const gainNode=audioCtx.createGain();
@@ -311,7 +311,7 @@ function playBeep(freq=440,duration=100){
   oscillator.type="square";
   oscillator.frequency.value=freq;
 
-  gainNode.gain.setValueAtTime(.08,audioCtx.currentTime);
+  gainNode.gain.setValueAtTime(volume,audioCtx.currentTime);
   gainNode.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration/1000);
 
   oscillator.connect(gainNode);
@@ -321,14 +321,18 @@ function playBeep(freq=440,duration=100){
   oscillator.stop(audioCtx.currentTime+duration/1000);
 }
 
+function playTick(){
+  playBeep(700,35,.035);
+}
+
 function playVictory(){
-  playBeep(523,120);
-  setTimeout(()=>playBeep(659,120),140);
-  setTimeout(()=>playBeep(784,220),280);
+  playBeep(523,120,.08);
+  setTimeout(()=>playBeep(659,120,.08),140);
+  setTimeout(()=>playBeep(784,220,.08),280);
 }
 
 function playFailure(){
-  playBeep(180,220);
+  playBeep(180,220,.08);
 }
 
 function renderDays(){
@@ -400,18 +404,18 @@ function showChecklist(){
     return;
   }
 
-  playBeep(500,80);
+  playBeep(500,80,.06);
 
   let checks=state.checks[todayIndex];
 
   let html="";
   html+="<div class='checklist-wrapper'>";
   html+="<div class='check-title'>"+shortDays[todayIndex]+" VOW</div>";
-  html+="<div class='checklist'>";
+  html+="<div class='checklist' id='checklist'>";
 
   for(let i=0;i<rules.length;i++){
     html+="<div class='rule'>";
-    html+="<div class='box "+(checks[i]?"checked":"")+"' onclick='toggleRule("+i+")'></div>";
+    html+="<div class='box "+(checks[i]?"checked":"")+"' id='box"+i+"' onclick='toggleRule("+i+")'></div>";
     html+="<div>"+rules[i]+"</div>";
     html+="</div>";
   }
@@ -429,8 +433,13 @@ function showChecklist(){
 function toggleRule(index){
   state.checks[todayIndex][index]=!state.checks[todayIndex][index];
   saveState();
-  playBeep(620,60);
-  showChecklist();
+
+  let box=document.getElementById("box"+index);
+  if(box){
+    box.classList.toggle("checked",state.checks[todayIndex][index]);
+  }
+
+  playTick();
 }
 
 function lockInDay(){
@@ -455,7 +464,7 @@ function lockInDay(){
 }
 
 function showWeek(){
-  playBeep(380,80);
+  playBeep(380,80,.06);
   renderDays();
 
   let clean=state.statuses.filter(s=>s==="complete").length;
@@ -473,7 +482,7 @@ function showWeek(){
 }
 
 function resetWeek(){
-  playBeep(220,140);
+  playBeep(220,140,.08);
   state=freshState();
   saveState();
   showMain();
