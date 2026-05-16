@@ -116,18 +116,22 @@
       animation:bob 1.2s infinite steps(2);
     }
 
-    .knight{
-      font-size:58px;
-      line-height:1;
+    .knight-img{
+      width:64px;
+      height:64px;
       display:block;
-      transform-origin:center center;
+      image-rendering:pixelated;
+      image-rendering:crisp-edges;
+      object-fit:contain;
+      opacity:.9;
+      filter:grayscale(1) contrast(1.8) brightness(.65);
     }
 
-    .pet-walker.right .knight{
+    .pet-walker.right .knight-img{
       transform:scaleX(-1);
     }
 
-    .pet-walker.left .knight{
+    .pet-walker.left .knight-img{
       transform:scaleX(1);
     }
 
@@ -502,12 +506,12 @@ function renderDays(){
   }
 }
 
-function petHTML(symbol){
+function petHTML(){
   return `
     <div class="pet-zone">
       <div class="pet-walker left" id="petWalker">
         <div class="pet-bob">
-          <div class="knight">${symbol}</div>
+          <img class="knight-img" src="knight.png" alt="Kaizen Knight">
         </div>
       </div>
     </div>
@@ -585,7 +589,7 @@ function showMain(fromBoot=false){
 
   if(todayIndex < 0){
     document.getElementById("playArea").innerHTML =
-      petHTML("♞") +
+      petHTML() +
       "<div class='ground'></div>" +
       "<div class='textbox'>" +
       dateString + " • " + timeString +
@@ -599,20 +603,17 @@ function showMain(fromBoot=false){
 
   let status = state.statuses[todayIndex];
   let text = "STEADY";
-  let symbol = "♞";
 
   if(status === "complete"){
     text = "DAY LOCKED CLEAN";
-    symbol = "♔";
   }
 
   if(status === "failed"){
     text = "INTEGRITY DAMAGED";
-    symbol = "♜";
   }
 
   document.getElementById("playArea").innerHTML =
-    petHTML(symbol) +
+    petHTML() +
     "<div class='ground'></div>" +
     "<div class='textbox'>" +
     dateString + " • " + timeString +
@@ -686,7 +687,7 @@ function lockInDay(){
   if(passed){playVictory()}else{playFailure()}
 
   document.getElementById("playArea").innerHTML =
-    petHTML(passed?"♔":"♜") +
+    petHTML() +
     "<div class='ground'></div>" +
     "<div class='textbox'>" +
     "DAY LOCKED<br>"+total+"/10 RULES KEPT<br>"+
@@ -710,7 +711,7 @@ function showWeek(){
   let active=state.statuses.filter(s=>s!=="inactive").length;
 
   document.getElementById("playArea").innerHTML =
-    petHTML("♞") +
+    petHTML() +
     "<div class='ground'></div>" +
     "<div class='textbox'>" +
     "WEEK "+weekKey+"<br>"+
