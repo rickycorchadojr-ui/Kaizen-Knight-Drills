@@ -7,14 +7,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Kaizen Knight">
   <meta name="theme-color" content="#222222">
-
   <link rel="apple-touch-icon" href="icon.png">
   <link rel="icon" href="icon.png">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-
   <style>
     body{margin:0;height:100vh;background:#222;display:flex;justify-content:center;align-items:center;font-family:'VT323',monospace;overflow:hidden;-webkit-user-select:none;user-select:none;touch-action:manipulation;}
     .device{width:min(92vw,420px);height:min(86vh,740px);background:#d8d0b0;border:6px solid #111;border-radius:24px;padding:24px;box-sizing:border-box;box-shadow:0 8px 0 #111;}
@@ -23,6 +20,21 @@
     .status-bar{height:38px;border-bottom:4px solid #111;display:flex;justify-content:center;align-items:center;font-size:24px;letter-spacing:2px;flex-shrink:0;}
     .off .status-bar,.boot-dark .status-bar{color:#e9ecd8;border-bottom:4px solid #e9ecd8;}
     .play-area{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;box-sizing:border-box;overflow:hidden;position:relative;}
+
+    .scene-bg{
+      position:absolute;
+      left:50%;
+      bottom:68px;
+      width:320px;
+      height:160px;
+      transform:translateX(-50%);
+      object-fit:contain;
+      image-rendering:pixelated;
+      image-rendering:crisp-edges;
+      z-index:1;
+      pointer-events:none;
+    }
+
     .achievement-banner{position:absolute;top:0;left:50%;transform:translate(-50%,-120%);background:#111;color:#f8f8f8;border:4px solid #f8f8f8;font-size:30px;line-height:1;padding:7px 18px;z-index:20;white-space:nowrap;letter-spacing:2px;pointer-events:none;}
     .achievement-banner.show{animation:achievementDrop 2.05s forwards;}
     @keyframes achievementDrop{
@@ -36,7 +48,8 @@
     .power-author{display:block;margin-top:10px;font-size:22px;}
     .boot-text{color:#e9ecd8;font-size:32px;letter-spacing:2px;animation:bootPulse .8s infinite steps(2);}
     @keyframes bootPulse{0%{opacity:1}50%{opacity:.35}100%{opacity:1}}
-    .pet-zone{width:240px;height:130px;position:relative;margin-bottom:-10px;}
+
+    .pet-zone{width:240px;height:130px;position:relative;margin-bottom:-10px;z-index:2;}
     .pet-walker{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);}
     .pet-bob{animation:bob 1.2s infinite steps(2);position:relative;width:160px;height:160px;}
     .pet-img{width:160px;height:160px;display:block;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;opacity:.92;filter:grayscale(1) contrast(2) brightness(.55);}
@@ -45,8 +58,8 @@
     .pet-walker.right .pet-img{transform:scaleX(-1);}
     .pet-walker.left .pet-img{transform:scaleX(1);}
     @keyframes bob{0%{transform:translateY(0)}50%{transform:translateY(-4px)}100%{transform:translateY(0)}}
-    .ground{width:100px;border-bottom:4px solid #111;margin-bottom:14px;}
-    .textbox{width:100%;background:#f8f8f8;border-top:4px solid #111;padding:9px;box-sizing:border-box;text-align:center;font-size:24px;line-height:1.03;}
+    .ground{width:100px;border-bottom:4px solid #111;margin-bottom:14px;position:relative;z-index:2;}
+    .textbox{width:100%;background:#f8f8f8;border-top:4px solid #111;padding:9px;box-sizing:border-box;text-align:center;font-size:24px;line-height:1.03;position:relative;z-index:3;}
     .subline{font-size:20px;opacity:.9;}
     .panel{width:100%;height:100%;display:flex;flex-direction:column;background:#f8f8f8;}
     .panel-title{text-align:center;font-size:25px;padding:5px;border-bottom:4px solid #111;flex-shrink:0;}
@@ -70,9 +83,7 @@
     button:active{transform:translateY(3px);box-shadow:0 1px 0 #333;}
   </style>
 </head>
-
 <body>
-
 <div class="device">
   <div class="screen off" id="screen">
     <div class="status-bar" id="statusBar">POWER OFF</div>
@@ -83,7 +94,6 @@
       </button>
     </div>
   </div>
-
   <div class="week-row">
     <div class="day" id="day0">SUN</div>
     <div class="day" id="day1">MON</div>
@@ -92,7 +102,6 @@
     <div class="day" id="day4">THU</div>
     <div class="day" id="day5">FRI</div>
   </div>
-
   <div class="buttons">
     <button onclick="showCheckWithMenuSound()">CHECK</button>
     <button onclick="showCode()">CODE</button>
@@ -111,19 +120,16 @@ const weekdayVows=[
   "IF STOP HIT, NO TRADING SECOND ACCOUNT",
   "DRILLS"
 ];
-
 const sundayVows=[
   "LOCK BOTH ACCOUNTS",
   "DRILLS"
 ];
-
 const damageStates=[
   "SPIRALED AFTER LOSS",
   "TRADED OUTSIDE ROUTINE",
   "RISK SETTINGS REMOVED",
   "BOUGHT / RESET COMBINE"
 ];
-
 const codeNotes=[
   "CONSIDER STOPPING AT -250.",
   "LOOK FOR CHOP AND MANIPULATION.",
@@ -135,49 +141,38 @@ const codeNotes=[
   "I AM DETERMINED TO HAVE A GOOD DAY REGARDLESS OF WHAT HAPPENS.",
   "BE GRATEFUL. SHOW REVERENCE FOR EVERY COMBINE."
 ];
-
 const days=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"];
-
 let todayIndex=getTradingDayIndex();
 let weekKey=getWeekKey();
 let state=loadState();
-
 let moveTimer=null;
 let petStep=0;
 let poweredOn=false;
-
 let fireworkTimer=null;
 let fireworkFrame=1;
 let achievementTimer=null;
-
 const petPositions=[50,40,32,32,44,58,66,66,54,50];
 const sounds={};
 
-function requirePower(){
-  return poweredOn;
-}
+function requirePower(){ return poweredOn; }
+function getTodaysVows(){ return todayIndex===0 ? sundayVows : weekdayVows; }
 
-function getTodaysVows(){
-  if(todayIndex===0) return sundayVows;
-  return weekdayVows;
+function sceneBackgroundHTML(){
+  return "<img class='scene-bg' src='bgtest.png'>";
 }
 
 function makeToneSequenceWav(sequence){
   const sampleRate=22050;
   let totalSamples=0;
-
   for(let i=0;i<sequence.length;i++){
     totalSamples+=Math.floor(sampleRate*sequence[i].duration);
   }
-
   const dataSize=totalSamples*2;
   const buffer=new ArrayBuffer(44+dataSize);
   const view=new DataView(buffer);
-
   function writeString(offset,string){
     for(let i=0;i<string.length;i++) view.setUint8(offset+i,string.charCodeAt(i));
   }
-
   writeString(0,"RIFF");
   view.setUint32(4,36+dataSize,true);
   writeString(8,"WAVE");
@@ -191,86 +186,54 @@ function makeToneSequenceWav(sequence){
   view.setUint16(34,16,true);
   writeString(36,"data");
   view.setUint32(40,dataSize,true);
-
   let sampleIndex=0;
-
   for(let s=0;s<sequence.length;s++){
     const freq=sequence[s].freq;
     const duration=sequence[s].duration;
     const volume=sequence[s].volume || .7;
     const samples=Math.floor(sampleRate*duration);
-
     for(let i=0;i<samples;i++){
       let sample=0;
-
       if(freq>0){
         const t=i/sampleRate;
         const square=Math.sin(2*Math.PI*freq*t)>=0?1:-1;
         const fade=1-(i/samples);
         sample=square*volume*fade*32767;
       }
-
       view.setInt16(44+sampleIndex*2,sample,true);
       sampleIndex++;
     }
   }
-
   let binary="";
   const bytes=new Uint8Array(buffer);
   for(let i=0;i<bytes.length;i++) binary+=String.fromCharCode(bytes[i]);
-
   return "data:audio/wav;base64,"+btoa(binary);
 }
 
 function buildSounds(){
-  sounds.tick=new Audio(makeToneSequenceWav([
-    {freq:720,duration:.04,volume:.7}
-  ]));
-
-  sounds.menu=new Audio(makeToneSequenceWav([
-    {freq:500,duration:.08,volume:.7}
-  ]));
-
-  sounds.fail=new Audio(makeToneSequenceWav([
-    {freq:180,duration:.25,volume:.8}
-  ]));
-
-  sounds.reset=new Audio(makeToneSequenceWav([
-    {freq:220,duration:.18,volume:.7}
-  ]));
-
+  sounds.tick=new Audio(makeToneSequenceWav([{freq:720,duration:.04,volume:.7}]));
+  sounds.menu=new Audio(makeToneSequenceWav([{freq:500,duration:.08,volume:.7}]));
+  sounds.fail=new Audio(makeToneSequenceWav([{freq:180,duration:.25,volume:.8}]));
+  sounds.reset=new Audio(makeToneSequenceWav([{freq:220,duration:.18,volume:.7}]));
   sounds.boot=new Audio(makeToneSequenceWav([
-    {freq:196,duration:.09,volume:.8},
-    {freq:0,duration:.06},
-    {freq:294,duration:.10,volume:.8},
-    {freq:0,duration:.07},
-    {freq:392,duration:.10,volume:.85},
-    {freq:0,duration:.08},
+    {freq:196,duration:.09,volume:.8},{freq:0,duration:.06},
+    {freq:294,duration:.10,volume:.8},{freq:0,duration:.07},
+    {freq:392,duration:.10,volume:.85},{freq:0,duration:.08},
     {freq:523,duration:.15,volume:.9}
   ]));
-
   sounds.good=new Audio(makeToneSequenceWav([
-    {freq:523,duration:.12,volume:.8},
-    {freq:0,duration:.04},
-    {freq:659,duration:.12,volume:.8},
-    {freq:0,duration:.04},
+    {freq:523,duration:.12,volume:.8},{freq:0,duration:.04},
+    {freq:659,duration:.12,volume:.8},{freq:0,duration:.04},
     {freq:784,duration:.22,volume:.85}
   ]));
-
   sounds.achievement=new Audio(makeToneSequenceWav([
-    {freq:880,duration:.055,volume:.85},
-    {freq:0,duration:.025},
-    {freq:520,duration:.055,volume:.85},
-    {freq:0,duration:.06},
-    {freq:880,duration:.055,volume:.85},
-    {freq:0,duration:.025},
-    {freq:520,duration:.055,volume:.85},
-    {freq:0,duration:.06},
-    {freq:880,duration:.055,volume:.85},
-    {freq:0,duration:.025},
+    {freq:880,duration:.055,volume:.85},{freq:0,duration:.025},
+    {freq:520,duration:.055,volume:.85},{freq:0,duration:.06},
+    {freq:880,duration:.055,volume:.85},{freq:0,duration:.025},
+    {freq:520,duration:.055,volume:.85},{freq:0,duration:.06},
+    {freq:880,duration:.055,volume:.85},{freq:0,duration:.025},
     {freq:520,duration:.055,volume:.85}
   ]));
-
   sounds.firework=new Audio("8d82b5_Super_Mario_Bros_Fireworks_Sound_Effect.mp3");
   sounds.perfectWeek=new Audio("fever-stage-clear (online-video-cutter.com).mp3");
 }
@@ -281,13 +244,8 @@ function play(name){
   s.play().catch(()=>{});
 }
 
-function playGoodSeal(){
-  play("good");
-}
-
-function playAchievementSound(){
-  play("achievement");
-}
+function playGoodSeal(){ play("good"); }
+function playAchievementSound(){ play("achievement"); }
 
 function getTradingDayIndex(){
   let d=new Date().getDay();
@@ -321,24 +279,20 @@ function freshState(){
 function loadState(){
   let saved=localStorage.getItem("kaizenKnightV5");
   if(!saved) return freshState();
-
   try{
     let parsed=JSON.parse(saved);
-
     if(parsed.weekKey!==weekKey){
       let newState=freshState();
       newState.streak=typeof parsed.streak==="number" ? parsed.streak : 0;
       newState.bestStreak=typeof parsed.bestStreak==="number" ? parsed.bestStreak : newState.streak;
       return newState;
     }
-
     if(!parsed.sundayVows || parsed.sundayVows.length!==sundayVows.length) return freshState();
     if(!parsed.weekdayVows || parsed.weekdayVows[1].length!==weekdayVows.length) return freshState();
     if(!parsed.damage || parsed.damage[0].length!==damageStates.length) return freshState();
     if(typeof parsed.streak!=="number") parsed.streak=cleanCountFromStatuses(parsed.statuses);
     if(typeof parsed.bestStreak!=="number") parsed.bestStreak=parsed.streak;
     if(typeof parsed.finalForm==="undefined") parsed.finalForm=null;
-
     return parsed;
   }catch(e){
     return freshState();
@@ -412,15 +366,12 @@ function petHTML(type="knight"){
   `;
 }
 
-function stopPet(){
-  clearInterval(moveTimer);
-}
+function stopPet(){ clearInterval(moveTimer); }
 
 function stopFirework(){
   clearInterval(fireworkTimer);
   fireworkTimer=null;
   fireworkFrame=1;
-
   const fw=document.getElementById("fireworkImg");
   if(fw){
     fw.style.display="none";
@@ -430,45 +381,34 @@ function stopFirework(){
 
 function startFirework(){
   stopFirework();
-
   const fw=document.getElementById("fireworkImg");
   if(!fw) return;
-
   fireworkFrame=1;
   fw.src="Firework1.png";
   fw.style.display="block";
   play("firework");
-
   fireworkTimer=setInterval(()=>{
     fireworkFrame++;
-
     if(fireworkFrame>12){
       stopFirework();
       return;
     }
-
     if(fireworkFrame===5 || fireworkFrame===9){
       play("firework");
     }
-
     fw.src="Firework"+fireworkFrame+".png";
   },500);
 }
 
 function showAchievementBanner(dayNum){
   clearTimeout(achievementTimer);
-
   const banner=document.getElementById("achievementBanner");
   if(!banner) return;
-
   banner.className="achievement-banner";
   banner.innerHTML="DAY "+dayNum+"!";
-
   void banner.offsetWidth;
-
   playAchievementSound();
   banner.classList.add("show");
-
   achievementTimer=setTimeout(()=>{
     banner.className="achievement-banner";
     banner.innerHTML="";
@@ -477,20 +417,16 @@ function showAchievementBanner(dayNum){
 
 function startPet(delay=0){
   stopPet();
-
   setTimeout(()=>{
     const walker=document.getElementById("petWalker");
     const pet=document.getElementById("petImg");
     if(!walker || !pet) return;
-
     petStep=0;
     walker.style.left=petPositions[petStep]+"%";
-
     moveTimer=setInterval(()=>{
       const current=petPositions[petStep];
       petStep=(petStep+1)%petPositions.length;
       const next=petPositions[petStep];
-
       if(next>current){
         walker.className="pet-walker right";
         pet.src=getPetImage(pet.dataset.petType);
@@ -500,7 +436,6 @@ function startPet(delay=0){
       }else{
         if(pet.dataset.petType==="knight") pet.src="blink.png";
       }
-
       walker.style.left=next+"%";
     },1200);
   },delay);
@@ -510,7 +445,6 @@ function renderDays(){
   for(let i=0;i<6;i++){
     let el=document.getElementById("day"+i);
     el.className="day";
-
     if(state.statuses[i]==="complete") el.classList.add("complete");
     if(state.statuses[i]==="failed") el.classList.add("failed");
     if(state.statuses[i]==="inactive") el.classList.add("inactive");
@@ -518,34 +452,23 @@ function renderDays(){
   }
 }
 
-function cleanCount(){
-  return state.statuses.filter(s=>s==="complete").length;
-}
-
-function failedCount(){
-  return state.statuses.filter(s=>s==="failed").length;
-}
-
-function perfectWeek(){
-  return cleanCount()===6 && failedCount()===0;
-}
+function cleanCount(){ return state.statuses.filter(s=>s==="complete").length; }
+function failedCount(){ return state.statuses.filter(s=>s==="failed").length; }
+function perfectWeek(){ return cleanCount()===6 && failedCount()===0; }
 
 function weeklyVowPercent(){
   let checked=0;
   let total=0;
-
   for(let i=0;i<sundayVows.length;i++){
     total++;
     if(state.sundayVows[i]) checked++;
   }
-
   for(let d=1;d<=5;d++){
     for(let i=0;i<weekdayVows.length;i++){
       total++;
       if(state.weekdayVows[d][i]) checked++;
     }
   }
-
   if(total<=0) return 0;
   return Math.floor((checked/total)*100);
 }
@@ -569,20 +492,16 @@ function shouldShowFinalForm(){
 function powerOn(){
   if(poweredOn) return;
   poweredOn=true;
-
   play("boot");
   showBoot();
 }
 
 function showBoot(){
   renderDays();
-
   document.getElementById("screen").className="screen boot-dark";
   document.getElementById("statusBar").innerHTML="POWER";
   document.getElementById("playArea").innerHTML="<div class='boot-text'>BOOTING...</div>";
-
   setTimeout(()=>{ document.getElementById("statusBar").innerHTML="KAIZEN KNIGHT"; },650);
-
   setTimeout(()=>{
     document.getElementById("screen").className="screen";
     showMain(true);
@@ -591,38 +510,32 @@ function showBoot(){
 
 function showMain(fromBoot=false){
   if(!requirePower()) return;
-
   stopPet();
   stopFirework();
   renderDays();
-
   document.getElementById("screen").className="screen";
   document.getElementById("statusBar").innerHTML="KAIZEN KNIGHT";
-
   let weekText="WEEK OF "+weekKey;
   let status="REST DAY";
   let petType="knight";
-
   if(shouldShowFinalForm()){
     petType=state.finalForm;
     status=state.finalForm==="angel" ? "PERFECT WEEK" : "WEEK FORM";
   }else if(todayIndex>=0){
     status="STEADY";
-
     if(state.statuses[todayIndex]==="complete"){
       status="DAY SEALED CLEAN";
       petType="king";
     }
-
     if(state.statuses[todayIndex]==="failed"){
       status="INTEGRITY DAMAGED";
       petType="rook";
     }
   }
-
   document.getElementById("playArea").innerHTML=
     achievementHTML()+
     streakHTML()+
+    sceneBackgroundHTML()+
     petHTML(petType)+
     "<div class='ground'></div>"+
     "<div class='textbox'>"+
@@ -630,58 +543,46 @@ function showMain(fromBoot=false){
     "<br>STATUS: "+status+
     "<br><span class='subline'>CLEAN DAYS: "+cleanCount()+"/6</span>"+
     "</div>";
-
   startPet(fromBoot ? 650 : 0);
 }
 
 function showCheck(restoreScroll=null){
   if(!requirePower()) return;
-
   if(todayIndex<0){
     showMain();
     return;
   }
-
   stopPet();
   stopFirework();
-
   let todaysVows=getTodaysVows();
   let vowState=getVowStateForToday();
-
   let html="";
   html+="<div class='panel'>";
   html+="<div class='panel-title'>"+days[todayIndex]+" CHECK</div>";
   html+="<div class='scroll' id='checkScroll'>";
-
   html+="<div class='section-label'>VOWS</div>";
   html+="<div class='small-note'>CHECK WHAT HELD TRUE TODAY</div>";
-
   for(let i=0;i<todaysVows.length;i++){
     html+="<div class='rule'>";
     html+="<div class='box "+(vowState[i]?"checked":"")+"' onclick='toggleVow("+i+")'></div>";
     html+="<div>"+todaysVows[i]+"</div>";
     html+="</div>";
   }
-
   html+="<div class='section-label'>DAMAGE</div>";
   html+="<div class='small-note'>ONLY MARK IF CONTAINMENT BROKE</div>";
-
   for(let i=0;i<damageStates.length;i++){
     html+="<div class='rule'>";
     html+="<div class='box "+(state.damage[todayIndex][i]?"checked":"")+"' onclick='toggleDamage("+i+")'></div>";
     html+="<div>"+damageStates[i]+"</div>";
     html+="</div>";
   }
-
   html+="</div>";
   html+="<div class='panel-buttons'>";
   html+="<button class='mini-btn' onclick='lockDay()'>LOCK</button>";
   html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
   html+="</div>";
   html+="</div>";
-
   document.getElementById("playArea").innerHTML=html;
-
   if(restoreScroll!==null){
     const sc=document.getElementById("checkScroll");
     if(sc) sc.scrollTop=restoreScroll;
@@ -690,33 +591,27 @@ function showCheck(restoreScroll=null){
 
 function showCheckWithMenuSound(){
   if(!requirePower()) return;
-
   play("menu");
   showCheck();
 }
 
 function showCode(){
   if(!requirePower()) return;
-
   play("menu");
   stopPet();
   stopFirework();
-
   let html="";
   html+="<div class='panel'>";
   html+="<div class='panel-title'>FIELD CODE</div>";
   html+="<div class='scroll'>";
-
   for(let i=0;i<codeNotes.length;i++){
     html+="<div class='note'>"+codeNotes[i]+"</div>";
   }
-
   html+="</div>";
   html+="<div class='panel-buttons'>";
   html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
   html+="</div>";
   html+="</div>";
-
   document.getElementById("playArea").innerHTML=html;
 }
 
@@ -727,11 +622,9 @@ function getCheckScrollTop(){
 
 function toggleVow(i){
   if(!requirePower()) return;
-
   let scrollTop=getCheckScrollTop();
   let vowState=getVowStateForToday();
   vowState[i]=!vowState[i];
-
   saveState();
   play("tick");
   showCheck(scrollTop);
@@ -739,10 +632,8 @@ function toggleVow(i){
 
 function toggleDamage(i){
   if(!requirePower()) return;
-
   let scrollTop=getCheckScrollTop();
   state.damage[todayIndex][i]=!state.damage[todayIndex][i];
-
   saveState();
   play("tick");
   showCheck(scrollTop);
@@ -750,28 +641,20 @@ function toggleDamage(i){
 
 function lockDay(){
   if(!requirePower()) return;
-
   stopPet();
   stopFirework();
-
   let passed=true;
   let vowState=getVowStateForToday();
-
   for(let i=0;i<vowState.length;i++){
     if(!vowState[i]) passed=false;
   }
-
   for(let i=0;i<damageStates.length;i++){
     if(state.damage[todayIndex][i]) passed=false;
   }
-
   state.statuses[todayIndex]=passed ? "complete" : "failed";
-
   let newRecord=false;
-
   if(passed){
     state.streak++;
-
     if(state.streak>state.bestStreak && state.streak<=365){
       state.bestStreak=state.streak;
       newRecord=true;
@@ -779,22 +662,17 @@ function lockDay(){
   }else{
     state.streak=0;
   }
-
   let shouldPlayFirework=passed && todayIndex===5 && perfectWeek();
   let weeklyForm=null;
-
   if(todayIndex===5){
     if(shouldPlayFirework){
       weeklyForm="angel";
     }else{
       weeklyForm=formFromWeeklyPercent(weeklyVowPercent());
     }
-
     state.finalForm=weeklyForm;
   }
-
   saveState();
-
   if(shouldPlayFirework){
     play("perfectWeek");
   }else if(todayIndex===5 && weeklyForm){
@@ -804,18 +682,13 @@ function lockDay(){
   }else{
     play("fail");
   }
-
   renderDays();
-
   let petType=passed ? "king" : "rook";
-
   if(todayIndex===5 && weeklyForm){
     petType=weeklyForm;
   }
-
   let sealText="DAY SEALED";
   let resultText=passed ? "INTEGRITY PRESERVED" : "INTEGRITY DAMAGED";
-
   if(shouldPlayFirework){
     sealText="PERFECT WEEK!";
     resultText="INTEGRITY PRESERVED";
@@ -823,23 +696,20 @@ function lockDay(){
     sealText="WEEK FORM";
     resultText=weeklyVowPercent()+"% VOWS KEPT";
   }
-
   document.getElementById("playArea").innerHTML=
     achievementHTML()+
     streakHTML()+
+    sceneBackgroundHTML()+
     petHTML(petType)+
     "<div class='ground'></div>"+
     "<div class='textbox'>"+
     sealText+
     "<br>"+resultText+
     "</div>";
-
   startPet();
-
   if(shouldPlayFirework){
     setTimeout(()=>startFirework(),450);
   }
-
   if(newRecord){
     setTimeout(()=>showAchievementBanner(state.streak),650);
   }
@@ -847,17 +717,13 @@ function lockDay(){
 
 function resetWeek(){
   if(!requirePower()) return;
-
   play("reset");
   stopFirework();
-
   let savedStreak=state.streak;
   let savedBestStreak=state.bestStreak;
-
   state=freshState();
   state.streak=savedStreak;
   state.bestStreak=savedBestStreak;
-
   saveState();
   showMain();
 }
@@ -865,6 +731,5 @@ function resetWeek(){
 buildSounds();
 renderDays();
 </script>
-
 </body>
 </html>
