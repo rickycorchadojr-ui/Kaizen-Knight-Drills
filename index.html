@@ -61,6 +61,7 @@
 
     .gallery-wrap{width:100%;height:100%;display:flex;flex-direction:column;background:#f8f8f8;}
     .gallery-title{text-align:center;font-size:25px;padding:5px;border-bottom:4px solid #111;flex-shrink:0;}
+    .gallery-tab{cursor:pointer;}
     .gallery-hall{flex:1;overflow-x:auto;overflow-y:hidden;white-space:nowrap;background:#f8f8f8;box-sizing:border-box;scroll-snap-type:none;-webkit-overflow-scrolling:touch;}
     .gallery-room{display:inline-flex;vertical-align:top;width:100%;height:100%;box-sizing:border-box;position:relative;background:#f8f8f8 url("gallery_bg.png") center/cover no-repeat;image-rendering:pixelated;image-rendering:crisp-edges;justify-content:center;align-items:flex-end;padding:18px 18px 20px;}
     .gallery-room.locked{opacity:.38;}
@@ -69,6 +70,7 @@
     .trophy-date{font-size:20px;line-height:.9;min-height:22px;margin-bottom:18px;width:180px;overflow:hidden;}
     .trophy-icon{font-size:30px;line-height:1;margin-bottom:0;}
     .empty-trophy{font-size:30px;line-height:1;color:#777;margin-bottom:0;}
+    .record-line{font-size:25px;line-height:1.0;margin-bottom:10px;padding-bottom:8px;border-bottom:2px dotted #111;white-space:nowrap;}
     .gallery-footer{font-size:19px;text-align:center;border-top:4px solid #111;padding:4px;background:#f8f8f8;}
 
     .panel-buttons{border-top:4px solid #111;padding:6px;display:flex;gap:8px;background:#f8f8f8;}
@@ -375,6 +377,7 @@ function freshState(){
     bestStreak:0,
     finalForm:null,
     achievements:{},
+    records:[],
     statuses:["inactive","inactive","inactive","inactive","inactive","inactive"],
     sundayVows:Array(sundayVows.length).fill(false),
     weekdayVows:Array.from({length:6},()=>Array(weekdayVows.length).fill(false)),
@@ -394,6 +397,7 @@ function loadState(){
       newState.streak=typeof parsed.streak==="number" ? parsed.streak : 0;
       newState.bestStreak=typeof parsed.bestStreak==="number" ? parsed.bestStreak : newState.streak;
       newState.achievements=parsed.achievements || {};
+      newState.records=parsed.records || [];
       return newState;
     }
 
@@ -405,6 +409,7 @@ function loadState(){
     if(typeof parsed.bestStreak!=="number") parsed.bestStreak=parsed.streak;
     if(typeof parsed.finalForm==="undefined") parsed.finalForm=null;
     if(!parsed.achievements) parsed.achievements={};
+    if(!parsed.records) parsed.records=[];
 
     return parsed;
   }catch(e){
@@ -587,6 +592,64 @@ function formFromWeeklyPercent(percent){
   return null;
 }
 
+function weeklyRookCount(){
+  let total=0;
+
+  for(let d=0;d<6;d++){
+    for(let i=0;i<damageStates.length;i++){
+      if(state.damage[d][i]) total++;
+    }
+  }
+
+  return total;
+}
+
+function gradeEmoji(form){
+  if(form==="angel") return "⬜";
+  if(form==="red") return "🟥";
+  if(form==="orange") return "🟧";
+  if(form==="yellow") return "🟨";
+  if(form==="green") return "🟩";
+  if(form==="blue") return "🟦";
+  if(form==="purple") return "🟪";
+  if(form==="black") return "⬛";
+  if(form==="brown") return "🟫";
+  return "⬜";
+}
+
+function weekRecordDate(){
+  let d=new Date(weekKey+"T00:00:00");
+  let m=d.getMonth()+1;
+  let day=d.getDate();
+  let year=String(d.getFullYear()).slice(-2);
+
+  return m+"-"+day+"-"+year;
+}
+
+function addWeekRecord(weeklyForm){
+  if(!weeklyForm) return;
+  if(!state.records) state.records=[];
+
+  let date=weekRecordDate();
+
+  for(let i=0;i<state.records.length;i++){
+    if(state.records[i].date===date){
+      state.records[i]={
+        date:date,
+        grade:gradeEmoji(weeklyForm),
+        rooks:weeklyRookCount()
+      };
+      return;
+    }
+  }
+
+  state.records.push({
+    date:date,
+    grade:gradeEmoji(weeklyForm),
+    rooks:weeklyRookCount()
+  });
+}
+
 function shouldShowFinalForm(){ return state.finalForm && (todayIndex===5 || todayIndex===-1); }
 
 function powerOn(){
@@ -736,7 +799,7 @@ function showCode(){
   document.getElementById("playArea").innerHTML=html;
 }
 
-function showGallery(){
+function showGallery(mode="trophies"){
   if(!requirePower()) return;
 
   play("menu");
@@ -748,44 +811,80 @@ function showGallery(){
 
   let html="";
   html+="<div class='gallery-wrap'>";
-  html+="<div class='gallery-title'>TROPHY GALLERY</div>";
-  html+="<div class='gallery-hall' id='galleryHall'>";
 
-  for(let i=0;i<achievementDays.length;i++){
-    let day=achievementDays[i];
-    let earned=state.achievements && state.achievements[day];
+  html+="<div class='gallery-title'>";
+  html+="<span class='gallery-tab' style='opacity:"+(mode==="trophies"?"1":".45")+"' onclick=\"showGallery('trophies')\">TROPHIES</span>";
+  html+=" &nbsp;|&nbsp; ";
+  html+="<span class='gallery-tab' style='opacity:"+(mode==="records"?"1":".45")+"' onclick=\"showGallery('records')\">RECORDS</span>";
+  html+="</div>";
 
-    html+="<div class='gallery-room "+(earned?"":"locked")+"'>";
-    html+="<div class='trophy-display'>";
-    html+="<div class='trophy-day'>DAY "+day+"</div>";
-    html+="<div class='trophy-date'>"+(earned ? earned : "")+"</div>";
+  if(mode==="trophies"){
+    html+="<div class='gallery-hall' id='galleryHall'>";
 
-    if(earned){
-      html+="<div class='trophy-icon'>🏆</div>";
+    for(let i=0;i<achievementDays.length;i++){
+      let day=achievementDays[i];
+      let earned=state.achievements && state.achievements[day];
+
+      html+="<div class='gallery-room "+(earned?"":"locked")+"'>";
+      html+="<div class='trophy-display'>";
+      html+="<div class='trophy-day'>DAY "+day+"</div>";
+      html+="<div class='trophy-date'>"+(earned ? earned : "")+"</div>";
+
+      if(earned){
+        html+="<div class='trophy-icon'>🏆</div>";
+      }else{
+        html+="<div class='empty-trophy'>□</div>";
+      }
+
+      html+="</div>";
+      html+="</div>";
+    }
+
+    html+="</div>";
+  }else{
+    html+="<div class='panel'>";
+    html+="<div class='scroll'>";
+
+    if(!state.records || state.records.length<=0){
+      html+="<div class='small-note' style='margin-top:14px;'>NO RECORDS YET</div>";
     }else{
-      html+="<div class='empty-trophy'>□</div>";
+      for(let i=state.records.length-1;i>=0;i--){
+        let r=state.records[i];
+        let rookText="";
+        for(let j=0;j<r.rooks;j++) rookText+="♜";
+
+        html+="<div class='record-line'>";
+        html+=r.date+" "+r.grade+" "+rookText;
+        html+="</div>";
+      }
     }
 
     html+="</div>";
     html+="</div>";
   }
 
-  html+="</div>";
   html+="<div class='gallery-footer'>BEST STREAK: "+state.bestStreak+"</div>";
+
   html+="<div class='panel-buttons'>";
   html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
   html+="</div>";
+
   html+="</div>";
 
   document.getElementById("playArea").innerHTML=html;
 
-  const hall=document.getElementById("galleryHall");
-  if(hall){
-    let earnedCount=0;
-    for(let i=0;i<achievementDays.length;i++){
-      if(state.achievements && state.achievements[achievementDays[i]]) earnedCount++;
+  if(mode==="trophies"){
+    const hall=document.getElementById("galleryHall");
+
+    if(hall){
+      let earnedCount=0;
+
+      for(let i=0;i<achievementDays.length;i++){
+        if(state.achievements && state.achievements[achievementDays[i]]) earnedCount++;
+      }
+
+      hall.scrollLeft=Math.max(0,(earnedCount-1)*hall.clientWidth);
     }
-    hall.scrollLeft=Math.max(0,(earnedCount-1)*hall.clientWidth);
   }
 }
 
@@ -882,6 +981,7 @@ function lockDay(){
     }
 
     state.finalForm=weeklyForm;
+    addWeekRecord(weeklyForm);
   }
 
   saveState();
