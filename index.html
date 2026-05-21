@@ -136,6 +136,20 @@ const codeNotes=[
   "I AM DETERMINED TO HAVE A GOOD DAY REGARDLESS OF WHAT HAPPENS.",
   "BE GRATEFUL. SHOW REVERENCE FOR EVERY COMBINE."
 ];
+const manualNotes=[
+  ["LOCK RISK SETTINGS","WIN: LOCKED BEFORE CHARTS. FAIL: RISK LEFT OPEN."],
+  ["RECORD EVERY SESSION","WIN: SESSION RECORDED. FAIL: TRADED UNRECORDED."],
+  ["MAX CONTRACTS 5","WIN: NEVER ABOVE 5. FAIL: 6+ CONTRACTS."],
+  ["DON'T TRADE OUTSIDE ROUTINE","WIN: ONLY PLANNED WINDOW. FAIL: RANDOM SESSION."],
+  ["DON'T SIZE UP AFTER A LOSS","WIN: SAME OR SMALLER SIZE. FAIL: REVENGE SIZE."],
+  ["JOURNAL BOTH ACCOUNTS","WIN: BOTH REVIEWED. FAIL: LEFT UNWRITTEN."],
+  ["IF STOP HIT, NO TRADING SECOND ACCOUNT","WIN: STOP MEANS DONE. FAIL: SWITCHED ACCOUNTS."],
+  ["DRILLS","WIN: PRACTICE DONE. FAIL: SKIPPED."],
+  ["SPIRALED AFTER LOSS","DAMAGE: LOSS CAUSED LOSS OF CONTROL."],
+  ["TRADED OUTSIDE ROUTINE","DAMAGE: TRADED WITHOUT RITUAL."],
+  ["RISK SETTINGS REMOVED","DAMAGE: SAFETY WAS UNLOCKED."],
+  ["BOUGHT / RESET COMBINE","DAMAGE: PAID TO CONTINUE THE LOOP."]
+];
 const days=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"];
 let todayIndex=getTradingDayIndex();
 let weekKey=getWeekKey();
@@ -746,16 +760,34 @@ function showCode(){
   play("menu");
   stopPet();
   stopFirework();
+
   let html="";
   html+="<div class='panel'>";
   html+="<div class='panel-title'>FIELD CODE</div>";
   html+="<div class='scroll'>";
-  for(let i=0;i<codeNotes.length;i++) html+="<div class='note'>"+codeNotes[i]+"</div>";
+
+  for(let i=0;i<codeNotes.length;i++){
+    html+="<div class='note'>"+codeNotes[i]+"</div>";
+  }
+
+  html+="<div class='section-label'>INSTRUCTION MANUAL</div>";
+  html+="<div class='small-note'>WIN AND FAIL CONDITIONS</div>";
+
+  for(let i=0;i<manualNotes.length;i++){
+    html+="<div class='note'>";
+    html+="<div style='font-size:24px;margin-bottom:4px;'>"+manualNotes[i][0]+"</div>";
+    html+="<div style='font-size:20px;opacity:.9;'>"+manualNotes[i][1]+"</div>";
+    html+="</div>";
+  }
+
   html+="</div>";
+
   html+="<div class='panel-buttons'>";
   html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
   html+="</div>";
+
   html+="</div>";
+
   document.getElementById("playArea").innerHTML=html;
 }
 function showGallery(mode="trophies"){
