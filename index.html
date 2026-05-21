@@ -40,6 +40,7 @@
     .pet-bob{animation:bob 1.2s infinite steps(2);position:relative;width:160px;height:160px;}
     .pet-img{width:160px;height:160px;display:block;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;opacity:.92;filter:grayscale(1) contrast(2) brightness(.55);}
     .pet-img.clean-img{filter:none;opacity:1;}
+    .sleep-overlay{width:160px;height:160px;position:absolute;left:0;top:0;display:none;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;pointer-events:none;z-index:4;}
     .firework-img{width:160px;height:160px;position:absolute;left:0;top:0;display:none;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;pointer-events:none;z-index:3;}
     .pet-walker.right .pet-img{transform:scaleX(-1);}
     .pet-walker.left .pet-img{transform:scaleX(1);}
@@ -158,6 +159,8 @@ let todayIndex=getTradingDayIndex();
 let weekKey=getWeekKey();
 let state=loadState();
 let moveTimer=null;
+let sleepTimer=null;
+let sleepFrame=1;
 let petStep=0;
 let poweredOn=false;
 let fireworkTimer=null;
@@ -169,6 +172,12 @@ const sounds={};
 
 function requirePower(){ return poweredOn; }
 function getTodaysVows(){ return todayIndex===0 ? sundayVows : weekdayVows; }
+
+function isSleepTime(){
+  const now=new Date();
+  const mins=now.getHours()*60+now.getMinutes();
+  return mins>=22*60+30 || mins<4*60;
+}
 
 function getSceneImage(){
   if(state.streak>=35) return "scene6.png";
@@ -468,11 +477,19 @@ function streakHTML(){ return "<div class='streak-counter'>"+state.streak+"</div
 function achievementHTML(){ return "<div class='achievement-banner' id='achievementBanner'></div>"; }
 
 function petHTML(type="knight"){
+  let sleeping=isSleepTime();
+  let img=getPetImage(type);
+
+  if(sleeping && canPetBlink(type)){
+    img=getPetBlinkImage(type);
+  }
+
   return `
     <div class="pet-zone">
       <div class="pet-walker left" id="petWalker">
         <div class="pet-bob">
-          <img class="${getPetClass(type)}" id="petImg" src="${getPetImage(type)}" data-pet-type="${type}">
+          <img class="${getPetClass(type)}" id="petImg" src="${img}" data-pet-type="${type}">
+          <img class="sleep-overlay" id="sleepOverlay" src="Sleep1.png">
           <img class="firework-img" id="fireworkImg" src="Firework1.png">
         </div>
       </div>
@@ -480,7 +497,39 @@ function petHTML(type="knight"){
   `;
 }
 
-function stopPet(){ clearInterval(moveTimer); }
+function stopPet(){
+  clearInterval(moveTimer);
+  clearInterval(sleepTimer);
+  moveTimer=null;
+  sleepTimer=null;
+}
+
+function startSleepOverlay(){
+  clearInterval(sleepTimer);
+  const overlay=document.getElementById("sleepOverlay");
+  if(!overlay) return;
+
+  if(!isSleepTime()){
+    overlay.style.display="none";
+    return;
+  }
+
+  sleepFrame=1;
+  overlay.src="Sleep1.png";
+  overlay.style.display="block";
+
+  sleepTimer=setInterval(()=>{
+    if(!isSleepTime()){
+      overlay.style.display="none";
+      clearInterval(sleepTimer);
+      sleepTimer=null;
+      return;
+    }
+
+    sleepFrame=sleepFrame===1 ? 2 : 1;
+    overlay.src="Sleep"+sleepFrame+".png";
+  },500);
+}
 
 function stopFirework(){
   clearInterval(fireworkTimer);
@@ -540,14 +589,40 @@ function startPet(delay=0){
     const pet=document.getElementById("petImg");
     if(!walker || !pet) return;
 
+    startSleepOverlay();
+
     petStep=0;
     walker.style.left=petPositions[petStep]+"%";
+    walker.className="pet-walker left";
+
+    if(isSleepTime()){
+      const petType=pet.dataset.petType;
+      if(canPetBlink(petType)){
+        pet.src=getPetBlinkImage(petType);
+      }else{
+        pet.src=getPetImage(petType);
+      }
+      return;
+    }
 
     moveTimer=setInterval(()=>{
       const current=petPositions[petStep];
       petStep=(petStep+1)%petPositions.length;
       const next=petPositions[petStep];
       const petType=pet.dataset.petType;
+
+      if(isSleepTime()){
+        walker.className="pet-walker left";
+        if(canPetBlink(petType)){
+          pet.src=getPetBlinkImage(petType);
+        }else{
+          pet.src=getPetImage(petType);
+        }
+        clearInterval(moveTimer);
+        moveTimer=null;
+        startSleepOverlay();
+        return;
+      }
 
       if(next>current){
         walker.className="pet-walker right";
@@ -720,6 +795,10 @@ function showMain(fromBoot=false){
       status="INTEGRITY DAMAGED";
       petType="rook";
     }
+  }
+
+  if(isSleepTime()){
+    status="SLEEPING";
   }
 
   document.getElementById("playArea").innerHTML=
@@ -1032,6 +1111,10 @@ function lockDay(){
   }else if(todayIndex===5 && weeklyForm){
     sealText="WEEK FORM";
     resultText=weeklyVowPercent()+"% VOWS KEPT";
+  }
+
+  if(isSleepTime()){
+    resultText="RESTING UNTIL 4AM";
   }
 
   document.getElementById("playArea").innerHTML=
