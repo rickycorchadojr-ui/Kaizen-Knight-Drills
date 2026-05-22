@@ -75,6 +75,10 @@ body{margin:0;height:100vh;background:#111;display:flex;justify-content:center;a
 .trophy-icon{font-size:30px;line-height:1;margin-bottom:0;}
 .empty-trophy{font-size:30px;line-height:1;color:#777;margin-bottom:0;}
 .record-line{font-size:25px;line-height:1.0;margin-bottom:10px;padding-bottom:8px;border-bottom:2px dotted #111;white-space:nowrap;}
+.vault-row{border-bottom:2px dotted #111;padding:8px 0;}
+.vault-name{font-size:22px;line-height:1;margin-bottom:5px;}
+.vault-coins{font-size:24px;line-height:1.05;word-break:break-word;}
+.vault-total{font-size:18px;opacity:.75;margin-top:3px;}
 .gallery-footer{font-size:19px;text-align:center;border-top:4px solid #111;padding:4px;background:#f8f8f8;}
 .panel-buttons{border-top:4px solid #111;padding:6px;display:flex;gap:8px;background:#f8f8f8;}
 .mini-btn{flex:1;height:36px;background:#111;color:white;border:none;font-family:'VT323',monospace;font-size:24px;box-shadow:0 4px 0 #333;border-radius:0;}
@@ -396,6 +400,73 @@ function getWeekKey(){
   let sunday=new Date(now.setDate(diff));
   return sunday.toISOString().slice(0,10);
 }
+const COPPER_PER_SILVER=50;
+const SILVER_PER_GOLD=10;
+
+function getVaultVows(){
+  let all=weekdayVows.concat(sundayVows);
+  return all.filter((v,i,a)=>a.indexOf(v)===i);
+}
+
+function createFreshVault(){
+  let vault={};
+  let vows=getVaultVows();
+  for(let i=0;i<vows.length;i++) vault[vows[i]]=0;
+  return vault;
+}
+
+function createFreshVaultEarned(){
+  return{
+    sunday:Array(sundayVows.length).fill(false),
+    weekday:Array.from({length:6},()=>Array(weekdayVows.length).fill(false))
+  };
+}
+
+function ensureVault(){
+  if(!state.vault) state.vault=createFreshVault();
+  if(!state.vaultEarned) state.vaultEarned=createFreshVaultEarned();
+
+  let vows=getVaultVows();
+  for(let i=0;i<vows.length;i++){
+    if(typeof state.vault[vows[i]]!=="number") state.vault[vows[i]]=0;
+  }
+}
+
+function getVaultEarnedForToday(){
+  ensureVault();
+  return todayIndex===0 ? state.vaultEarned.sunday : state.vaultEarned.weekday[todayIndex];
+}
+
+function addVaultCoinOnce(vow,index){
+  ensureVault();
+  let earned=getVaultEarnedForToday();
+  if(earned[index]) return;
+  state.vault[vow]++;
+  earned[index]=true;
+}
+
+function vaultCoinsHTML(count){
+  let goldValue=COPPER_PER_SILVER*SILVER_PER_GOLD;
+  let gold=Math.floor(count/goldValue);
+  let rem=count%goldValue;
+  let silver=Math.floor(rem/COPPER_PER_SILVER);
+  let copper=rem%COPPER_PER_SILVER;
+
+  function repeatCoin(symbol,num,max){
+    let shown=Math.min(num,max);
+    let s="";
+    for(let i=0;i<shown;i++) s+=symbol;
+    if(num>max) s+=" +";
+    return s;
+  }
+
+  let html="";
+  if(gold>0) html+="<div>"+repeatCoin("🥇",gold,8)+"</div>";
+  if(silver>0) html+="<div>"+repeatCoin("🥈",silver,10)+"</div>";
+  if(copper>0) html+="<div>"+repeatCoin("🥉",copper,14)+"</div>";
+  if(count<=0) html+="<div>□</div>";
+  return html;
+}
 function freshState(){
   return{
     weekKey:weekKey,
@@ -403,8 +474,10 @@ function freshState(){
     bestStreak:0,
     finalForm:null,
     achievements:{},
-    records:[],
-    statuses:["inactive","inactive","inactive","inactive","inactive","inactive"],
+ records:[],
+vault:createFreshVault(),
+vaultEarned:createFreshVaultEarned(),
+statuses:["inactive","inactive","inactive","inactive","inactive","inactive"],
     sundayVows:Array(sundayVows.length).fill(false),
     weekdayVows:Array.from({length:6},()=>Array(weekdayVows.length).fill(false)),
     damage:Array.from({length:6},()=>Array(damageStates.length).fill(false))
@@ -420,8 +493,10 @@ function loadState(){
       newState.streak=typeof parsed.streak==="number" ? parsed.streak : 0;
       newState.bestStreak=typeof parsed.bestStreak==="number" ? parsed.bestStreak : newState.streak;
       newState.achievements=parsed.achievements || {};
-      newState.records=parsed.records || [];
-      return newState;
+   newState.records=parsed.records || [];
+newState.vault=parsed.vault || createFreshVault();
+newState.vaultEarned=createFreshVaultEarned();
+return newState;
     }
     if(!parsed.sundayVows || parsed.sundayVows.length!==sundayVows.length) return freshState();
     if(!parsed.weekdayVows || parsed.weekdayVows[1].length!==weekdayVows.length) return freshState();
@@ -430,8 +505,10 @@ function loadState(){
     if(typeof parsed.bestStreak!=="number") parsed.bestStreak=parsed.streak;
     if(typeof parsed.finalForm==="undefined") parsed.finalForm=null;
     if(!parsed.achievements) parsed.achievements={};
-    if(!parsed.records) parsed.records=[];
-    return parsed;
+   if(!parsed.records) parsed.records=[];
+if(!parsed.vault) parsed.vault=createFreshVault();
+if(!parsed.vaultEarned) parsed.vaultEarned=createFreshVaultEarned();
+return parsed;
   }catch(e){
     return freshState();
   }
@@ -873,6 +950,8 @@ function showGallery(mode="trophies"){
   stopPet();
   stopFirework();
   ensureAchievementArchive();
+  ensureVault();
+
   const achievementDays=getAchievementDays();
   let html="";
   html+="<div class='gallery-wrap'>";
@@ -880,28 +959,39 @@ function showGallery(mode="trophies"){
   html+="<span class='gallery-tab' style='opacity:"+(mode==="trophies"?"1":".45")+"' onclick=\"showGallery('trophies')\">TROPHIES</span>";
   html+=" &nbsp;|&nbsp; ";
   html+="<span class='gallery-tab' style='opacity:"+(mode==="records"?"1":".45")+"' onclick=\"showGallery('records')\">RECORDS</span>";
+  html+=" &nbsp;|&nbsp; ";
+  html+="<span class='gallery-tab' style='opacity:"+(mode==="vault"?"1":".45")+"' onclick=\"showGallery('vault')\">VAULT</span>";
   html+="</div>";
+
   if(mode==="trophies"){
     html+="<div class='gallery-hall' id='galleryHall'>";
+
     for(let i=0;i<achievementDays.length;i++){
       let day=achievementDays[i];
       let earned=state.achievements && state.achievements[day];
+
       html+="<div class='gallery-room "+(earned?"":"locked")+"'>";
       html+="<div class='trophy-display'>";
       html+="<div class='trophy-day'>DAY "+day+"</div>";
       html+="<div class='trophy-date'>"+(earned ? earned : "")+"</div>";
+
       if(earned){
         html+="<div class='trophy-icon'>🏆</div>";
       }else{
         html+="<div class='empty-trophy'>□</div>";
       }
+
       html+="</div>";
       html+="</div>";
     }
+
     html+="</div>";
-  }else{
+  }
+
+  else if(mode==="records"){
     html+="<div class='panel'>";
     html+="<div class='scroll'>";
+
     if(!state.records || state.records.length<=0){
       html+="<div class='small-note' style='margin-top:14px;'>NO RECORDS YET</div>";
     }else{
@@ -909,47 +999,84 @@ function showGallery(mode="trophies"){
         let r=state.records[i];
         let rookText="";
         for(let j=0;j<r.rooks;j++) rookText+="♜";
+
         html+="<div class='record-line'>";
         html+=r.date+" "+r.grade+" "+rookText;
         html+="</div>";
       }
     }
+
     html+="</div>";
     html+="</div>";
   }
+
+  else if(mode==="vault"){
+    html+="<div class='panel'>";
+    html+="<div class='scroll'>";
+    html+="<div class='small-note'>LIFETIME VOW COINS</div>";
+
+    let vows=getVaultVows();
+
+    for(let i=0;i<vows.length;i++){
+      let vow=vows[i];
+      let count=state.vault[vow] || 0;
+
+      html+="<div class='vault-row'>";
+      html+="<div class='vault-name'>"+(i+1)+". "+vow+"</div>";
+      html+="<div class='vault-coins'>"+vaultCoinsHTML(count)+"</div>";
+      html+="<div class='vault-total'>TOTAL: "+count+"</div>";
+      html+="</div>";
+    }
+
+    html+="</div>";
+    html+="</div>";
+  }
+
   html+="<div class='gallery-footer'>BEST STREAK: "+state.bestStreak+"</div>";
   html+="<div class='panel-buttons'>";
   html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
   html+="</div>";
   html+="</div>";
+
   document.getElementById("playArea").innerHTML=html;
+
   if(mode==="trophies"){
     const hall=document.getElementById("galleryHall");
+
     if(hall){
       let earnedCount=0;
+
       for(let i=0;i<achievementDays.length;i++){
         if(state.achievements && state.achievements[achievementDays[i]]) earnedCount++;
       }
+
       hall.scrollLeft=Math.max(0,(earnedCount-1)*hall.clientWidth);
     }
   }
 }
+
 function getCheckScrollTop(){
   const sc=document.getElementById("checkScroll");
   return sc ? sc.scrollTop : 0;
 }
-function toggleVow(i){
-  if(!requirePower()) return;
+
+function toggleVow(i){  if(!requirePower()) return;
+
   let scrollTop=getCheckScrollTop();
+  let todaysVows=getTodaysVows();
   let vowState=getVowStateForToday();
   let wasChecked=vowState[i];
+
   vowState[i]=!vowState[i];
-  saveState();
+
   if(!wasChecked){
+    addVaultCoinOnce(todaysVows[i],i);
     playVowNote(i);
   }else{
     play("reset");
   }
+
+  saveState();
   showCheck(scrollTop);
 }
 function toggleDamage(i){
