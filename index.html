@@ -41,9 +41,52 @@ body{margin:0;height:100vh;background:#111;display:flex;justify-content:center;a
 .halloween-overlay{position:absolute;left:50%;bottom:88px;width:320px;height:auto;transform:translateX(-50%);object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;z-index:1;pointer-events:none;}
 .rainbow-overlay{position:absolute;left:50%;top:0px;width:320px;height:auto;transform:translateX(-50%);object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;z-index:2;pointer-events:none;}
 .crack-overlay{position:absolute;left:50%;top:0px;width:320px;height:auto;transform:translateX(-50%);object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;z-index:2;pointer-events:none;}
-.ufo{position:absolute;top:52px;left:0;width:64px;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;pointer-events:none;z-index:2;animation:ufoFly 60s linear infinite;}
-@keyframes ufoFly{0%{transform:translateX(-90px);}100%{transform:translateX(410px);}}
-.achievement-banner{position:absolute;top:0;left:50%;transform:translate(-50%,-120%);background:#111;color:#f8f8f8;border:4px solid #f8f8f8;font-size:30px;line-height:1;padding:7px 18px;z-index:20;white-space:nowrap;letter-spacing:2px;pointer-events:none;}
+.sky-object{
+position:absolute;
+top:var(--sky-top);
+left:0;
+width:64px;
+height:auto;
+image-rendering:pixelated;
+image-rendering:crisp-edges;
+pointer-events:none;
+z-index:2;
+animation-duration:var(--sky-duration);
+animation-delay:var(--sky-delay);
+animation-timing-function:linear;
+animation-iteration-count:infinite;
+animation-fill-mode:both;
+}
+
+.sky-img{
+width:100%;
+height:auto;
+display:block;
+image-rendering:pixelated;
+image-rendering:crisp-edges;
+}
+
+.sky-object.fly-right{
+animation-name:skyFlyRight;
+}
+
+.sky-object.fly-left{
+animation-name:skyFlyLeft;
+}
+
+.sky-object.fly-left .sky-img{
+transform:scaleX(-1);
+}
+
+@keyframes skyFlyRight{
+0%{transform:translateX(-90px);}
+100%{transform:translateX(410px);}
+}
+
+@keyframes skyFlyLeft{
+0%{transform:translateX(410px);}
+100%{transform:translateX(-90px);}
+}.achievement-banner{position:absolute;top:0;left:50%;transform:translate(-50%,-120%);background:#111;color:#f8f8f8;border:4px solid #f8f8f8;font-size:30px;line-height:1;padding:7px 18px;z-index:20;white-space:nowrap;letter-spacing:2px;pointer-events:none;}
 .achievement-banner.show{animation:achievementDrop 2.05s forwards;}
 @keyframes achievementDrop{0%{transform:translate(-50%,-120%);}18%{transform:translate(-50%,8px);}72%{transform:translate(-50%,8px);}100%{transform:translate(-50%,-120%);}}
 .streak-counter{position:absolute;top:8px;right:10px;font-size:32px;line-height:.8;color:#111;text-align:right;min-width:0;font-family:'VT323',monospace;letter-spacing:1px;z-index:5;}
@@ -227,7 +270,7 @@ const manualNotes=[
   ["RISK SETTINGS REMOVED","DAMAGE: SAFETY WAS UNLOCKED."],
   ["BOUGHT / RESET COMBINE","DAMAGE: PAID TO CONTINUE THE LOOP."]
 ];
-const APP_VERSION="5.3.0";
+const APP_VERSION="5.4.0";
 const days=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"];
 let todayIndex=getTradingDayIndex();
 let weekKey=getWeekKey();
@@ -269,7 +312,21 @@ const FORCE_CHRISTMAS_TEST=false;
 
 const FORCE_RAINBOW_TEST=false;
 const RAINBOW_CHANCE=100; // 1 in 100. Lower = more common. Higher = rarer.
+const SKY_MIN_Y=42;
+const SKY_MAX_Y=66;
 
+const UFO_MIN_DURATION=42;
+const UFO_MAX_DURATION=78;
+const UFO_MAX_DELAY=18;
+
+const PLANE_CHANCE=800;
+
+const PLANE_MIN_DURATION=34;
+const PLANE_MAX_DURATION=64;
+const PLANE_MAX_DELAY=8;
+
+const PLANE_FRAME_COUNT=5;
+const PLANE_FPS=6;
 function seasonalOverlayHTML(){
 
   const month=new Date().getMonth();
@@ -310,7 +367,86 @@ function rainbowHTML(){
 function crackHTML(){
   return state.crackActive ? "<img class='crack-overlay' src='Crack.png'>" : "";
 }
-function ufoHTML(){ return state.streak>=35 ? "<img class='ufo' src='ufo.png'>" : ""; }
+function randRange(min,max){
+  return min+Math.random()*(max-min);
+}
+
+function randSkyTop(){
+  return Math.floor(randRange(SKY_MIN_Y,SKY_MAX_Y));
+}
+
+function randDirection(){
+  return Math.random()<.5 ? "right" : "left";
+}
+
+function skyStyle(top,duration,delay){
+  return "--sky-top:"+top+"px;--sky-duration:"+duration+"s;--sky-delay:"+delay+"s;";
+}
+
+function ufoHTML(){
+
+  if(state.streak<35) return "";
+
+  const dir=randDirection();
+
+  const top=randSkyTop();
+
+  const duration=randRange(
+    UFO_MIN_DURATION,
+    UFO_MAX_DURATION
+  ).toFixed(2);
+
+  const delay=randRange(
+    0,
+    UFO_MAX_DELAY
+  ).toFixed(2);
+
+  return "<div class='sky-object fly-"+dir+"' style='"+skyStyle(top,duration,delay)+"'><img class='sky-img' src='ufo.png'></div>";
+}
+
+function planeHTML(){
+
+  if(Math.floor(Math.random()*PLANE_CHANCE)!==0){
+    return "";
+  }
+
+  const dir=randDirection();
+
+  const top=randSkyTop();
+
+  const duration=randRange(
+    PLANE_MIN_DURATION,
+    PLANE_MAX_DURATION
+  ).toFixed(2);
+
+  const delay=randRange(
+    0,
+    PLANE_MAX_DELAY
+  ).toFixed(2);
+
+  return "<div class='sky-object fly-"+dir+"' style='"+skyStyle(top,duration,delay)+"'><img class='sky-img' id='planeImg' src='Plane1.png'></div>";
+}
+
+function startSkyAnimations(){
+
+  const plane=document.getElementById("planeImg");
+
+  if(!plane) return;
+
+  let frame=1;
+
+  setInterval(()=>{
+
+    frame++;
+
+    if(frame>PLANE_FRAME_COUNT){
+      frame=1;
+    }
+
+    plane.src="Plane"+frame+".png";
+
+  },1000/PLANE_FPS);
+}
 function getAchievementDays(){
   let arr=[];
   for(let i=1;i<=100;i++) arr.push(i);
@@ -918,6 +1054,7 @@ rainbowHTML()+
 crackHTML()+
 
 ufoHTML()+
+planeHTML()+
 petHTML(petType)+
     "<div class='ground'></div>"+
     "<div class='textbox'>"+
@@ -926,6 +1063,7 @@ petHTML(petType)+
 "</div>"+
 "<div class='version-line'>VER "+APP_VERSION+"</div>";
   startPet(fromBoot ? 650 : 0);
+startSkyAnimations();
 }
 function showCheck(restoreScroll=null){
   if(!requirePower()) return;
@@ -1262,6 +1400,7 @@ rainbowHTML()+
 crackHTML()+
 
 ufoHTML()+
+planeHTML()+
 petHTML(petType)+
 
     "<div class='ground'></div>"+
@@ -1270,6 +1409,7 @@ petHTML(petType)+
     "<br>"+resultText+
     "</div>";
   startPet();
+startSkyAnimations();
   if(shouldPlayFirework) setTimeout(()=>startFirework(),450);
   if(newRecord && newAchievement) setTimeout(()=>showAchievementBanner(state.streak),650);
 }
