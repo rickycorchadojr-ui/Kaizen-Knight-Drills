@@ -276,7 +276,7 @@ const manualNotes=[
   ["RISK SETTINGS REMOVED","DAMAGE: SAFETY WAS UNLOCKED."],
   ["BOUGHT / RESET COMBINE","DAMAGE: PAID TO CONTINUE THE LOOP."]
 ];
-const APP_VERSION="5.4.0";
+const APP_VERSION="5.4.1";
 const days=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"];
 let todayIndex=getTradingDayIndex();
 let weekKey=getWeekKey();
@@ -576,8 +576,9 @@ function buildSounds(){
     {freq:0,duration:.03},
     {freq:1046.50,duration:.22,volume:.65}
   ]));
-  sounds.firework=new Audio("8d82b5_Super_Mario_Bros_Fireworks_Sound_Effect.mp3");
-  sounds.perfectWeek=new Audio("fever-stage-clear (online-video-cutter.com).mp3");
+sounds.firework=new Audio("8d82b5_Super_Mario_Bros_Fireworks_Sound_Effect.mp3");
+sounds.perfectWeek=new Audio("fever-stage-clear (online-video-cutter.com).mp3");
+sounds.milestone=new Audio("myinstants.mp3");
 }
 function play(name){
   if(!sounds[name]) return;
@@ -844,13 +845,24 @@ function startFirework(){
 }
 function showAchievementBanner(dayNum){
   clearTimeout(achievementTimer);
+
   const banner=document.getElementById("achievementBanner");
+
   if(!banner) return;
+
   banner.className="achievement-banner";
   banner.innerHTML="DAY "+dayNum+"!";
+
   void banner.offsetWidth;
-  playAchievementSound();
+
+  if(dayNum%5===0){
+    play("milestone");
+  }else{
+    playAchievementSound();
+  }
+
   banner.classList.add("show");
+
   achievementTimer=setTimeout(()=>{
     banner.className="achievement-banner";
     banner.innerHTML="";
