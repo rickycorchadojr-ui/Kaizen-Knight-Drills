@@ -1,471 +1,74 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Kaizen Knight</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Kaizen Knight">
-  <meta name="theme-color" content="#222222">
-  <link rel="apple-touch-icon" href="icon.png">
-  <link rel="icon" href="icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-<style>
-@font-face{
-  font-family:'Radeil';
-  src:url('RadeilRounded-Regular.otf') format('opentype');
-}
-</style>
-  <style>
-body{margin:0;height:100vh;background:#111;display:flex;justify-content:center;align-items:center;font-family:'VT323',monospace;overflow:hidden;-webkit-user-select:none;user-select:none;touch-action:manipulation;}
-.device{width:min(92vw,420px);height:min(86vh,740px);background:#ECECEC;border:6px solid #777;border-radius:32px;padding:18px 24px 24px;box-sizing:border-box;box-shadow:0 8px 0 #555;}
-.device-title{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  margin:2px 0 10px;
-}
+<!DOCTYPE html> <html> <head>   <title>Kaizen Knight</title>   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">   <meta name="apple-mobile-web-app-capable" content="yes">   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">   <meta name="apple-mobile-web-app-title" content="Kaizen Knight">   <meta name="theme-color" content="#222222">   <link rel="apple-touch-icon" href="icon.png">   <link rel="icon" href="icon.png">   <link rel="preconnect" href="https://fonts.googleapis.com">   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet"> <style> @font-face{   font-family:'Radeil';   src:url('RadeilRounded-Regular.otf') format('opentype'); } </style>   <style> body{margin:0;height:100vh;background:#111;display:flex;justify-content:center;align-items:center;font-family:'VT323',monospace;overflow:hidden;-webkit-user-select:none;user-select:none;touch-action:manipulation;} .device{width:min(92vw,420px);height:min(86vh,740px);background:#ECECEC;border:6px solid #777;border-radius:32px;padding:18px 24px 24px;box-sizing:border-box;box-shadow:0 8px 0 #555;} .device-title{   display:flex;   justify-content:center;   align-items:center;   margin:2px 0 10px; }
 
-.title-logo{
-  width:260px;
-  height:auto;
-  display:block;
-}.screen{width:100%;height:62%;background:#e9ecd8;border:10px solid #346245;border-radius:18px;display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box;}
-.screen.off,.screen.boot-dark{background:#111;}
-.status-bar{height:38px;border-bottom:4px solid #111;display:flex;justify-content:center;align-items:center;font-size:24px;letter-spacing:2px;flex-shrink:0;}
-.off .status-bar,.boot-dark .status-bar{color:#e9ecd8;border-bottom:4px solid #e9ecd8;}
-.play-area{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;box-sizing:border-box;overflow:hidden;position:relative;}
-.scene-bg{position:absolute;left:50%;bottom:60px;width:320px;height:auto;transform:translateX(-50%);object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;z-index:1;pointer-events:none;}
-.halloween-overlay{position:absolute;left:50%;bottom:60px;width:320px;height:auto;transform:translateX(-50%);object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;z-index:1;pointer-events:none;}
-.rainbow-overlay{position:absolute;left:50%;top:0px;width:320px;height:auto;transform:translateX(-50%);object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;z-index:2;pointer-events:none;}
-.crack-overlay{position:absolute;left:50%;top:0px;width:320px;height:auto;transform:translateX(-50%);object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;z-index:2;pointer-events:none;}
-.sky-object{
-position:absolute;
-top:var(--sky-top);
-left:0;
-width:64px;
-height:auto;
-image-rendering:pixelated;
-image-rendering:crisp-edges;
-pointer-events:none;
-z-index:1;
-animation-duration:var(--sky-duration);
-animation-delay:var(--sky-delay);
-animation-timing-function:linear;
-animation-iteration-count:infinite;
-animation-fill-mode:both;
-}
-.ufo-object{
-width:64px;
-}
+.title-logo{   width:260px;   height:auto;   display:block; }.screen{width:100%;height:62%;background:#e9ecd8;border:10px solid #346245;border-radius:18px;display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box;} .screen.off,.screen.boot-dark{background:#111;} .status-bar{height:38px;border-bottom:4px solid #111;display:flex;justify-content:center;align-items:center;font-size:24px;letter-spacing:2px;flex-shrink:0;} .off .status-bar,.boot-dark .status-bar{color:#e9ecd8;border-bottom:4px solid #e9ecd8;} .play-area{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;box-sizing:border-box;overflow:hidden;position:relative;} .scene-bg{position:absolute;left:50%;bottom:60px;width:320px;height:auto;transform:translateX(-50%);object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;z-index:1;pointer-events:none;} .halloween-overlay{position:absolute;left:50%;bottom:60px;width:320px;height:auto;transform:translateX(-50%);object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;z-index:1;pointer-events:none;} .rainbow-overlay{position:absolute;left:50%;top:0px;width:320px;height:auto;transform:translateX(-50%);object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;z-index:2;pointer-events:none;} .crack-overlay{position:absolute;left:50%;top:0px;width:320px;height:auto;transform:translateX(-50%);object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;z-index:2;pointer-events:none;} .sky-object{ position:absolute; top:var(--sky-top); left:0; width:64px; height:auto; image-rendering:pixelated; image-rendering:crisp-edges; pointer-events:none; z-index:1; animation-duration:var(--sky-duration); animation-delay:var(--sky-delay); animation-timing-function:linear; animation-iteration-count:infinite; animation-fill-mode:both; } .ufo-object{ width:64px; }
 
-.plane-object{
-width:310px;
-}
-.sky-img{
-width:100%;
-height:auto;
-display:block;
-image-rendering:pixelated;
-image-rendering:crisp-edges;
-}
+.plane-object{ width:310px; } .sky-img{ width:100%; height:auto; display:block; image-rendering:pixelated; image-rendering:crisp-edges; }
 
-.sky-object.fly-right{
-animation-name:skyFlyRight;
-}
+.sky-object.fly-right{ animation-name:skyFlyRight; }
 
-.sky-object.fly-left{
-animation-name:skyFlyLeft;
-}
+.sky-object.fly-left{ animation-name:skyFlyLeft; }
 
-.sky-object.fly-left .sky-img{
-transform:scaleX(-1);
-}
+.sky-object.fly-left .sky-img{ transform:scaleX(-1); }
 
-@keyframes skyFlyRight{
-0%{transform:translateX(-90px);}
-100%{transform:translateX(410px);}
-}
+@keyframes skyFlyRight{ 0%{transform:translateX(-90px);} 100%{transform:translateX(410px);} }
 
-@keyframes skyFlyLeft{
-0%{transform:translateX(410px);}
-100%{transform:translateX(-90px);}
-}.achievement-banner{position:absolute;top:0;left:50%;transform:translate(-50%,-120%);background:#111;color:#f8f8f8;border:4px solid #f8f8f8;font-size:30px;line-height:1;padding:7px 18px;z-index:20;white-space:nowrap;letter-spacing:2px;pointer-events:none;}
-.achievement-banner.show{animation:achievementDrop 2.05s forwards;}
-@keyframes achievementDrop{0%{transform:translate(-50%,-120%);}18%{transform:translate(-50%,8px);}72%{transform:translate(-50%,8px);}100%{transform:translate(-50%,-120%);}}
-.streak-counter{position:absolute;top:8px;right:10px;font-size:32px;line-height:.8;color:#111;text-align:right;min-width:0;font-family:'VT323',monospace;letter-spacing:1px;z-index:5;}
-.power-quote{width:88%;background:#111;color:#e9ecd8;border:4px solid #e9ecd8;font-family:'VT323',monospace;font-size:24px;line-height:1.02;padding:14px 12px;box-shadow:none;text-align:center;}
-.power-author{display:block;margin-top:10px;font-size:22px;}
-.boot-text{color:#e9ecd8;font-size:32px;letter-spacing:2px;animation:bootPulse .8s infinite steps(2);}
-@keyframes bootPulse{0%{opacity:1}50%{opacity:.35}100%{opacity:1}}
-.pet-zone{width:240px;height:130px;position:relative;margin-bottom:-10px;z-index:2;}
-.pet-walker{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);}
-.pet-bob{animation:bob 1.2s infinite steps(2);position:relative;width:160px;height:160px;}
-.pet-img{width:160px;height:160px;display:block;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;opacity:.92;filter:grayscale(1) contrast(2) brightness(.55);}
-.santa-hat{width:160px;height:160px;position:absolute;left:0;top:0;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;pointer-events:none;z-index:2;}
-.pet-img.clean-img{filter:none;opacity:1;}
-.firework-img{width:160px;height:160px;position:absolute;left:0;top:0;display:none;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;pointer-events:none;z-index:3;}
-.sleep-overlay{width:160px;height:160px;position:absolute;left:0;top:0;display:none;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;pointer-events:none;z-index:4;}
-.pet-walker.right .pet-img{transform:scaleX(-1);}
-.pet-walker.left .pet-img{transform:scaleX(1);}
-.pet-walker.right .santa-hat{transform:scaleX(-1);}
-.pet-walker.left .santa-hat{transform:scaleX(1);}
-@keyframes bob{0%{transform:translateY(0)}50%{transform:translateY(-4px)}100%{transform:translateY(0)}}
-.ground{width:100px;border-bottom:4px solid #111;margin-bottom:14px;position:relative;z-index:2;}
-.textbox{width:100%;background:#f8f8f8;border-top:4px solid #111;padding:9px;box-sizing:border-box;text-align:center;font-size:24px;line-height:1.03;position:relative;z-index:3;}
-.subline{font-size:20px;opacity:.9;}
-.version-line{
-  position:absolute;
-  right:14px;
-  bottom:4px;
-  font-size:13px;
-  opacity:.32;
-  letter-spacing:1px;
-  pointer-events:none;
-  z-index:6;
-}
-.panel{width:100%;height:100%;display:flex;flex-direction:column;background:#f8f8f8;}
-.panel-title{text-align:center;font-size:25px;padding:5px;border-bottom:4px solid #111;flex-shrink:0;}
-.scroll{flex:1;overflow-y:auto;padding:8px 10px;box-sizing:border-box;}
-.section-label{font-size:23px;margin:8px 0 5px;border-bottom:3px solid #111;letter-spacing:1px;}
-.rule{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:22px;line-height:1.0;}
-.box{width:15px;height:15px;border:3px solid #111;background:#f8f8f8;flex-shrink:0;cursor:pointer;margin-top:2px;}
-.box.checked{background:#111;}
-.note{font-size:22px;line-height:1.05;margin-bottom:12px;padding-bottom:8px;border-bottom:2px dotted #111;}
-.small-note{font-size:19px;opacity:.85;margin:4px 0 10px;text-align:center;}
-.save-textarea{
-  width:100%;
-  height:120px;
-  box-sizing:border-box;
-  border:3px solid #111;
-  background:#f8f8f8;
-  font-family:'VT323',monospace;
-  font-size:18px;
-  line-height:1;
-  padding:8px;
-  resize:none;
-}
-.save-message{
-  font-size:21px;
-  text-align:center;
-  margin:8px 0;
-}
-.gallery-wrap{width:100%;height:100%;display:flex;flex-direction:column;background:#f8f8f8;}
-.gallery-title{text-align:center;font-size:21px;padding:5px 0;border-bottom:4px solid #111;flex-shrink:0;white-space:nowrap;overflow:hidden;}
-.gallery-tab{cursor:pointer;}
-.gallery-hall{flex:1;overflow-x:auto;overflow-y:hidden;white-space:nowrap;background:#f8f8f8;box-sizing:border-box;scroll-snap-type:none;-webkit-overflow-scrolling:touch;}
-.gallery-room{display:inline-flex;vertical-align:top;width:100%;height:100%;box-sizing:border-box;position:relative;background:#f8f8f8 url("gallery_bg.png") center/cover no-repeat;image-rendering:pixelated;image-rendering:crisp-edges;justify-content:center;align-items:flex-end;padding:18px 18px 20px;}
-.gallery-room.locked{opacity:.38;}
-.trophy-display{position:relative;z-index:2;width:180px;height:155px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;text-align:center;margin-bottom:0;}
-.trophy-day{font-size:34px;line-height:.9;margin-bottom:4px;background:transparent;border:none;padding:0;}
-.trophy-date{font-size:20px;line-height:.9;min-height:22px;margin-bottom:18px;width:180px;overflow:hidden;}
-.trophy-icon{font-size:30px;line-height:1;margin-bottom:0;}
-.empty-trophy{font-size:30px;line-height:1;color:#777;margin-bottom:0;}
-.record-line{font-size:25px;line-height:1.0;margin-bottom:10px;padding-bottom:8px;border-bottom:2px dotted #111;white-space:nowrap;}
-.vault-row{border-bottom:2px dotted #111;padding:8px 0;}
-.vault-name{font-size:22px;line-height:1;margin-bottom:5px;}
-.vault-coins{font-size:24px;line-height:1.05;word-break:break-word;}
-.vault-total{font-size:18px;opacity:.75;margin-top:3px;}
-.gallery-footer{font-size:19px;text-align:center;border-top:4px solid #111;padding:4px;background:#f8f8f8;}
-.panel-buttons{border-top:4px solid #111;padding:6px;display:flex;gap:8px;background:#f8f8f8;}
-.mini-btn{flex:1;height:36px;background:#111;color:white;border:none;font-family:'VT323',monospace;font-size:24px;box-shadow:0 4px 0 #333;border-radius:0;}
-.week-row{margin-top:18px;display:flex;justify-content:space-between;gap:8px;}
-.day{flex:1;height:40px;border:4px solid rgba(0,0,0,.35);background:#f8f8f8;font-size:20px;display:flex;justify-content:center;align-items:center;box-shadow:4px 5px 0 rgba(0,0,0,.25);color:#ECECEC;}
-#day0{background:#D93831;}
-#day1{background:#F7CD47;color:#111;}
-#day2{background:#346245;}
-#day3{background:#55BAED;color:#111;}
-#day4{background:#2253A0;}
-#day5{background:#2253A0;}
-.day.complete{background:#111;color:white;}
+@keyframes skyFlyLeft{ 0%{transform:translateX(410px);} 100%{transform:translateX(-90px);} }.achievement-banner{position:absolute;top:0;left:50%;transform:translate(-50%,-120%);background:#111;color:#f8f8f8;border:4px solid #f8f8f8;font-size:30px;line-height:1;padding:7px 18px;z-index:20;white-space:nowrap;letter-spacing:2px;pointer-events:none;} .achievement-banner.show{animation:achievementDrop 2.05s forwards;} @keyframes achievementDrop{0%{transform:translate(-50%,-120%);}18%{transform:translate(-50%,8px);}72%{transform:translate(-50%,8px);}100%{transform:translate(-50%,-120%);}} .streak-counter{position:absolute;top:8px;right:10px;font-size:32px;line-height:.8;color:#111;text-align:right;min-width:0;font-family:'VT323',monospace;letter-spacing:1px;z-index:5;} .power-quote{width:88%;background:#111;color:#e9ecd8;border:4px solid #e9ecd8;font-family:'VT323',monospace;font-size:24px;line-height:1.02;padding:14px 12px;box-shadow:none;text-align:center;} .power-author{display:block;margin-top:10px;font-size:22px;} .boot-text{color:#e9ecd8;font-size:32px;letter-spacing:2px;animation:bootPulse .8s infinite steps(2);} @keyframes bootPulse{0%{opacity:1}50%{opacity:.35}100%{opacity:1}} .pet-zone{width:240px;height:130px;position:relative;margin-bottom:-10px;z-index:2;} .pet-walker{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);} .pet-bob{animation:bob 1.2s infinite steps(2);position:relative;width:160px;height:160px;} .pet-img{width:160px;height:160px;display:block;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;opacity:.92;filter:grayscale(1) contrast(2) brightness(.55);} .santa-hat{width:160px;height:160px;position:absolute;left:0;top:0;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;pointer-events:none;z-index:2;} .pet-img.clean-img{filter:none;opacity:1;} .firework-img{width:160px;height:160px;position:absolute;left:0;top:0;display:none;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;pointer-events:none;z-index:3;} .sleep-overlay{width:160px;height:160px;position:absolute;left:0;top:0;display:none;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;pointer-events:none;z-index:4;} .pet-walker.right .pet-img{transform:scaleX(-1);} .pet-walker.left .pet-img{transform:scaleX(1);} .pet-walker.right .santa-hat{transform:scaleX(-1);} .pet-walker.left .santa-hat{transform:scaleX(1);} @keyframes bob{0%{transform:translateY(0)}50%{transform:translateY(-4px)}100%{transform:translateY(0)}} .ground{width:100px;border-bottom:4px solid #111;margin-bottom:14px;position:relative;z-index:2;} .textbox{width:100%;background:#f8f8f8;border-top:4px solid #111;padding:9px;box-sizing:border-box;text-align:center;font-size:24px;line-height:1.03;position:relative;z-index:3;} .subline{font-size:20px;opacity:.9;} .version-line{   position:absolute;   right:14px;   bottom:4px;   font-size:13px;   opacity:.32;   letter-spacing:1px;   pointer-events:none;   z-index:6; } .panel{width:100%;height:100%;display:flex;flex-direction:column;background:#f8f8f8;} .panel-title{text-align:center;font-size:25px;padding:5px;border-bottom:4px solid #111;flex-shrink:0;} .scroll{flex:1;overflow-y:auto;padding:8px 10px;box-sizing:border-box;} .section-label{font-size:23px;margin:8px 0 5px;border-bottom:3px solid #111;letter-spacing:1px;} .rule{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:22px;line-height:1.0;} .box{width:15px;height:15px;border:3px solid #111;background:#f8f8f8;flex-shrink:0;cursor:pointer;margin-top:2px;} .box.checked{background:#111;} .note{font-size:22px;line-height:1.05;margin-bottom:12px;padding-bottom:8px;border-bottom:2px dotted #111;} .small-note{font-size:19px;opacity:.85;margin:4px 0 10px;text-align:center;} .save-textarea{   width:100%;   height:120px;   box-sizing:border-box;   border:3px solid #111;   background:#f8f8f8;   font-family:'VT323',monospace;   font-size:18px;   line-height:1;   padding:8px;   resize:none; } .save-message{   font-size:21px;   text-align:center;   margin:8px 0; } .gallery-wrap{width:100%;height:100%;display:flex;flex-direction:column;background:#f8f8f8;} .gallery-title{text-align:center;font-size:21px;padding:5px 0;border-bottom:4px solid #111;flex-shrink:0;white-space:nowrap;overflow:hidden;} .gallery-tab{cursor:pointer;} .gallery-hall{flex:1;overflow-x:auto;overflow-y:hidden;white-space:nowrap;background:#f8f8f8;box-sizing:border-box;scroll-snap-type:none;-webkit-overflow-scrolling:touch;} .gallery-room{display:inline-flex;vertical-align:top;width:100%;height:100%;box-sizing:border-box;position:relative;background:#f8f8f8 url("gallery_bg.png") center/cover no-repeat;image-rendering:pixelated;image-rendering:crisp-edges;justify-content:center;align-items:flex-end;padding:18px 18px 20px;} .gallery-room.locked{opacity:.38;} .trophy-display{position:relative;z-index:2;width:180px;height:155px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;text-align:center;margin-bottom:0;} .trophy-day{font-size:34px;line-height:.9;margin-bottom:4px;background:transparent;border:none;padding:0;} .trophy-date{font-size:20px;line-height:.9;min-height:22px;margin-bottom:18px;width:180px;overflow:hidden;} .trophy-icon{font-size:30px;line-height:1;margin-bottom:0;} .empty-trophy{font-size:30px;line-height:1;color:#777;margin-bottom:0;} .record-line{font-size:25px;line-height:1.0;margin-bottom:10px;padding-bottom:8px;border-bottom:2px dotted #111;white-space:nowrap;} .vault-row{border-bottom:2px dotted #111;padding:8px 0;} .vault-name{font-size:22px;line-height:1;margin-bottom:5px;} .vault-coins{font-size:24px;line-height:1.05;word-break:break-word;} .vault-total{font-size:18px;opacity:.75;margin-top:3px;} .gallery-footer{font-size:19px;text-align:center;border-top:4px solid #111;padding:4px;background:#f8f8f8;} .panel-buttons{border-top:4px solid #111;padding:6px;display:flex;gap:8px;background:#f8f8f8;} .mini-btn{flex:1;height:36px;background:#111;color:white;border:none;font-family:'VT323',monospace;font-size:24px;box-shadow:0 4px 0 #333;border-radius:0;} .week-row{margin-top:18px;display:flex;justify-content:space-between;gap:8px;} .day{flex:1;height:40px;border:4px solid rgba(0,0,0,.35);background:#f8f8f8;font-size:20px;display:flex;justify-content:center;align-items:center;box-shadow:4px 5px 0 rgba(0,0,0,.25);color:#ECECEC;} #day0{background:#D93831;} #day1{background:#F7CD47;color:#111;} #day2{background:#346245;} #day3{background:#55BAED;color:#111;} #day4{background:#2253A0;} #day5{background:#2253A0;} .day.complete{background:#111;color:white;}
 
-.day.recovery{
-  background:#346245;
-  color:white;
-}
-.day.failed{text-decoration:line-through;}
-.day.today{outline:4px solid #111;}
-.day.inactive{opacity:.55;}
-.buttons{margin-top:14px;display:flex;justify-content:space-around;align-items:flex-start;gap:10px;}
-.control-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;}
-.control-wrap:nth-child(2){transform:translateY(6px);}
-.control-wrap button{width:44px;height:44px;border-radius:50%;background:#F7CD47;color:transparent;border:none;font-family:'VT323',monospace;font-size:0;box-shadow:0 5px 0 #C99A22;}
-.control-wrap button:active{transform:translateY(3px);box-shadow:0 2px 0 #C99A22;}
-.control-label{font-family:'VT323',monospace;color:#7a7a7a;font-size:12px;line-height:1;text-transform:uppercase;letter-spacing:2px;}  </style>
-</head>
-<body>
-<div class="device">
-  <div class="device-title">
-  <img src="logo.png" class="title-logo">
-</div>
-  <div class="screen off" id="screen">
-    <div class="status-bar" id="statusBar">POWER OFF</div>
-    <div class="play-area" id="playArea">
-      <button class="power-quote" onclick="powerOn()">
-        “The minute that we change our minds and stop giving power to the past, the past with its mistakes loses its power over us.”
-        <span class="power-author">— Psycho-Cybernetics</span>
-      </button>
-    </div>
-  </div>
-  <div class="week-row">
-    <div class="day" id="day0">SUN</div>
-    <div class="day" id="day1">MON</div>
-    <div class="day" id="day2">TUE</div>
-    <div class="day" id="day3">WED</div>
-    <div class="day" id="day4">THU</div>
-    <div class="day" id="day5">FRI</div>
-  </div>
-<div class="buttons">
-    <div class="control-wrap">
-      <button onclick="showCheckWithMenuSound()">CHECK</button>
-      <div class="control-label">Check</div>
-    </div>
-    <div class="control-wrap">
-      <button onclick="showCode()">CODE</button>
-      <div class="control-label">Code</div>
-    </div>
-    <div class="control-wrap">
-      <button onclick="showGallery()">GALLERY</button>
-      <div class="control-label">Gallery</div>
-    </div>
-  </div>
+.day.recovery{   background:#f8f8f8;   color:#111;   position:relative; }
 
+.day.recovery::after{   content:"X";   position:absolute;   left:50%;   top:50%;   transform:translate(-50%,-50%);   color:#D93831;   font-size:42px;   font-weight:bold;   line-height:1;   z-index:2; } .day.failed{text-decoration:line-through;} .day.today{outline:4px solid #111;} .day.inactive{opacity:.55;} .buttons{margin-top:14px;display:flex;justify-content:space-around;align-items:flex-start;gap:10px;} .control-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;} .control-wrap:nth-child(2){transform:translateY(6px);} .control-wrap button{width:44px;height:44px;border-radius:50%;background:#F7CD47;color:transparent;border:none;font-family:'VT323',monospace;font-size:0;box-shadow:0 5px 0 #C99A22;} .control-wrap button:active{transform:translateY(3px);box-shadow:0 2px 0 #C99A22;} .control-label{font-family:'VT323',monospace;color:#7a7a7a;font-size:12px;line-height:1;text-transform:uppercase;letter-spacing:2px;}  </style> </head> <body> <div class="device">   <div class="device-title">   <img src="logo.png" class="title-logo"> </div>   <div class="screen off" id="screen">     <div class="status-bar" id="statusBar">POWER OFF</div>     <div class="play-area" id="playArea">       <button class="power-quote" onclick="powerOn()">         “The minute that we change our minds and stop giving power to the past, the past with its mistakes loses its power over us.”         <span class="power-author">— Psycho-Cybernetics</span>       </button>     </div>   </div>   <div class="week-row">     <div class="day" id="day0">SUN</div>     <div class="day" id="day1">MON</div>     <div class="day" id="day2">TUE</div>     <div class="day" id="day3">WED</div>     <div class="day" id="day4">THU</div>     <div class="day" id="day5">FRI</div>   </div> <div class="buttons">     <div class="control-wrap">       <button onclick="showCheckWithMenuSound()">CHECK</button>       <div class="control-label">Check</div>     </div>     <div class="control-wrap">       <button onclick="showCode()">CODE</button>       <div class="control-label">Code</div>     </div>     <div class="control-wrap">       <button onclick="showGallery()">GALLERY</button>       <div class="control-label">Gallery</div>     </div>   </div>
 
+</div> <script> const weekdayVows=[   "LOCK RISK SETTINGS",   "RECORD EVERY SESSION",   "MAX CONTRACTS 5",   "DON'T TRADE OUTSIDE ROUTINE",   "DON'T SIZE UP AFTER A LOSS",   "JOURNAL BOTH ACCOUNTS",   "IF STOP HIT, NO TRADING SECOND ACCOUNT" ]; const sundayVows=[   "LOCK BOTH ACCOUNTS" ]; const growthVows=[   "DRILLS" ]; const damageStates=[   "SPIRALED AFTER LOSS / DON'T GET EMOTIONAL",   "TRADED OUTSIDE ROUTINE",   "RISK SETTINGS REMOVED",   "BOUGHT / RESET COMBINE" ]; const gateQuestions=[   "SLEPT ENOUGH TO THINK CLEARLY",   "JOURNALS READY",   "MEDITATED OR GROUNDED",   "NOT RUSHING",   "NOT EMOTIONALLY AGITATED",   "NOT TRYING TO RECOVER LOSSES",   "NO 'I NEED THIS' FEELING",   "NO VOICE SAYING DON'T TRADE",   "RISK SETTINGS CAN BE LOCKED BEFORE CHARTS",   "PREPARED TO ACCEPT A RED DAY",   "PREPARED TO STOP EARLY",   "NO URGE TO SIZE UP",   "NO URGE TO TEST DISCIPLINE",   "CAN TRADE WITHOUT YELLING OR PLEADING",   "WILL JOURNAL BOTH ACCOUNTS",   "WILL RECORD SESSION",   "CAN WALK AWAY IF COMPROMISED" ];
 
-</div>
-<script>
-const weekdayVows=[
-  "LOCK RISK SETTINGS",
-  "RECORD EVERY SESSION",
-  "MAX CONTRACTS 5",
-  "DON'T TRADE OUTSIDE ROUTINE",
-  "DON'T SIZE UP AFTER A LOSS",
-  "JOURNAL BOTH ACCOUNTS",
-  "IF STOP HIT, NO TRADING SECOND ACCOUNT",
-  "DRILLS"
-];
-const sundayVows=[
-  "LOCK BOTH ACCOUNTS",
-  "DRILLS"
-];
-const damageStates=[
-  "SPIRALED AFTER LOSS / DON'T GET EMOTIONAL",
-  "TRADED OUTSIDE ROUTINE",
-  "RISK SETTINGS REMOVED",
-  "BOUGHT / RESET COMBINE"
-];
-const gateQuestions=[
-  "SLEPT ENOUGH TO THINK CLEARLY",
-  "JOURNALS READY",
-  "MEDITATED OR GROUNDED",
-  "NOT RUSHING",
-  "NOT EMOTIONALLY AGITATED",
-  "NOT TRYING TO RECOVER LOSSES",
-  "NO 'I NEED THIS' FEELING",
-  "NO VOICE SAYING DON'T TRADE",
-  "RISK SETTINGS CAN BE LOCKED BEFORE CHARTS",
-  "PREPARED TO ACCEPT A RED DAY",
-  "PREPARED TO STOP EARLY",
-  "NO URGE TO SIZE UP",
-  "NO URGE TO TEST DISCIPLINE",
-  "CAN TRADE WITHOUT YELLING OR PLEADING",
-  "WILL JOURNAL BOTH ACCOUNTS",
-  "WILL RECORD SESSION",
-  "CAN WALK AWAY IF COMPROMISED"
-];
+const GATE_FAIL_LIMIT=3; const recoveryVows=[   "LOCK BOTH ACCOUNTS",   "NO CHARTS",   "NO BROKER",   "WALK OUTSIDE",   "STRETCH OR MOBILITY",   "HYDRATE",   "EAT REAL FOOD",   "JOURNAL STATE",   "REVIEW LESSON CALMLY",   "VISUALIZE TOMORROW",   "PREPARE NOTEBOOKS",   "EARLY SLEEP PREP" ];
 
-const GATE_FAIL_LIMIT=3;
-const recoveryVows=[
-  "LOCK BOTH ACCOUNTS",
-  "NO CHARTS",
-  "NO BROKER",
-  "WALK OUTSIDE",
-  "STRETCH OR MOBILITY",
-  "HYDRATE",
-  "EAT REAL FOOD",
-  "JOURNAL STATE",
-  "REVIEW LESSON CALMLY",
-  "VISUALIZE TOMORROW",
-  "PREPARE NOTEBOOKS",
-  "EARLY SLEEP PREP"
-];
+const recoveryDamageStates=[   "CHECKED CHARTS",   "OPENED BROKER",   "TRADED ANYWAY",   "SKIPPED ACCOUNT LOCK",   "SPIRALED / SELF ATTACKED" ]; const damageProtocolVows=[   "LOCK BOTH ACCOUNTS",   "NO CHARTS",   "NO BROKER",   "WRITE WHAT HAPPENED",   "NAME THE TRIGGER",   "WALK OUTSIDE",   "DRINK WATER",   "NO SELF ATTACK",   "RESET ROOM / BODY",   "PLAN REPAIR STEP" ]; const codeNotes=[   "CONSIDER STOPPING AT -250.",   "LOOK FOR CHOP AND MANIPULATION.",   "DON'T RELY ON STOPS. STAY ALERT.",   "SESSION WILL END QUICKLY. BE MINDFUL.",   "MANAGE MOODS OUTSIDE OF TRADING.",   "YOU ARE ALL THAT STANDS BETWEEN A PROFITABLE ACCOUNT AND THE MARKET.",   "WHAT IF IT WORKS OUT?",   "I AM DETERMINED TO HAVE A GOOD DAY REGARDLESS OF WHAT HAPPENS.",   "BE GRATEFUL. SHOW REVERENCE FOR EVERY COMBINE." ]; const manualNotes=[   ["LOCK RISK SETTINGS","WIN: LOCKED BEFORE CHARTS. FAIL: RISK LEFT OPEN."],   ["RECORD EVERY SESSION","WIN: SESSION RECORDED. FAIL: TRADED UNRECORDED."],   ["MAX CONTRACTS 5","WIN: NEVER ABOVE 5. FAIL: 6+ CONTRACTS."],   ["DON'T TRADE OUTSIDE ROUTINE","WIN: ONLY PLANNED WINDOW. FAIL: RANDOM SESSION."],   ["DON'T SIZE UP AFTER A LOSS","WIN: SAME OR SMALLER SIZE. FAIL: REVENGE SIZE."],   ["JOURNAL BOTH ACCOUNTS","WIN: BOTH REVIEWED. FAIL: LEFT UNWRITTEN."],   ["IF STOP HIT, NO TRADING SECOND ACCOUNT","WIN: STOP MEANS DONE. FAIL: SWITCHED ACCOUNTS."],   ["DRILLS","WIN: PRACTICE DONE. FAIL: SKIPPED."], ["SPIRALED AFTER LOSS / DON'T GET EMOTIONAL","DAMAGE: LOSS CAUSED LOSS OF CONTROL. UNCHARACTERISTICALLY EMOTIONAL."],   ["TRADED OUTSIDE ROUTINE","DAMAGE: TRADED WITHOUT RITUAL."],   ["RISK SETTINGS REMOVED","DAMAGE: SAFETY WAS UNLOCKED."],   ["BOUGHT / RESET COMBINE","DAMAGE: PAID TO CONTINUE THE LOOP."] ]; const APP_VERSION="7.0.0"; const DEBUG_MODE=false; const days=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"]; let todayIndex=getTradingDayIndex(); let weekKey=getWeekKey(); let state=loadState(); let moveTimer=null; let sleepTimer=null; let sleepFrame=1; let petStep=0; let poweredOn=false; let fireworkTimer=null; let fireworkFrame=1; let achievementTimer=null; const petPositions=[50,40,32,32,44,58,66,66,54,50]; const sounds={}; function requirePower(){ return poweredOn; } function getTodaysVows(){ return todayIndex===0 ? sundayVows : weekdayVows; } function isSleepTime(){   const now=new Date();   const mins=now.getHours()*60+now.getMinutes();   return mins>=22*60+30 || mins<4*60; } function getSceneImage(){   if(state.streak>=35) return "scene6.png";   if(state.streak>=30) return "scene6.png";   if(state.streak>=25) return "scene5.png";   if(state.streak>=20) return "scene4.png";   if(state.streak>=15) return "scene3.png";   if(state.streak>=10) return "scene2.png";   if(state.streak>=5) return "scene1.png";   return "bgtest.png"; }
 
-const recoveryDamageStates=[
-  "CHECKED CHARTS",
-  "OPENED BROKER",
-  "TRADED ANYWAY",
-  "SKIPPED ACCOUNT LOCK",
-  "SPIRALED / SELF ATTACKED"
-];
-const damageProtocolVows=[
-  "LOCK BOTH ACCOUNTS",
-  "NO CHARTS",
-  "NO BROKER",
-  "WRITE WHAT HAPPENED",
-  "NAME THE TRIGGER",
-  "WALK OUTSIDE",
-  "DRINK WATER",
-  "NO SELF ATTACK",
-  "RESET ROOM / BODY",
-  "PLAN REPAIR STEP"
-];
-const codeNotes=[
-  "CONSIDER STOPPING AT -250.",
-  "LOOK FOR CHOP AND MANIPULATION.",
-  "DON'T RELY ON STOPS. STAY ALERT.",
-  "SESSION WILL END QUICKLY. BE MINDFUL.",
-  "MANAGE MOODS OUTSIDE OF TRADING.",
-  "YOU ARE ALL THAT STANDS BETWEEN A PROFITABLE ACCOUNT AND THE MARKET.",
-  "WHAT IF IT WORKS OUT?",
-  "I AM DETERMINED TO HAVE A GOOD DAY REGARDLESS OF WHAT HAPPENS.",
-  "BE GRATEFUL. SHOW REVERENCE FOR EVERY COMBINE."
-];
-const manualNotes=[
-  ["LOCK RISK SETTINGS","WIN: LOCKED BEFORE CHARTS. FAIL: RISK LEFT OPEN."],
-  ["RECORD EVERY SESSION","WIN: SESSION RECORDED. FAIL: TRADED UNRECORDED."],
-  ["MAX CONTRACTS 5","WIN: NEVER ABOVE 5. FAIL: 6+ CONTRACTS."],
-  ["DON'T TRADE OUTSIDE ROUTINE","WIN: ONLY PLANNED WINDOW. FAIL: RANDOM SESSION."],
-  ["DON'T SIZE UP AFTER A LOSS","WIN: SAME OR SMALLER SIZE. FAIL: REVENGE SIZE."],
-  ["JOURNAL BOTH ACCOUNTS","WIN: BOTH REVIEWED. FAIL: LEFT UNWRITTEN."],
-  ["IF STOP HIT, NO TRADING SECOND ACCOUNT","WIN: STOP MEANS DONE. FAIL: SWITCHED ACCOUNTS."],
-  ["DRILLS","WIN: PRACTICE DONE. FAIL: SKIPPED."],
-["SPIRALED AFTER LOSS / DON'T GET EMOTIONAL","DAMAGE: LOSS CAUSED LOSS OF CONTROL. UNCHARACTERISTICALLY EMOTIONAL."],
-  ["TRADED OUTSIDE ROUTINE","DAMAGE: TRADED WITHOUT RITUAL."],
-  ["RISK SETTINGS REMOVED","DAMAGE: SAFETY WAS UNLOCKED."],
-  ["BOUGHT / RESET COMBINE","DAMAGE: PAID TO CONTINUE THE LOOP."]
-];
-const APP_VERSION="6.0.2";
-const DEBUG_MODE=false;
-const days=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"];
-let todayIndex=getTradingDayIndex();
-let weekKey=getWeekKey();
-let state=loadState();
-let moveTimer=null;
-let sleepTimer=null;
-let sleepFrame=1;
-let petStep=0;
-let poweredOn=false;
-let fireworkTimer=null;
-let fireworkFrame=1;
-let achievementTimer=null;
-const petPositions=[50,40,32,32,44,58,66,66,54,50];
-const sounds={};
-function requirePower(){ return poweredOn; }
-function getTodaysVows(){ return todayIndex===0 ? sundayVows : weekdayVows; }
-function isSleepTime(){
-  const now=new Date();
-  const mins=now.getHours()*60+now.getMinutes();
-  return mins>=22*60+30 || mins<4*60;
-}
-function getSceneImage(){
-  if(state.streak>=35) return "scene6.png";
-  if(state.streak>=30) return "scene6.png";
-  if(state.streak>=25) return "scene5.png";
-  if(state.streak>=20) return "scene4.png";
-  if(state.streak>=15) return "scene3.png";
-  if(state.streak>=10) return "scene2.png";
-  if(state.streak>=5) return "scene1.png";
-  return "bgtest.png";
-}
+function sceneBackgroundHTML(){   return "<img class='scene-bg' src='"+getSceneImage()+"'>"; }
 
-function sceneBackgroundHTML(){
-  return "<img class='scene-bg' src='"+getSceneImage()+"'>";
-}
+const FORCE_HALLOWEEN_TEST=false; const FORCE_CHRISTMAS_TEST=false;
 
-const FORCE_HALLOWEEN_TEST=false;
-const FORCE_CHRISTMAS_TEST=false;
+const FORCE_RAINBOW_TEST=false; const RAINBOW_CHANCE=100; // 1 in 100. Lower = more common. Higher = rarer. const SKY_MIN_Y=5; const SKY_MAX_Y=36; const MUSIC_VOLUME=.34;
 
-const FORCE_RAINBOW_TEST=false;
-const RAINBOW_CHANCE=100; // 1 in 100. Lower = more common. Higher = rarer.
-const SKY_MIN_Y=5;
-const SKY_MAX_Y=36;
-const MUSIC_VOLUME=.34;
+const streakSongs=[   {day:40,file:"Brazil.mp3"},   {day:30,file:"Gerudo Valley.mp3"},   {day:20,file:"Peter Purser.mp3"},   {day:10,file:"Maria Elena.mp3"},   {day:7,file:"Kk.mp3"},   {day:6,file:"Perfidia.mp3"},   {day:5,file:"Majora.mp3"},   {day:4,file:"End Titles.mp3"},   {day:3,file:"Femme.mp3"},   {day:2,file:"Mario Party.mp3"} ];
 
-const streakSongs=[
-  {day:40,file:"Brazil.mp3"},
-  {day:30,file:"Gerudo Valley.mp3"},
-  {day:20,file:"Peter Purser.mp3"},
-  {day:10,file:"Maria Elena.mp3"},
-  {day:7,file:"Kk.mp3"},
-  {day:6,file:"Perfidia.mp3"},
-  {day:5,file:"Majora.mp3"},
-  {day:4,file:"End Titles.mp3"},
-  {day:3,file:"Femme.mp3"},
-  {day:2,file:"Mario Party.mp3"}
-];
+let bgMusic=null; let currentMusicFile=null;
 
-let bgMusic=null;
-let currentMusicFile=null;
-
-const UFO_MIN_DURATION=42;
-const UFO_MAX_DURATION=78;
-const UFO_MAX_DELAY=18;
+const UFO_MIN_DURATION=42; const UFO_MAX_DURATION=78; const UFO_MAX_DELAY=18;
 
 const PLANE_CHANCE=1200;
 
-const PLANE_MIN_DURATION=34;
-const PLANE_MAX_DURATION=64;
-const PLANE_MAX_DELAY=8;
+const PLANE_MIN_DURATION=34; const PLANE_MAX_DURATION=64; const PLANE_MAX_DELAY=8;
 
-const PLANE_FRAME_COUNT=5;
-const PLANE_FPS=6;
-function seasonalOverlayHTML(){
+const PLANE_FRAME_COUNT=5; const PLANE_FPS=6; function seasonalOverlayHTML(){
 
   const month=new Date().getMonth();
 
-  const isOctober=month===9;
-  const isDecember=month===11;
+  const isOctober=month===9;   const isDecember=month===11;
 
-  if(FORCE_HALLOWEEN_TEST || isOctober){
-    return "<img class='halloween-overlay' src='Halloween.png'>";
-  }
+  if(FORCE_HALLOWEEN_TEST || isOctober){     return "<img class='halloween-overlay' src='Halloween.png'>";   }
 
-  if(FORCE_CHRISTMAS_TEST || isDecember){
-    return "<img class='halloween-overlay' src='Christmas.png'>";
-  }
+  if(FORCE_CHRISTMAS_TEST || isDecember){     return "<img class='halloween-overlay' src='Christmas.png'>";   }
 
-  return "";
-}
+  return ""; }
 
-function getDayKey(){
-  return new Date().toISOString().slice(0,10);
-}
+function getDayKey(){   return new Date().toISOString().slice(0,10); }
 
-function rollRainbowForToday(){
-  const dayKey=getDayKey();
+function rollRainbowForToday(){   const dayKey=getDayKey();
 
   if(state.rainbowDayKey===dayKey) return;
 
-  state.rainbowDayKey=dayKey;
-  state.rainbowToday=Math.floor(Math.random()*RAINBOW_CHANCE)===0;
+  state.rainbowDayKey=dayKey;   state.rainbowToday=Math.floor(Math.random()*RAINBOW_CHANCE)===0;
 
-  saveState();
-}
+  saveState(); }
 
-function rainbowHTML(){
-  if(FORCE_RAINBOW_TEST) return "<img class='rainbow-overlay' src='Rainbow.png'>";
-  return state.rainbowToday ? "<img class='rainbow-overlay' src='Rainbow.png'>" : "";
-}
-function crackHTML(){
-  return state.crackActive ? "<img class='crack-overlay' src='Crack.png'>" : "";
-}
-function randRange(min,max){
-  return min+Math.random()*(max-min);
-}
+function rainbowHTML(){   if(FORCE_RAINBOW_TEST) return "<img class='rainbow-overlay' src='Rainbow.png'>";   return state.rainbowToday ? "<img class='rainbow-overlay' src='Rainbow.png'>" : ""; } function crackHTML(){   return state.crackActive ? "<img class='crack-overlay' src='Crack.png'>" : ""; } function randRange(min,max){   return min+Math.random()*(max-min); }
 
-function randSkyTop(){
-  return Math.floor(randRange(SKY_MIN_Y,SKY_MAX_Y));
-}
+function randSkyTop(){   return Math.floor(randRange(SKY_MIN_Y,SKY_MAX_Y)); }
 
-function randDirection(){
-  return Math.random()<.5 ? "right" : "left";
-}
+function randDirection(){   return Math.random()<.5 ? "right" : "left"; }
 
-function skyStyle(top,duration,delay){
-  return "--sky-top:"+top+"px;--sky-duration:"+duration+"s;--sky-delay:"+delay+"s;";
-}
+function skyStyle(top,duration,delay){   return "--sky-top:"+top+"px;--sky-duration:"+duration+"s;--sky-delay:"+delay+"s;"; }
 
 function ufoHTML(){
 
@@ -475,31 +78,17 @@ function ufoHTML(){
 
   const top=randSkyTop();
 
-  const duration=randRange(
-    UFO_MIN_DURATION,
-    UFO_MAX_DURATION
-  ).toFixed(2);
+  const duration=randRange(     UFO_MIN_DURATION,     UFO_MAX_DURATION   ).toFixed(2);
 
-  const delay=randRange(
-    0,
-    UFO_MAX_DELAY
-  ).toFixed(2);
+  const delay=randRange(     0,     UFO_MAX_DELAY   ).toFixed(2);
 
-  return "<div class='sky-object ufo-object fly-"+dir+"' style='"+skyStyle(top,duration,delay)+"'><img class='sky-img' src='ufo.png'></div>";
-}
+  return "<div class='sky-object ufo-object fly-"+dir+"' style='"+skyStyle(top,duration,delay)+"'><img class='sky-img' src='ufo.png'></div>"; }
 
-function planeHTML(){
-  if(Math.floor(Math.random()*PLANE_CHANCE)!==0){
-    return "";
-  }
+function planeHTML(){   if(Math.floor(Math.random()*PLANE_CHANCE)!==0){     return "";   }
 
-  const dir=randDirection();
-  const top=Math.floor(randRange(2,18));
-  const duration=randRange(22,34).toFixed(2);
-  const delay=randRange(0,6).toFixed(2);
+  const dir=randDirection();   const top=Math.floor(randRange(2,18));   const duration=randRange(22,34).toFixed(2);   const delay=randRange(0,6).toFixed(2);
 
-  return "<div class='sky-object plane-object fly-"+dir+"' style='"+skyStyle(top,duration,delay)+"'><img class='sky-img' id='planeImg' src='./Plane1.png'></div>";
-}
+  return "<div class='sky-object plane-object fly-"+dir+"' style='"+skyStyle(top,duration,delay)+"'><img class='sky-img' id='planeImg' src='./Plane1.png'></div>"; }
 
 function startSkyAnimations(){
 
@@ -513,200 +102,61 @@ function startSkyAnimations(){
 
     frame++;
 
-    if(frame>PLANE_FRAME_COUNT){
-      frame=1;
-    }
+    if(frame>PLANE_FRAME_COUNT){       frame=1;     }
 
     plane.src="./Plane"+frame+".png";
 
-  },1000/PLANE_FPS);
-}
-function getAchievementDays(){
-  let arr=[];
-  for(let i=1;i<=100;i++) arr.push(i);
-  for(let i=105;i<=365;i+=5) arr.push(i);
-  return arr;
-}
-function isAchievementDay(day){
-  if(day>=1 && day<=100) return true;
-  if(day>100 && day<=365 && day%5===0) return true;
-  return false;
-}
-function formatToday(){
-  const now=new Date();
-  const months=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-  return months[now.getMonth()]+" "+now.getDate()+" "+now.getFullYear();
-}
-function formatWeekDisplay(){
-  const d=new Date(weekKey+"T00:00:00");
+  },1000/PLANE_FPS); } function getAchievementDays(){   let arr=[];   for(let i=1;i<=100;i++) arr.push(i);   for(let i=105;i<=365;i+=5) arr.push(i);   return arr; } function isAchievementDay(day){   if(day>=1 && day<=100) return true;   if(day>100 && day<=365 && day%5===0) return true;   return false; } function formatToday(){   const now=new Date();   const months=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];   return months[now.getMonth()]+" "+now.getDate()+" "+now.getFullYear(); } function logRecoveryDay(){   if(!state.recoveryLog) state.recoveryLog=[];
 
-  return (
-    (d.getMonth()+1)+"/"+
-    d.getDate()+"/"+
-    d.getFullYear()
-  );
-}
-function ensureAchievementArchive(){
-  if(!state.achievements) state.achievements={};
+  const dayKey=getDayKey();
+
+  for(let i=0;i<state.recoveryLog.length;i++){     if(state.recoveryLog[i].dayKey===dayKey) return;   }
+
+  state.recoveryLog.push({     dayKey:dayKey,     date:formatToday()   }); }
+
+function recoveryCountThisWeek(){   if(!state.recoveryLog) return 0;
+
+  let count=0;
+
+  for(let i=0;i<state.recoveryLog.length;i++){     if(state.recoveryLog[i].dayKey>=weekKey){       count++;     }   }
+
+  return count; }
+
+function recoveryCountThisMonth(){   if(!state.recoveryLog) return 0;
+
+  const monthKey=getDayKey().slice(0,7);
+
+  let count=0;
+
+  for(let i=0;i<state.recoveryLog.length;i++){     if(state.recoveryLog[i].dayKey.slice(0,7)===monthKey){       count++;     }   }
+
+  return count; } function formatWeekDisplay(){   const d=new Date(weekKey+"T00:00:00");
+
+  return (     (d.getMonth()+1)+"/"+     d.getDate()+"/"+     d.getFullYear()   ); } function ensureAchievementArchive(){   if(!state.achievements) state.achievements={};
 
   let changed=false;
 
-  for(let key in state.achievements){
-    if(state.achievements[key]==="PAST RECORD"){
-      state.achievements[key]="DATE UNKNOWN";
-      changed=true;
-    }
-  }
+  for(let key in state.achievements){     if(state.achievements[key]==="PAST RECORD"){       state.achievements[key]="DATE UNKNOWN";       changed=true;     }   }
 
-  if(changed) saveState();
-}
-function recordAchievement(day){
-  if(!isAchievementDay(day)) return false;
-  if(!state.achievements) state.achievements={};
+  if(changed) saveState(); } function recordAchievement(day){   if(!isAchievementDay(day)) return false;   if(!state.achievements) state.achievements={};
 
-  if(!state.achievements[day] || state.achievements[day]==="DATE UNKNOWN" || state.achievements[day]==="PAST RECORD"){
-    state.achievements[day]=formatToday();
-    return true;
-  }
+  if(!state.achievements[day] || state.achievements[day]==="DATE UNKNOWN" || state.achievements[day]==="PAST RECORD"){     state.achievements[day]=formatToday();     return true;   }
 
-  return false;
-}
-function makeToneSequenceWav(sequence){
-  const sampleRate=22050;
-  let totalSamples=0;
-  for(let i=0;i<sequence.length;i++) totalSamples+=Math.floor(sampleRate*sequence[i].duration);
-  const dataSize=totalSamples*2;
-  const buffer=new ArrayBuffer(44+dataSize);
-  const view=new DataView(buffer);
-  function writeString(offset,string){
-    for(let i=0;i<string.length;i++) view.setUint8(offset+i,string.charCodeAt(i));
-  }
-  writeString(0,"RIFF");
-  view.setUint32(4,36+dataSize,true);
-  writeString(8,"WAVE");
-  writeString(12,"fmt ");
-  view.setUint32(16,16,true);
-  view.setUint16(20,1,true);
-  view.setUint16(22,1,true);
-  view.setUint32(24,sampleRate,true);
-  view.setUint32(28,sampleRate*2,true);
-  view.setUint16(32,2,true);
-  view.setUint16(34,16,true);
-  writeString(36,"data");
-  view.setUint32(40,dataSize,true);
-  let sampleIndex=0;
-  for(let s=0;s<sequence.length;s++){
-    const freq=sequence[s].freq;
-    const duration=sequence[s].duration;
-    const volume=sequence[s].volume || .7;
-    const samples=Math.floor(sampleRate*duration);
-    for(let i=0;i<samples;i++){
-      let sample=0;
-      if(freq>0){
-        const t=i/sampleRate;
-        const square=Math.sin(2*Math.PI*freq*t)>=0?1:-1;
-        const fade=1-(i/samples);
-        sample=square*volume*fade*32767;
-      }
-      view.setInt16(44+sampleIndex*2,sample,true);
-      sampleIndex++;
-    }
-  }
-  let binary="";
-  const bytes=new Uint8Array(buffer);
-  for(let i=0;i<bytes.length;i++) binary+=String.fromCharCode(bytes[i]);
-  return "data:audio/wav;base64,"+btoa(binary);
-}
-function buildSounds(){
-  sounds.tick=new Audio(makeToneSequenceWav([{freq:720,duration:.04,volume:.7}]));
-  sounds.menu=new Audio(makeToneSequenceWav([{freq:500,duration:.08,volume:.7}]));
-  sounds.fail=new Audio(makeToneSequenceWav([{freq:180,duration:.25,volume:.8}]));
-  sounds.reset=new Audio(makeToneSequenceWav([{freq:220,duration:.18,volume:.7}]));
-  sounds.boot=new Audio(makeToneSequenceWav([
-    {freq:196,duration:.09,volume:.8},{freq:0,duration:.06},
-    {freq:294,duration:.10,volume:.8},{freq:0,duration:.07},
-    {freq:392,duration:.10,volume:.85},{freq:0,duration:.08},
-    {freq:523,duration:.15,volume:.9}
-  ]));
-  sounds.good=new Audio(makeToneSequenceWav([
-    {freq:523,duration:.12,volume:.8},{freq:0,duration:.04},
-    {freq:659,duration:.12,volume:.8},{freq:0,duration:.04},
-    {freq:784,duration:.22,volume:.85}
-  ]));
-  sounds.achievement=new Audio(makeToneSequenceWav([
-    {freq:880,duration:.055,volume:.85},{freq:0,duration:.025},
-    {freq:520,duration:.055,volume:.85},{freq:0,duration:.06},
-    {freq:880,duration:.055,volume:.85},{freq:0,duration:.025},
-    {freq:520,duration:.055,volume:.85},{freq:0,duration:.06},
-    {freq:880,duration:.055,volume:.85},{freq:0,duration:.025},
-    {freq:520,duration:.055,volume:.85}
-  ]));
-  sounds.vowNotes=[
-    new Audio(makeToneSequenceWav([{freq:523.25,duration:.12,volume:.55}])),
-    new Audio(makeToneSequenceWav([{freq:587.33,duration:.12,volume:.55}])),
-    new Audio(makeToneSequenceWav([{freq:659.25,duration:.12,volume:.55}])),
-    new Audio(makeToneSequenceWav([{freq:698.46,duration:.12,volume:.55}])),
-    new Audio(makeToneSequenceWav([{freq:783.99,duration:.12,volume:.55}])),
-    new Audio(makeToneSequenceWav([{freq:880.00,duration:.12,volume:.55}])),
-    new Audio(makeToneSequenceWav([{freq:987.77,duration:.12,volume:.55}])),
-    new Audio(makeToneSequenceWav([{freq:1046.50,duration:.18,volume:.6}]))
-  ];
-  sounds.damageNote=new Audio(makeToneSequenceWav([
-    {freq:392,duration:.08,volume:.45},
-    {freq:0,duration:.025},
-    {freq:349.23,duration:.14,volume:.42}
-  ]));
-  sounds.resolve=new Audio(makeToneSequenceWav([
-    {freq:783.99,duration:.09,volume:.6},
-    {freq:0,duration:.03},
-    {freq:987.77,duration:.09,volume:.6},
-    {freq:0,duration:.03},
-    {freq:1046.50,duration:.22,volume:.65}
-  ]));
-sounds.firework=new Audio("8d82b5_Super_Mario_Bros_Fireworks_Sound_Effect.mp3");
-sounds.perfectWeek=new Audio("fever-stage-clear (online-video-cutter.com).mp3");
-sounds.milestone=new Audio("myinstants.mp3");
-}
-function play(name){
-  if(!sounds[name]) return;
-  let s=sounds[name].cloneNode();
-  s.play().catch(()=>{});
-}
-function playVowNote(i){
-  if(!sounds.vowNotes) return;
-  let note=sounds.vowNotes[i % sounds.vowNotes.length].cloneNode();
-  note.play().catch(()=>{});
-}
-function playDamageNote(){
-  if(!sounds.damageNote) return;
-  let note=sounds.damageNote.cloneNode();
-  note.play().catch(()=>{});
-}
-function playGoodSeal(){ play("good"); }
-function playAchievementSound(){ play("achievement"); }
-function getStreakSong(){
+  return false; } function makeToneSequenceWav(sequence){   const sampleRate=22050;   let totalSamples=0;   for(let i=0;i<sequence.length;i++) totalSamples+=Math.floor(sampleRate*sequence[i].duration);   const dataSize=totalSamples*2;   const buffer=new ArrayBuffer(44+dataSize);   const view=new DataView(buffer);   function writeString(offset,string){     for(let i=0;i<string.length;i++) view.setUint8(offset+i,string.charCodeAt(i));   }   writeString(0,"RIFF");   view.setUint32(4,36+dataSize,true);   writeString(8,"WAVE");   writeString(12,"fmt ");   view.setUint32(16,16,true);   view.setUint16(20,1,true);   view.setUint16(22,1,true);   view.setUint32(24,sampleRate,true);   view.setUint32(28,sampleRate*2,true);   view.setUint16(32,2,true);   view.setUint16(34,16,true);   writeString(36,"data");   view.setUint32(40,dataSize,true);   let sampleIndex=0;   for(let s=0;s<sequence.length;s++){     const freq=sequence[s].freq;     const duration=sequence[s].duration;     const volume=sequence[s].volume || .7;     const samples=Math.floor(sampleRate*duration);     for(let i=0;i<samples;i++){       let sample=0;       if(freq>0){         const t=i/sampleRate;         const square=Math.sin(2*Math.PI*freq*t)>=0?1:-1;         const fade=1-(i/samples);         sample=square*volume*fade*32767;       }       view.setInt16(44+sampleIndex*2,sample,true);       sampleIndex++;     }   }   let binary="";   const bytes=new Uint8Array(buffer);   for(let i=0;i<bytes.length;i++) binary+=String.fromCharCode(bytes[i]);   return "data:audio/wav;base64,"+btoa(binary); } function buildSounds(){   sounds.tick=new Audio(makeToneSequenceWav([{freq:720,duration:.04,volume:.7}]));   sounds.menu=new Audio(makeToneSequenceWav([{freq:500,duration:.08,volume:.7}]));   sounds.fail=new Audio(makeToneSequenceWav([{freq:180,duration:.25,volume:.8}]));   sounds.reset=new Audio(makeToneSequenceWav([{freq:220,duration:.18,volume:.7}]));   sounds.boot=new Audio(makeToneSequenceWav([     {freq:196,duration:.09,volume:.8},{freq:0,duration:.06},     {freq:294,duration:.10,volume:.8},{freq:0,duration:.07},     {freq:392,duration:.10,volume:.85},{freq:0,duration:.08},     {freq:523,duration:.15,volume:.9}   ]));   sounds.good=new Audio(makeToneSequenceWav([     {freq:523,duration:.12,volume:.8},{freq:0,duration:.04},     {freq:659,duration:.12,volume:.8},{freq:0,duration:.04},     {freq:784,duration:.22,volume:.85}   ]));   sounds.achievement=new Audio(makeToneSequenceWav([     {freq:880,duration:.055,volume:.85},{freq:0,duration:.025},     {freq:520,duration:.055,volume:.85},{freq:0,duration:.06},     {freq:880,duration:.055,volume:.85},{freq:0,duration:.025},     {freq:520,duration:.055,volume:.85},{freq:0,duration:.06},     {freq:880,duration:.055,volume:.85},{freq:0,duration:.025},     {freq:520,duration:.055,volume:.85}   ]));   sounds.vowNotes=[     new Audio(makeToneSequenceWav([{freq:523.25,duration:.12,volume:.55}])),     new Audio(makeToneSequenceWav([{freq:587.33,duration:.12,volume:.55}])),     new Audio(makeToneSequenceWav([{freq:659.25,duration:.12,volume:.55}])),     new Audio(makeToneSequenceWav([{freq:698.46,duration:.12,volume:.55}])),     new Audio(makeToneSequenceWav([{freq:783.99,duration:.12,volume:.55}])),     new Audio(makeToneSequenceWav([{freq:880.00,duration:.12,volume:.55}])),     new Audio(makeToneSequenceWav([{freq:987.77,duration:.12,volume:.55}])),     new Audio(makeToneSequenceWav([{freq:1046.50,duration:.18,volume:.6}]))   ];   sounds.damageNote=new Audio(makeToneSequenceWav([     {freq:392,duration:.08,volume:.45},     {freq:0,duration:.025},     {freq:349.23,duration:.14,volume:.42}   ]));   sounds.resolve=new Audio(makeToneSequenceWav([     {freq:783.99,duration:.09,volume:.6},     {freq:0,duration:.03},     {freq:987.77,duration:.09,volume:.6},     {freq:0,duration:.03},     {freq:1046.50,duration:.22,volume:.65}   ])); sounds.firework=new Audio("8d82b5_Super_Mario_Bros_Fireworks_Sound_Effect.mp3"); sounds.perfectWeek=new Audio("fever-stage-clear (online-video-cutter.com).mp3"); sounds.milestone=new Audio("myinstants.mp3"); } function play(name){   if(!sounds[name]) return;   let s=sounds[name].cloneNode();   s.play().catch(()=>{}); } function playVowNote(i){   if(!sounds.vowNotes) return;   let note=sounds.vowNotes[i % sounds.vowNotes.length].cloneNode();   note.play().catch(()=>{}); } function playDamageNote(){   if(!sounds.damageNote) return;   let note=sounds.damageNote.cloneNode();   note.play().catch(()=>{}); } function playGoodSeal(){ play("good"); } function playAchievementSound(){ play("achievement"); } function getStreakSong(){
 
   for(let i=0;i<streakSongs.length;i++){
 
-    if(state.streak>=streakSongs[i].day){
-      return streakSongs[i];
-    }
+    if(state.streak>=streakSongs[i].day){       return streakSongs[i];     }
 
   }
 
-  return null;
-}
+  return null; }
 
 function stopStreakMusic(){
 
-  if(bgMusic){
-    bgMusic.pause();
-    bgMusic.currentTime=0;
-  }
+  if(bgMusic){     bgMusic.pause();     bgMusic.currentTime=0;   }
 
-  bgMusic=null;
-  currentMusicFile=null;
-}
+  bgMusic=null;   currentMusicFile=null; }
 
 function updateStreakMusic(){
 
@@ -714,14 +164,9 @@ function updateStreakMusic(){
 
   const song=getStreakSong();
 
-  if(!song){
-    stopStreakMusic();
-    return;
-  }
+  if(!song){     stopStreakMusic();     return;   }
 
-  if(currentMusicFile===song.file && bgMusic){
-    return;
-  }
+  if(currentMusicFile===song.file && bgMusic){     return;   }
 
   stopStreakMusic();
 
@@ -729,639 +174,135 @@ function updateStreakMusic(){
 
   bgMusic=new Audio(song.file);
 
-  bgMusic.loop=true;
-  bgMusic.volume=MUSIC_VOLUME;
+  bgMusic.loop=true;   bgMusic.volume=MUSIC_VOLUME;
 
-  bgMusic.play().catch(()=>{});
-}
-function getTradingDayIndex(){
-  let d=new Date().getDay();
-  if(d===6) return -1;
-  if(d===0) return 0;
-  if(d>=1 && d<=5) return d;
-  return -1;
-}
-function getWeekKey(){
-  let now=new Date();
-  let day=now.getDay();
-  let diff=now.getDate()-day;
-  let sunday=new Date(now.setDate(diff));
-  return sunday.toISOString().slice(0,10);
-}
-const COPPER_PER_SILVER=50;
-const SILVER_PER_GOLD=10;
+  bgMusic.play().catch(()=>{}); } function getTradingDayIndex(){   let d=new Date().getDay();   if(d===6) return -1;   if(d===0) return 0;   if(d>=1 && d<=5) return d;   return -1; } function getWeekKey(){   let now=new Date();   let day=now.getDay();   let diff=now.getDate()-day;   let sunday=new Date(now.setDate(diff));   return sunday.toISOString().slice(0,10); } const COPPER_PER_SILVER=50; const SILVER_PER_GOLD=10;
 
-function getVaultVows(){
-  let all=weekdayVows.concat(sundayVows);
-  return all.filter((v,i,a)=>a.indexOf(v)===i);
-}
+function getVaultVows(){   let all=weekdayVows.concat(sundayVows).concat(growthVows);   return all.filter((v,i,a)=>a.indexOf(v)===i); }
 
-function createFreshVault(){
-  let vault={};
-  let vows=getVaultVows();
-  for(let i=0;i<vows.length;i++) vault[vows[i]]=0;
-  return vault;
-}
+function createFreshVault(){   let vault={};   let vows=getVaultVows();   for(let i=0;i<vows.length;i++) vault[vows[i]]=0;   return vault; }
 
-function ensureVault(){
-  if(!state.vault) state.vault=createFreshVault();
+function ensureVault(){   if(!state.vault) state.vault=createFreshVault();
 
-  let vows=getVaultVows();
-  for(let i=0;i<vows.length;i++){
-    if(typeof state.vault[vows[i]]!=="number") state.vault[vows[i]]=0;
-  }
-}
-function vaultCoinsHTML(count){
-  let goldValue=COPPER_PER_SILVER*SILVER_PER_GOLD;
-  let gold=Math.floor(count/goldValue);
-  let rem=count%goldValue;
-  let silver=Math.floor(rem/COPPER_PER_SILVER);
-  let copper=rem%COPPER_PER_SILVER;
+  let vows=getVaultVows();   for(let i=0;i<vows.length;i++){     if(typeof state.vault[vows[i]]!=="number") state.vault[vows[i]]=0;   } } function vaultCoinsHTML(count){   let goldValue=COPPER_PER_SILVER*SILVER_PER_GOLD;   let gold=Math.floor(count/goldValue);   let rem=count%goldValue;   let silver=Math.floor(rem/COPPER_PER_SILVER);   let copper=rem%COPPER_PER_SILVER;
 
-  function repeatCoin(symbol,num,max){
-    let shown=Math.min(num,max);
-    let s="";
-    for(let i=0;i<shown;i++) s+=symbol;
-    if(num>max) s+=" +";
-    return s;
-  }
+  function repeatCoin(symbol,num,max){     let shown=Math.min(num,max);     let s="";     for(let i=0;i<shown;i++) s+=symbol;     if(num>max) s+=" +";     return s;   }
 
-  let html="";
-  if(gold>0) html+="<div>"+repeatCoin("🥇",gold,8)+"</div>";
-  if(silver>0) html+="<div>"+repeatCoin("🥈",silver,10)+"</div>";
-  if(copper>0) html+="<div>"+repeatCoin("🥉",copper,14)+"</div>";
-  if(count<=0) html+="<div>□</div>";
-  return html;
-}
-function freshState(){
-  return{
-    weekKey:weekKey,
+  let html="";   if(gold>0) html+="<div>"+repeatCoin("🥇",gold,8)+"</div>";   if(silver>0) html+="<div>"+repeatCoin("🥈",silver,10)+"</div>";   if(copper>0) html+="<div>"+repeatCoin("🥉",copper,14)+"</div>";   if(count<=0) html+="<div>□</div>";   return html; } function freshState(){   return{     weekKey:weekKey,
 
-   // DAILY MODE SYSTEM
-modeDate:getDayKey(),
-dayMode:"undecided",
-gateCompleted:false,
-gatePassed:false,
-recoveryChosen:false,
-damageProtocolActive:false,
-gateAnswers:Array(gateQuestions.length).fill(false),
+   // DAILY MODE SYSTEM modeDate:getDayKey(), dayMode:"undecided", gateCompleted:false, gatePassed:false, recoveryChosen:false, damageProtocolActive:false, gateAnswers:Array(gateQuestions.length).fill(false),
 
-streak:0,
-bestStreak:0,
-rainbowDayKey:null,
-rainbowToday:false,
-crackActive:false,
-finalForm:null,
-    achievements:{},
- records:[],
-vault:createFreshVault(),
-statuses:["inactive","inactive","inactive","inactive","inactive","inactive"],
-    sundayVows:Array(sundayVows.length).fill(false),
-    weekdayVows:Array.from({length:6},()=>Array(weekdayVows.length).fill(false)),
-    damage:Array.from({length:6},()=>Array(damageStates.length).fill(false)),
-recoveryVows:Array.from({length:6},()=>Array(recoveryVows.length).fill(false)),
-recoveryDamage:Array.from({length:6},()=>Array(recoveryDamageStates.length).fill(false)),
-damageProtocolVows:Array.from({length:6},()=>Array(damageProtocolVows.length).fill(false))
-  };
-}
+streak:0, bestStreak:0, rainbowDayKey:null, rainbowToday:false, crackActive:false, finalForm:null,     achievements:{}, records:[], recoveryLog:[], vault:createFreshVault(), statuses:["inactive","inactive","inactive","inactive","inactive","inactive"],     sundayVows:Array(sundayVows.length).fill(false),     weekdayVows:Array.from({length:6},()=>Array(weekdayVows.length).fill(false)),     damage:Array.from({length:6},()=>Array(damageStates.length).fill(false)), growthVows:Array.from({length:6},()=>Array(growthVows.length).fill(false)), recoveryVows:Array.from({length:6},()=>Array(recoveryVows.length).fill(false)), recoveryDamage:Array.from({length:6},()=>Array(recoveryDamageStates.length).fill(false)), damageProtocolVows:Array.from({length:6},()=>Array(damageProtocolVows.length).fill(false))   }; }
 
-function loadState(){
-  let saved=localStorage.getItem("kaizenKnightV5");
-  if(!saved) return freshState();
-  try{
-    let parsed=JSON.parse(saved);
-    if(parsed.weekKey!==weekKey){
-      let newState=freshState();
-      newState.streak=typeof parsed.streak==="number" ? parsed.streak : 0;
-      newState.bestStreak=typeof parsed.bestStreak==="number" ? parsed.bestStreak : newState.streak;
-      newState.achievements=parsed.achievements || {};
-   newState.records=parsed.records || [];
-newState.vault=parsed.vault || createFreshVault();
-return newState;
-    }
-    if(!parsed.sundayVows || parsed.sundayVows.length!==sundayVows.length) return freshState();
-    if(!parsed.weekdayVows || parsed.weekdayVows[1].length!==weekdayVows.length) return freshState();
-    if(!parsed.damage || parsed.damage[0].length!==damageStates.length) return freshState();
-if(!parsed.recoveryVows || parsed.recoveryVows.length!==6 || parsed.recoveryVows[0].length!==recoveryVows.length){
-  parsed.recoveryVows=Array.from({length:6},()=>Array(recoveryVows.length).fill(false));
-}
+function loadState(){   let saved=localStorage.getItem("kaizenKnightV5");   if(!saved) return freshState();   try{     let parsed=JSON.parse(saved);     if(parsed.weekKey!==weekKey){       let newState=freshState();       newState.streak=typeof parsed.streak==="number" ? parsed.streak : 0;       newState.bestStreak=typeof parsed.bestStreak==="number" ? parsed.bestStreak : newState.streak;       newState.achievements=parsed.achievements || {};    newState.records=parsed.records || []; newState.recoveryLog=parsed.recoveryLog || []; newState.vault=parsed.vault || createFreshVault(); return newState;     }     if(!parsed.sundayVows || parsed.sundayVows.length!==sundayVows.length) return freshState(); if(!parsed.growthVows || parsed.growthVows.length!==6 || parsed.growthVows[0].length!==growthVows.length){   parsed.growthVows=Array.from({length:6},()=>Array(growthVows.length).fill(false)); }     if(!parsed.weekdayVows || parsed.weekdayVows[1].length!==weekdayVows.length) return freshState();     if(!parsed.damage || parsed.damage[0].length!==damageStates.length) return freshState(); if(!parsed.recoveryVows || parsed.recoveryVows.length!==6 || parsed.recoveryVows[0].length!==recoveryVows.length){   parsed.recoveryVows=Array.from({length:6},()=>Array(recoveryVows.length).fill(false)); }
 
-if(!parsed.recoveryDamage || parsed.recoveryDamage.length!==6 || parsed.recoveryDamage[0].length!==recoveryDamageStates.length){
-  parsed.recoveryDamage=Array.from({length:6},()=>Array(recoveryDamageStates.length).fill(false));
-}
-    if(typeof parsed.streak!=="number") parsed.streak=cleanCountFromStatuses(parsed.statuses);
-    if(typeof parsed.bestStreak!=="number") parsed.bestStreak=parsed.streak;
-if(typeof parsed.finalForm==="undefined") parsed.finalForm=null;
-if(typeof parsed.rainbowDayKey==="undefined") parsed.rainbowDayKey=null;
-if(typeof parsed.rainbowToday==="undefined") parsed.rainbowToday=false;
-if(typeof parsed.crackActive==="undefined") parsed.crackActive=false;
+if(!parsed.recoveryDamage || parsed.recoveryDamage.length!==6 || parsed.recoveryDamage[0].length!==recoveryDamageStates.length){   parsed.recoveryDamage=Array.from({length:6},()=>Array(recoveryDamageStates.length).fill(false)); }     if(typeof parsed.streak!=="number") parsed.streak=cleanCountFromStatuses(parsed.statuses);     if(typeof parsed.bestStreak!=="number") parsed.bestStreak=parsed.streak; if(typeof parsed.finalForm==="undefined") parsed.finalForm=null; if(typeof parsed.rainbowDayKey==="undefined") parsed.rainbowDayKey=null; if(typeof parsed.rainbowToday==="undefined") parsed.rainbowToday=false; if(typeof parsed.crackActive==="undefined") parsed.crackActive=false;
 
-// DAILY MODE SYSTEM MIGRATION
-if(typeof parsed.modeDate==="undefined") parsed.modeDate=getDayKey();
-if(typeof parsed.dayMode==="undefined") parsed.dayMode="undecided";
-if(typeof parsed.gateCompleted==="undefined") parsed.gateCompleted=false;
-if(typeof parsed.gatePassed==="undefined") parsed.gatePassed=false;
-if(typeof parsed.recoveryChosen==="undefined") parsed.recoveryChosen=false;
-if(typeof parsed.damageProtocolActive==="undefined") parsed.damageProtocolActive=false;
-if(!parsed.gateAnswers || parsed.gateAnswers.length!==gateQuestions.length){
-  parsed.gateAnswers=Array(gateQuestions.length).fill(false);
-}
-if(!parsed.damageProtocolVows || parsed.damageProtocolVows.length!==6 || parsed.damageProtocolVows[0].length!==damageProtocolVows.length){
-  parsed.damageProtocolVows=Array.from({length:6},()=>Array(damageProtocolVows.length).fill(false));
-}
+// DAILY MODE SYSTEM MIGRATION if(typeof parsed.modeDate==="undefined") parsed.modeDate=getDayKey(); if(typeof parsed.dayMode==="undefined") parsed.dayMode="undecided"; if(typeof parsed.gateCompleted==="undefined") parsed.gateCompleted=false; if(typeof parsed.gatePassed==="undefined") parsed.gatePassed=false; if(typeof parsed.recoveryChosen==="undefined") parsed.recoveryChosen=false; if(typeof parsed.damageProtocolActive==="undefined") parsed.damageProtocolActive=false; if(!parsed.gateAnswers || parsed.gateAnswers.length!==gateQuestions.length){   parsed.gateAnswers=Array(gateQuestions.length).fill(false); } if(!parsed.damageProtocolVows || parsed.damageProtocolVows.length!==6 || parsed.damageProtocolVows[0].length!==damageProtocolVows.length){   parsed.damageProtocolVows=Array.from({length:6},()=>Array(damageProtocolVows.length).fill(false)); }
 
-if(!parsed.achievements) parsed.achievements={};
-   if(!parsed.records) parsed.records=[];
-if(!parsed.vault) parsed.vault=createFreshVault();
-return parsed;
-  }catch(e){
-    return freshState();
-  }
-}
-function saveState(){ localStorage.setItem("kaizenKnightV5",JSON.stringify(state)); }
-function ensureDailyModeFresh(){
-  const todayKey=getDayKey();
+if(!parsed.achievements) parsed.achievements={};    if(!parsed.records) parsed.records=[]; if(!parsed.recoveryLog) parsed.recoveryLog=[]; if(!parsed.vault) parsed.vault=createFreshVault(); return parsed;   }catch(e){     return freshState();   } } function saveState(){ localStorage.setItem("kaizenKnightV5",JSON.stringify(state)); } function ensureDailyModeFresh(){   const todayKey=getDayKey();
 
   if(state.modeDate===todayKey) return;
 
-  state.modeDate=todayKey;
-  state.dayMode="undecided";
-  state.gateCompleted=false;
-  state.gatePassed=false;
-  state.recoveryChosen=false;
-  state.damageProtocolActive=false;
-  state.gateAnswers=Array(gateQuestions.length).fill(false);
-state.damageProtocolVows=Array.from({length:6},()=>Array(damageProtocolVows.length).fill(false));
-  saveState();
-}
-function cleanCountFromStatuses(statuses){
-  if(!statuses) return 0;
-  return statuses.filter(s=>s==="complete").length;
-}
-function repairWeeklyStatusesFromChecklist(){
+  state.modeDate=todayKey;   state.dayMode="undecided";   state.gateCompleted=false;   state.gatePassed=false;   state.recoveryChosen=false;   state.damageProtocolActive=false;   state.gateAnswers=Array(gateQuestions.length).fill(false); state.damageProtocolVows=Array.from({length:6},()=>Array(damageProtocolVows.length).fill(false));   saveState(); } function cleanCountFromStatuses(statuses){   if(!statuses) return 0;   return statuses.filter(s=>s==="complete").length; } function repairWeeklyStatusesFromChecklist(){
 
-  if(!state.statuses || state.statuses.length!==6){
-    state.statuses=["inactive","inactive","inactive","inactive","inactive","inactive"];
-  }
+  if(!state.statuses || state.statuses.length!==6){     state.statuses=["inactive","inactive","inactive","inactive","inactive","inactive"];   }
 
   for(let d=0;d<6;d++){
 
-    let vows = d===0 ? state.sundayVows : state.weekdayVows[d];
-    let damage = state.damage[d];
+    let vows = d===0 ? state.sundayVows : state.weekdayVows[d];     let damage = state.damage[d];
 
     if(!vows || !damage) continue;
 
-    let anyVowChecked=vows.some(v=>v);
-    let anyDamageChecked=damage.some(v=>v);
+    let anyVowChecked=vows.some(v=>v);     let anyDamageChecked=damage.some(v=>v);
 
     if(!anyVowChecked && !anyDamageChecked) continue;
 
     let allVowsChecked=vows.every(v=>v);
 
-    if(allVowsChecked && !anyDamageChecked){
-      state.statuses[d]="complete";
-    }else{
-      state.statuses[d]="failed";
-    }
-  }
-}
-function getVowStateForToday(){ return todayIndex===0 ? state.sundayVows : state.weekdayVows[todayIndex]; }
-function getPetImage(type){
-  if(type==="king") return "king.png";
-  if(type==="rook") return "rook.png";
-  if(type==="angel") return "angel.png";
-  if(type==="red") return "red.png";
-  if(type==="orange") return "orange.png";
-  if(type==="yellow") return "yellow.png";
-  if(type==="green") return "green.png";
-  if(type==="blue") return "blue.png";
-  if(type==="purple") return "purple.png";
-  if(type==="black") return "black.png";
-  if(type==="brown") return "brown.png";
-  return "knight.png";
-}
-function getPetBlinkImage(type){
-  if(type==="knight") return "blink.png";
-  if(type==="angel") return "angelblink.png";
-  if(type==="red") return "redblink.png";
-  if(type==="orange") return "orangeblink.png";
-  if(type==="yellow") return "yellowblink.png";
-  if(type==="green") return "greenblink.png";
-  if(type==="blue") return "blueblink.png";
-  if(type==="purple") return "purpleblink.png";
-  if(type==="black") return "blackblink.png";
-  if(type==="brown") return "brownblink.png";
-  return null;
-}
-function canPetBlink(type){
-  return getPetBlinkImage(type)!==null;
-}
-function isCleanSprite(type){
-  return type==="angel" || type==="red" || type==="orange" || type==="yellow" || type==="green" || type==="blue" || type==="purple" || type==="black" || type==="brown";
-}
-function getPetClass(type){ return isCleanSprite(type) ? "pet-img clean-img" : "pet-img"; }
-function streakHTML(){ return "<div class='streak-counter'>"+state.streak+"</div>"; }
-function achievementHTML(){ return "<div class='achievement-banner' id='achievementBanner'></div>"; }
-function santaHatHTML(type){
-  const month=new Date().getMonth();
-  const isDecember=month===11;
+    if(allVowsChecked && !anyDamageChecked){       state.statuses[d]="complete";     }else{       state.statuses[d]="failed";     }   } } function getVowStateForToday(){ return todayIndex===0 ? state.sundayVows : state.weekdayVows[todayIndex]; } function getPetImage(type){   if(type==="king") return "king.png";   if(type==="rook") return "rook.png";   if(type==="angel") return "angel.png";   if(type==="red") return "red.png";   if(type==="orange") return "orange.png";   if(type==="yellow") return "yellow.png";   if(type==="green") return "green.png";   if(type==="blue") return "blue.png";   if(type==="purple") return "purple.png";   if(type==="black") return "black.png";   if(type==="brown") return "brown.png";   return "knight.png"; } function getPetBlinkImage(type){   if(type==="knight") return "blink.png";   if(type==="angel") return "angelblink.png";   if(type==="red") return "redblink.png";   if(type==="orange") return "orangeblink.png";   if(type==="yellow") return "yellowblink.png";   if(type==="green") return "greenblink.png";   if(type==="blue") return "blueblink.png";   if(type==="purple") return "purpleblink.png";   if(type==="black") return "blackblink.png";   if(type==="brown") return "brownblink.png";   return null; } function canPetBlink(type){   return getPetBlinkImage(type)!==null; } function isCleanSprite(type){   return type==="angel" || type==="red" || type==="orange" || type==="yellow" || type==="green" || type==="blue" || type==="purple" || type==="black" || type==="brown"; } function getPetClass(type){ return isCleanSprite(type) ? "pet-img clean-img" : "pet-img"; } function streakHTML(){ return "<div class='streak-counter'>"+state.streak+"</div>"; } function achievementHTML(){ return "<div class='achievement-banner' id='achievementBanner'></div>"; } function santaHatHTML(type){   const month=new Date().getMonth();   const isDecember=month===11;
 
-  const canWearHat =
-    type==="knight" ||
-    type==="red" ||
-    type==="orange" ||
-    type==="yellow" ||
-    type==="green" ||
-    type==="blue" ||
-    type==="purple" ||
-    type==="black" ||
-    type==="brown";
+  const canWearHat =     type==="knight" ||     type==="red" ||     type==="orange" ||     type==="yellow" ||     type==="green" ||     type==="blue" ||     type==="purple" ||     type==="black" ||     type==="brown";
 
-  if((isDecember || FORCE_CHRISTMAS_TEST) && canWearHat){
-    return "<img class='santa-hat' src='Santahat.png'>";
-  }
+  if((isDecember || FORCE_CHRISTMAS_TEST) && canWearHat){     return "<img class='santa-hat' src='Santahat.png'>";   }
 
-  return "";
-}
+  return ""; }
 
-function petHTML(type="knight"){
-  let img=getPetImage(type);
-  if(isSleepTime() && canPetBlink(type)){
-    img=getPetBlinkImage(type);
-  }
-  return `
-    <div class="pet-zone">
-      <div class="pet-walker left" id="petWalker">
-        <div class="pet-bob">
-          <img class="${getPetClass(type)}" id="petImg" src="${img}" data-pet-type="${type}">
-         ${santaHatHTML(type)}
-          <img class="sleep-overlay" id="sleepOverlay" src="sleep1.png">
-          <img class="firework-img" id="fireworkImg" src="Firework1.png">
-        </div>
-      </div>
-    </div>
-  `;
-}
-function stopPet(){
-  clearInterval(moveTimer);
-  clearInterval(sleepTimer);
-  moveTimer=null;
-  sleepTimer=null;
-}
-function startSleepOverlay(){
-  clearInterval(sleepTimer);
-  const overlay=document.getElementById("sleepOverlay");
-  if(!overlay) return;
-  if(!isSleepTime()){
-    overlay.style.display="none";
-    return;
-  }
-  sleepFrame=1;
-  overlay.src="sleep1.png";
-  overlay.style.display="block";
-  sleepTimer=setInterval(()=>{
-    if(!isSleepTime()){
-      overlay.style.display="none";
-      clearInterval(sleepTimer);
-      sleepTimer=null;
-      return;
-    }
-    sleepFrame=sleepFrame===1 ? 2 : 1;
-    overlay.src="sleep"+sleepFrame+".png";
-  },500);
-}
-function stopFirework(){
-  clearInterval(fireworkTimer);
-  fireworkTimer=null;
-  fireworkFrame=1;
-  const fw=document.getElementById("fireworkImg");
-  if(fw){
-    fw.style.display="none";
-    fw.src="Firework1.png";
-  }
-}
-function startFirework(){
-  stopFirework();
-  const fw=document.getElementById("fireworkImg");
-  if(!fw) return;
-  fireworkFrame=1;
-  fw.src="Firework1.png";
-  fw.style.display="block";
-  play("firework");
-  fireworkTimer=setInterval(()=>{
-    fireworkFrame++;
-    if(fireworkFrame>12){
-      stopFirework();
-      return;
-    }
-    if(fireworkFrame===5 || fireworkFrame===9) play("firework");
-    fw.src="Firework"+fireworkFrame+".png";
-  },500);
-}
-function showAchievementBanner(dayNum){
-  clearTimeout(achievementTimer);
+function petHTML(type="knight"){   let img=getPetImage(type);   if(isSleepTime() && canPetBlink(type)){     img=getPetBlinkImage(type);   }   return `     <div class="pet-zone">       <div class="pet-walker left" id="petWalker">         <div class="pet-bob">           <img class="${getPetClass(type)}" id="petImg" src="${img}" data-pet-type="${type}">          ${santaHatHTML(type)}           <img class="sleep-overlay" id="sleepOverlay" src="sleep1.png">           <img class="firework-img" id="fireworkImg" src="Firework1.png">         </div>       </div>     </div>   `; } function stopPet(){   clearInterval(moveTimer);   clearInterval(sleepTimer);   moveTimer=null;   sleepTimer=null; } function startSleepOverlay(){   clearInterval(sleepTimer);   const overlay=document.getElementById("sleepOverlay");   if(!overlay) return;   if(!isSleepTime()){     overlay.style.display="none";     return;   }   sleepFrame=1;   overlay.src="sleep1.png";   overlay.style.display="block";   sleepTimer=setInterval(()=>{     if(!isSleepTime()){       overlay.style.display="none";       clearInterval(sleepTimer);       sleepTimer=null;       return;     }     sleepFrame=sleepFrame===1 ? 2 : 1;     overlay.src="sleep"+sleepFrame+".png";   },500); } function stopFirework(){   clearInterval(fireworkTimer);   fireworkTimer=null;   fireworkFrame=1;   const fw=document.getElementById("fireworkImg");   if(fw){     fw.style.display="none";     fw.src="Firework1.png";   } } function startFirework(){   stopFirework();   const fw=document.getElementById("fireworkImg");   if(!fw) return;   fireworkFrame=1;   fw.src="Firework1.png";   fw.style.display="block";   play("firework");   fireworkTimer=setInterval(()=>{     fireworkFrame++;     if(fireworkFrame>12){       stopFirework();       return;     }     if(fireworkFrame===5 || fireworkFrame===9) play("firework");     fw.src="Firework"+fireworkFrame+".png";   },500); } function showAchievementBanner(dayNum){   clearTimeout(achievementTimer);
 
   const banner=document.getElementById("achievementBanner");
 
   if(!banner) return;
 
-  banner.className="achievement-banner";
-  banner.innerHTML="DAY "+dayNum+"!";
+  banner.className="achievement-banner";   banner.innerHTML="DAY "+dayNum+"!";
 
   void banner.offsetWidth;
 
-  if(dayNum%5===0){
-    play("milestone");
-  }else{
-    playAchievementSound();
-  }
+  if(dayNum%5===0){     play("milestone");   }else{     playAchievementSound();   }
 
   banner.classList.add("show");
 
-  achievementTimer=setTimeout(()=>{
-    banner.className="achievement-banner";
-    banner.innerHTML="";
-  },2100);
-}
-function startPet(delay=0){
-  stopPet();
-  setTimeout(()=>{
-    const walker=document.getElementById("petWalker");
-    const pet=document.getElementById("petImg");
-    if(!walker || !pet) return;
-    startSleepOverlay();
-    petStep=0;
-    walker.style.left=petPositions[petStep]+"%";
-    walker.className="pet-walker left";
-    if(isSleepTime()){
-      const petType=pet.dataset.petType;
-      if(canPetBlink(petType)){
-        pet.src=getPetBlinkImage(petType);
-      }else{
-        pet.src=getPetImage(petType);
-      }
-      return;
-    }
-    moveTimer=setInterval(()=>{
-      const current=petPositions[petStep];
-      petStep=(petStep+1)%petPositions.length;
-      const next=petPositions[petStep];
-      const petType=pet.dataset.petType;
-      if(isSleepTime()){
-        walker.className="pet-walker left";
-        if(canPetBlink(petType)){
-          pet.src=getPetBlinkImage(petType);
-        }else{
-          pet.src=getPetImage(petType);
-        }
-        clearInterval(moveTimer);
-        moveTimer=null;
-        startSleepOverlay();
-        return;
-      }
-      if(next>current){
-        walker.className="pet-walker right";
-        pet.src=getPetImage(petType);
-      }else if(next<current){
-        walker.className="pet-walker left";
-        pet.src=getPetImage(petType);
-      }else{
-        if(canPetBlink(petType)){
-          pet.src=getPetBlinkImage(petType);
-        }
-      }
-      walker.style.left=next+"%";
-    },1200);
-  },delay);
-}
-function renderDays(){
-  for(let i=0;i<6;i++){
-    let el=document.getElementById("day"+i);
-    el.className="day";
+  achievementTimer=setTimeout(()=>{     banner.className="achievement-banner";     banner.innerHTML="";   },2100); } function startPet(delay=0){   stopPet();   setTimeout(()=>{     const walker=document.getElementById("petWalker");     const pet=document.getElementById("petImg");     if(!walker || !pet) return;     startSleepOverlay();     petStep=0;     walker.style.left=petPositions[petStep]+"%";     walker.className="pet-walker left";     if(isSleepTime()){       const petType=pet.dataset.petType;       if(canPetBlink(petType)){         pet.src=getPetBlinkImage(petType);       }else{         pet.src=getPetImage(petType);       }       return;     }     moveTimer=setInterval(()=>{       const current=petPositions[petStep];       petStep=(petStep+1)%petPositions.length;       const next=petPositions[petStep];       const petType=pet.dataset.petType;       if(isSleepTime()){         walker.className="pet-walker left";         if(canPetBlink(petType)){           pet.src=getPetBlinkImage(petType);         }else{           pet.src=getPetImage(petType);         }         clearInterval(moveTimer);         moveTimer=null;         startSleepOverlay();         return;       }       if(next>current){         walker.className="pet-walker right";         pet.src=getPetImage(petType);       }else if(next<current){         walker.className="pet-walker left";         pet.src=getPetImage(petType);       }else{         if(canPetBlink(petType)){           pet.src=getPetBlinkImage(petType);         }       }       walker.style.left=next+"%";     },1200);   },delay); } function renderDays(){   for(let i=0;i<6;i++){     let el=document.getElementById("day"+i);     el.className="day";
 
-    if(state.statuses[i]==="complete") el.classList.add("complete");
-    if(state.statuses[i]==="recovery") el.classList.add("recovery");
-    if(state.statuses[i]==="failed") el.classList.add("failed");
-    if(state.statuses[i]==="inactive") el.classList.add("inactive");
-    if(i===todayIndex) el.classList.add("today");
-  }
-}
-function cleanCount(){ return state.statuses.filter(s=>s==="complete").length; }
-function failedCount(){ return state.statuses.filter(s=>s==="failed").length; }
-function perfectWeek(){
-  for(let i=0;i<6;i++){
-    if(state.statuses[i]!=="complete" && state.statuses[i]!=="recovery"){
-      return false;
-    }
-  }
+    if(state.statuses[i]==="complete") el.classList.add("complete");     if(state.statuses[i]==="recovery") el.classList.add("recovery");     if(state.statuses[i]==="failed") el.classList.add("failed");     if(state.statuses[i]==="inactive") el.classList.add("inactive");     if(i===todayIndex) el.classList.add("today");   } } function cleanCount(){ return state.statuses.filter(s=>s==="complete").length; } function failedCount(){ return state.statuses.filter(s=>s==="failed").length; } function perfectWeek(){   for(let i=0;i<6;i++){     if(state.statuses[i]!=="complete" && state.statuses[i]!=="recovery"){       return false;     }   }
 
-  return failedCount()===0;
-}
-function weeklyVowPercent(){
-  let checked=0;
-  let total=0;
-  for(let i=0;i<sundayVows.length;i++){
-    total++;
-    if(state.sundayVows[i]) checked++;
-  }
-  for(let d=1;d<=5;d++){
-    for(let i=0;i<weekdayVows.length;i++){
-      total++;
-      if(state.weekdayVows[d][i]) checked++;
-    }
-  }
-  if(total<=0) return 0;
-  return Math.floor((checked/total)*100);
-}
-function formFromWeeklyPercent(percent){
-  if(percent>=90) return "red";
-  if(percent>=80) return "orange";
-  if(percent>=70) return "yellow";
-  if(percent>=60) return "green";
-  if(percent>=50) return "blue";
-  if(percent>=40) return "purple";
-  if(percent>=30) return "black";
-  if(percent>=20) return "brown";
-  return "rook";
-}
-function weeklyRookCount(){
-  let total=0;
-  for(let d=0;d<6;d++){
-    for(let i=0;i<damageStates.length;i++){
-      if(state.damage[d][i]) total++;
-    }
-  }
-  return total;
-}
-function gradeEmoji(form){
-  if(form==="angel") return "⬜";
-  if(form==="red") return "🟥";
-  if(form==="orange") return "🟧";
-  if(form==="yellow") return "🟨";
-  if(form==="green") return "🟩";
-  if(form==="blue") return "🟦";
-  if(form==="purple") return "🟪";
-  if(form==="black") return "⬛";
-  if(form==="brown") return "🟫";
-  return "❌";
-}
-function weekRecordDate(){
-  let d=new Date(weekKey+"T00:00:00");
-  let m=d.getMonth()+1;
-  let day=d.getDate();
-  let year=String(d.getFullYear()).slice(-2);
-  return m+"-"+day+"-"+year;
-}
-function addWeekRecord(weeklyForm){
-  if(!weeklyForm) return;
-  if(!state.records) state.records=[];
-  let date=weekRecordDate();
-  for(let i=0;i<state.records.length;i++){
-    if(state.records[i].date===date){
-      state.records[i]={
-        date:date,
-        grade:gradeEmoji(weeklyForm),
-        rooks:weeklyRookCount()
-      };
-      return;
-    }
-  }
-  state.records.push({
-    date:date,
-    grade:gradeEmoji(weeklyForm),
-    rooks:weeklyRookCount()
-  });
-}
-function shouldShowFinalForm(){ return state.finalForm && (todayIndex===5 || todayIndex===-1); }
-function powerOn(){
-  if(poweredOn) return;
+  return failedCount()===0; } function weeklyVowPercent(){   let checked=0;   let total=0;   for(let i=0;i<sundayVows.length;i++){     total++;     if(state.sundayVows[i]) checked++;   }   for(let d=1;d<=5;d++){     for(let i=0;i<weekdayVows.length;i++){       total++;       if(state.weekdayVows[d][i]) checked++;     }   }   if(total<=0) return 0;   return Math.floor((checked/total)*100); } function formFromWeeklyPercent(percent){   if(percent>=90) return "red";   if(percent>=80) return "orange";   if(percent>=70) return "yellow";   if(percent>=60) return "green";   if(percent>=50) return "blue";   if(percent>=40) return "purple";   if(percent>=30) return "black";   if(percent>=20) return "brown";   return "rook"; } function weeklyRookCount(){   let total=0;   for(let d=0;d<6;d++){     for(let i=0;i<damageStates.length;i++){       if(state.damage[d][i]) total++;     }   }   return total; } function gradeEmoji(form){   if(form==="angel") return "⬜";   if(form==="red") return "🟥";   if(form==="orange") return "🟧";   if(form==="yellow") return "🟨";   if(form==="green") return "🟩";   if(form==="blue") return "🟦";   if(form==="purple") return "🟪";   if(form==="black") return "⬛";   if(form==="brown") return "🟫";   return "❌"; } function weekRecordDate(){   let d=new Date(weekKey+"T00:00:00");   let m=d.getMonth()+1;   let day=d.getDate();   let year=String(d.getFullYear()).slice(-2);   return m+"-"+day+"-"+year; } function addWeekRecord(weeklyForm){   if(!weeklyForm) return;   if(!state.records) state.records=[];   let date=weekRecordDate();   for(let i=0;i<state.records.length;i++){     if(state.records[i].date===date){       state.records[i]={         date:date,         grade:gradeEmoji(weeklyForm),         rooks:weeklyRookCount()       };       return;     }   }   state.records.push({     date:date,     grade:gradeEmoji(weeklyForm),     rooks:weeklyRookCount()   }); } function shouldShowFinalForm(){ return state.finalForm && (todayIndex===5 || todayIndex===-1); } function powerOn(){   if(poweredOn) return;
 
-  poweredOn=true;
+  play("boot");   showBoot(); } function showMorningGate(){   if(!requirePower()) return;
 
-  play("boot");
-  updateStreakMusic();
-
-  showBoot();
-}
-function showMorningGate(){
-  if(!requirePower()) return;
-
-  stopPet();
-  stopFirework();
-  renderDays();
+  stopPet();   stopFirework();   renderDays();
 
   document.getElementById("statusBar").innerHTML="MORNING GATE";
 
-  let html="";
-  html+="<div class='panel'>";
-  html+="<div class='panel-title'>CAN YOU TRADE?</div>";
-  html+="<div class='scroll' style='display:flex;flex-direction:column;justify-content:center;gap:10px;'>";
+  let html="";   html+="<div class='panel'>";   html+="<div class='panel-title'>CAN YOU TRADE?</div>";
 
-  html+="<div class='panel-buttons' style='border-top:none;padding:0;'>";
-  html+="<button class='mini-btn' onclick='chooseTradeDay()'>TRADE</button>";
-  html+="<button class='mini-btn' onclick='chooseSundayDay()'>SUNDAY</button>";
-  html+="</div>";
+  html+="<div class='scroll' style='display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:10px;text-align:center;'>";
 
-  html+="<button class='mini-btn' onclick='chooseRecoveryDay()'>RECOVERY DAY</button>";
-  html+="<button class='mini-btn' onclick='chooseDamageDay()'>DAMAGE</button>";
+  html+="<div style='flex:1;display:flex;align-items:center;justify-content:center;width:100%;'>";   html+="<img src='gate.png' style='max-width:220px;max-height:150px;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;'>";   html+="</div>";
+
+  html+="<div style='width:100%;display:flex;flex-direction:column;gap:8px;'>";
+
+  html+="<div class='panel-buttons' style='border-top:none;padding:0;'>";   html+="<button class='mini-btn' onclick='chooseTradeDay()'>TRADE</button>";   html+="<button class='mini-btn' onclick='chooseSundayDay()'>SUNDAY</button>";   html+="</div>";
+
+  html+="<button class='mini-btn' onclick='chooseRecoveryDay()'>RECOVERY DAY</button>";   html+="<button class='mini-btn' onclick='chooseDamageDay()'>DAMAGE</button>";
 
   html+="<div class='small-note'>COMPROMISED MINDS DO NOT GET MARKET ACCESS.</div>";
 
-  html+="</div>";
-  html+="</div>";
+  html+="</div>";   html+="</div>";   html+="</div>";
 
-  document.getElementById("playArea").innerHTML=html;
-}
-function chooseTradeDay(){
-  play("menu");
-  showTradeGateTest();
-}
+  document.getElementById("playArea").innerHTML=html; } function chooseTradeDay(){   play("menu");   showTradeGateTest(); }
 
-function chooseSundayDay(){
-  play("menu");
-  state.dayMode="sunday";
-  state.gateCompleted=true;
-  saveState();
-  showMain();
-}
+function chooseSundayDay(){   if(todayIndex!==0) return;
 
-function chooseRecoveryDay(){
-  play("good");
-  state.dayMode="recovery";
-  state.gateCompleted=true;
-  state.recoveryChosen=true;
-  saveState();
-  showMain();
-}
+  play("menu");   state.dayMode="sunday";   state.gateCompleted=true;   saveState();   showMain(); }
 
-function chooseDamageDay(){
-  play("fail");
-  state.dayMode="damage";
-  state.gateCompleted=true;
-  state.damageProtocolActive=true;
-  saveState();
-  showDamageProtocol();
-}
-function showHomeAfterBoot(fromBoot=false){
-  if(todayIndex>=0 && state.dayMode==="undecided"){
-    showMorningGate();
-    return;
-  }
+function chooseRecoveryDay(){   play("good");
 
-  showMain(fromBoot);
-}
-function showBoot(){
-  renderDays();
-  document.getElementById("screen").className="screen boot-dark";
-  document.getElementById("statusBar").innerHTML="POWER";
-  document.getElementById("playArea").innerHTML="<div class='boot-text'>BOOTING...</div>";
- setTimeout(()=>{ document.getElementById("statusBar").innerHTML="POWER"; },650);
-setTimeout(()=>{
-  document.getElementById("screen").className="screen";
-  showHomeAfterBoot(true);
-},1200);
-}
-function debugAddStreak(){
-  if(!DEBUG_MODE) return;
+  state.dayMode="recovery";   state.gateCompleted=true;   state.recoveryChosen=true;
+
+  awardRecoveryDay();
+
+  saveState();   showMain(); } function awardRecoveryDay(){   if(todayIndex<0) return;   if(state.statuses[todayIndex]!=="inactive") return;
+
+state.statuses[todayIndex]="recovery"; logRecoveryDay(); state.streak++;
+
+  if(recordAchievement(state.streak)){     // achievement recorded silently   }
+
+  if(state.streak>state.bestStreak && state.streak<=365){     state.bestStreak=state.streak;   } }
+
+function chooseDamageDay(){   play("menu");
+
+  state.dayMode="trade";   state.gateCompleted=true;   state.gatePassed=false;   state.damageProtocolActive=false;
+
+  saveState();   showMain(); } function showHomeAfterBoot(fromBoot=false){   if(todayIndex>=0 && state.dayMode==="undecided"){     showMorningGate();     return;   }
+
+  showMain(fromBoot); } function showBoot(){   renderDays();   document.getElementById("screen").className="screen boot-dark";   document.getElementById("statusBar").innerHTML="POWER";   document.getElementById("playArea").innerHTML="<div class='boot-text'>BOOTING...</div>";  setTimeout(()=>{ document.getElementById("statusBar").innerHTML="POWER"; },650); setTimeout(()=>{   poweredOn=true;   document.getElementById("screen").className="screen";   showHomeAfterBoot(true);   updateStreakMusic(); },1200); } function debugAddStreak(){   if(!DEBUG_MODE) return;
 
   state.streak++;
 
-  if(state.streak>state.bestStreak){
-    state.bestStreak=state.streak;
-  }
+  if(state.streak>state.bestStreak){     state.bestStreak=state.streak;   }
 
-  saveState();
-  showMain();
-}
-function showMain(fromBoot=false){
-  if(!requirePower()) return;
-  stopPet();
-  stopFirework();
-  renderDays();
-  ensureAchievementArchive();
-  document.getElementById("screen").className="screen";
-let weekText="WEEK OF "+formatWeekDisplay();
-let status="REST DAY";
-  let petType="knight";
-  if(shouldShowFinalForm()){
-    petType=state.finalForm;
-    status=state.finalForm==="angel" ? "PERFECT WEEK" : "WEEK FORM";
-  }else if(todayIndex>=0){
-    status="STEADY";
-    if(state.statuses[todayIndex]==="complete"){
-      status="DAY SEALED CLEAN";
-      petType="king";
-    }
-    if(state.statuses[todayIndex]==="failed"){
-      status="INTEGRITY DAMAGED";
-      petType="rook";
-    }
-  }
-document.getElementById("statusBar").innerHTML=status;
-  document.getElementById("playArea").innerHTML=
-    achievementHTML()+
-    streakHTML()+
-    sceneBackgroundHTML()+
+  saveState();   showMain(); } function showMain(fromBoot=false){   if(!requirePower()) return;   stopPet();   stopFirework();   renderDays();   ensureAchievementArchive();   document.getElementById("screen").className="screen"; let weekText="WEEK OF "+formatWeekDisplay(); let status="REST DAY";   let petType="knight";   if(shouldShowFinalForm()){     petType=state.finalForm;     status=state.finalForm==="angel" ? "PERFECT WEEK" : "WEEK FORM";   }else if(todayIndex>=0){     status="STEADY";     if(state.statuses[todayIndex]==="complete"){       status="DAY SEALED CLEAN";       petType="king";     }     if(state.statuses[todayIndex]==="failed"){       status="INTEGRITY DAMAGED";       petType="rook";     }   } document.getElementById("statusBar").innerHTML=status;   document.getElementById("playArea").innerHTML=     achievementHTML()+     streakHTML()+     sceneBackgroundHTML()+
 
 seasonalOverlayHTML()+
 
@@ -1369,811 +310,337 @@ rainbowHTML()+
 
 crackHTML()+
 
-ufoHTML()+
-planeHTML()+
-petHTML(petType)+
-    "<div class='ground'></div>"+
-    "<div class='textbox'>"+
-    weekText+
- "<br><span class='subline'>CLEAN DAYS: "+cleanCount()+"/6</span>"+
-"</div>"+
-"<div class='version-line'>VER "+APP_VERSION+"</div>"+
-(DEBUG_MODE ? "<button onclick='debugAddStreak()' style='position:absolute;left:8px;bottom:4px;z-index:30;font-family:VT323;font-size:14px;background:#111;color:white;border:none;'>+STREAK</button>" : "");
-startPet(fromBoot ? 650 : 0);
-startSkyAnimations();
-updateStreakMusic();
-}
-function showCheck(restoreScroll=null){
-  if(!requirePower()) return;
-  if(todayIndex<0){
-    showMain();
-    return;
-  }
-  stopPet();
-  stopFirework();
-  let todaysVows=getTodaysVows();
-  let vowState=getVowStateForToday();
-  let html="";
-  html+="<div class='panel'>";
-  html+="<div class='panel-title'>"+days[todayIndex]+" CHECK</div>";
-  html+="<div class='scroll' id='checkScroll'>";
-  html+="<div class='section-label'>VOWS</div>";
-  html+="<div class='small-note'>CHECK WHAT HELD TRUE TODAY</div>";
-  for(let i=0;i<todaysVows.length;i++){
-    html+="<div class='rule'>";
-    html+="<div class='box "+(vowState[i]?"checked":"")+"' onclick='toggleVow("+i+")'></div>";
-    html+="<div>"+todaysVows[i]+"</div>";
-    html+="</div>";
-  }
-  html+="<div class='section-label'>DAMAGE</div>";
-  html+="<div class='small-note'>ONLY MARK IF CONTAINMENT BROKE</div>";
-  for(let i=0;i<damageStates.length;i++){
-    html+="<div class='rule'>";
-    html+="<div class='box "+(state.damage[todayIndex][i]?"checked":"")+"' onclick='toggleDamage("+i+")'></div>";
-    html+="<div>"+damageStates[i]+"</div>";
-    html+="</div>";
-  }
-  html+="</div>";
-  html+="<div class='panel-buttons'>";
-html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
-html+="<button class='mini-btn' onclick='lockDay()'>LOCK</button>";
-  html+="</div>";
-  html+="</div>";
-  document.getElementById("playArea").innerHTML=html;
-  if(restoreScroll!==null){
-    const sc=document.getElementById("checkScroll");
-    if(sc) sc.scrollTop=restoreScroll;
-  }
-}
+ufoHTML()+ planeHTML()+ petHTML(petType)+     "<div class='ground'></div>"+     "<div class='textbox'>"+     weekText+  "<br><span class='subline'>CLEAN DAYS: "+cleanCount()+"/6</span>"+ "</div>"+ "<div class='version-line'>VER "+APP_VERSION+"</div>"+ (DEBUG_MODE ? "<button onclick='debugAddStreak()' style='position:absolute;left:8px;bottom:4px;z-index:30;font-family:VT323;font-size:14px;background:#111;color:white;border:none;'>+STREAK</button>" : ""); startPet(fromBoot ? 650 : 0); startSkyAnimations(); updateStreakMusic(); } function showCheck(restoreScroll=null){   if(!requirePower()) return;   if(todayIndex<0){     showMain();     return;   }   stopPet();   stopFirework();   let todaysVows=getTodaysVows();   let vowState=getVowStateForToday();   let html="";   html+="<div class='panel'>";   html+="<div class='panel-title'>"+days[todayIndex]+" CHECK</div>";   html+="<div class='scroll' id='checkScroll'>";   html+="<div class='section-label'>VOWS</div>";   html+="<div class='small-note'>CHECK WHAT HELD TRUE TODAY</div>";   for(let i=0;i<todaysVows.length;i++){     html+="<div class='rule'>";     html+="<div class='box "+(vowState[i]?"checked":"")+"' onclick='toggleVow("+i+")'></div>";     html+="<div>"+todaysVows[i]+"</div>";     html+="</div>";   } html+="<div class='section-label'>GROWTH</div>"; html+="<div class='small-note'>TRACKED, BUT DOES NOT BLOCK LOCKING</div>";
 
-function showRecoveryCheck(restoreScroll=null){
-  if(!requirePower()) return;
-  if(todayIndex<0){
-    showMain();
-    return;
-  }
+for(let i=0;i<growthVows.length;i++){   html+="<div class='rule'>";   html+="<div class='box "+(state.growthVows[todayIndex][i]?"checked":"")+"' onclick='toggleGrowthVow("+i+")'></div>";   html+="<div>"+growthVows[i]+"</div>";   html+="</div>"; }   html+="<div class='section-label'>DAMAGE</div>";   html+="<div class='small-note'>ONLY MARK IF CONTAINMENT BROKE</div>";   for(let i=0;i<damageStates.length;i++){     html+="<div class='rule'>";     html+="<div class='box "+(state.damage[todayIndex][i]?"checked":"")+"' onclick='toggleDamage("+i+")'></div>";     html+="<div>"+damageStates[i]+"</div>";     html+="</div>";   }   html+="</div>"; html+="<div class='panel-buttons'>"; html+="<button class='mini-btn' onclick='showMain()'>BACK</button>"; html+="<button class='mini-btn' onclick='lockDay()'>LOCK</button>"; html+="</div>";  html+="</div>";   document.getElementById("playArea").innerHTML=html;   if(restoreScroll!==null){     const sc=document.getElementById("checkScroll");     if(sc) sc.scrollTop=restoreScroll;   } }
 
-  stopPet();
-  stopFirework();
+function showRecoveryCheck(restoreScroll=null){   if(!requirePower()) return;   if(todayIndex<0){     showMain();     return;   }
+
+  stopPet();   stopFirework();
 
   document.getElementById("statusBar").innerHTML="RECOVERY";
 
-  let html="";
-  html+="<div class='panel'>";
-  html+="<div class='panel-title'>RECOVERY DAY</div>";
-  html+="<div class='scroll' id='recoveryScroll'>";
-  html+="<div class='small-note'>RECOVERY IS TRAINING. RESTORE READINESS.</div>";
+  let html="";   html+="<div class='panel'>";   html+="<div class='panel-title'>RECOVERY DAY</div>";   html+="<div class='scroll' id='recoveryScroll'>";   html+="<div class='small-note'>RECOVERY IS TRAINING. RESTORE READINESS.</div>";
 
-  html+="<div class='section-label'>VOWS</div>";
-  for(let i=0;i<recoveryVows.length;i++){
-    html+="<div class='rule'>";
-    html+="<div class='box "+(state.recoveryVows[todayIndex][i]?"checked":"")+"' onclick='toggleRecoveryVow("+i+")'></div>";
-    html+="<div>"+recoveryVows[i]+"</div>";
-    html+="</div>";
-  }
+  html+="<div class='section-label'>VOWS</div>";   for(let i=0;i<recoveryVows.length;i++){     html+="<div class='rule'>";     html+="<div class='box "+(state.recoveryVows[todayIndex][i]?"checked":"")+"' onclick='toggleRecoveryVow("+i+")'></div>";     html+="<div>"+recoveryVows[i]+"</div>";     html+="</div>";   }
 
-  html+="<div class='section-label'>DAMAGE</div>";
-  html+="<div class='small-note'>ONLY MARK IF RECOVERY CONTAINMENT BROKE</div>";
-  for(let i=0;i<recoveryDamageStates.length;i++){
-    html+="<div class='rule'>";
-    html+="<div class='box "+(state.recoveryDamage[todayIndex][i]?"checked":"")+"' onclick='toggleRecoveryDamage("+i+")'></div>";
-    html+="<div>"+recoveryDamageStates[i]+"</div>";
-    html+="</div>";
-  }
+  html+="<div class='section-label'>DAMAGE</div>";   html+="<div class='small-note'>ONLY MARK IF RECOVERY CONTAINMENT BROKE</div>";   for(let i=0;i<recoveryDamageStates.length;i++){     html+="<div class='rule'>";     html+="<div class='box "+(state.recoveryDamage[todayIndex][i]?"checked":"")+"' onclick='toggleRecoveryDamage("+i+")'></div>";     html+="<div>"+recoveryDamageStates[i]+"</div>";     html+="</div>";   }
 
-  html+="</div>";
-  html+="<div class='panel-buttons'>";
-  html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
-  html+="<button class='mini-btn' onclick='lockDay()'>LOCK</button>";
-  html+="</div>";
-  html+="</div>";
+  html+="</div>";   html+="<div class='panel-buttons'>";   html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";   html+="</div>";   html+="</div>";
 
   document.getElementById("playArea").innerHTML=html;
 
-  if(restoreScroll!==null){
-    const sc=document.getElementById("recoveryScroll");
-    if(sc) sc.scrollTop=restoreScroll;
-  }
-}
+  if(restoreScroll!==null){     const sc=document.getElementById("recoveryScroll");     if(sc) sc.scrollTop=restoreScroll;   } }
 
-function getRecoveryScrollTop(){
-  const sc=document.getElementById("recoveryScroll");
-  return sc ? sc.scrollTop : 0;
-}
+function getRecoveryScrollTop(){   const sc=document.getElementById("recoveryScroll");   return sc ? sc.scrollTop : 0; }
 
-function toggleRecoveryVow(i){
-  if(!requirePower()) return;
+function toggleRecoveryVow(i){   if(!requirePower()) return;
 
-  let scrollTop=getRecoveryScrollTop();
-  let wasChecked=state.recoveryVows[todayIndex][i];
+  let scrollTop=getRecoveryScrollTop();   let wasChecked=state.recoveryVows[todayIndex][i];
 
   state.recoveryVows[todayIndex][i]=!wasChecked;
 
-  if(!wasChecked){
-    playVowNote(i);
-  }else{
-    play("reset");
-  }
+  if(!wasChecked){     playVowNote(i);   }else{     play("reset");   }
 
-  saveState();
-  showRecoveryCheck(scrollTop);
-}
+  saveState();   showRecoveryCheck(scrollTop); }
 
-function toggleRecoveryDamage(i){
-  if(!requirePower()) return;
+function toggleRecoveryDamage(i){   if(!requirePower()) return;
 
-  let scrollTop=getRecoveryScrollTop();
-  let wasChecked=state.recoveryDamage[todayIndex][i];
+  let scrollTop=getRecoveryScrollTop();   let wasChecked=state.recoveryDamage[todayIndex][i];
 
   state.recoveryDamage[todayIndex][i]=!wasChecked;
 
-  if(!wasChecked){
-    state.crackActive=true;
-    playDamageNote();
-  }else{
-    play("reset");
-  }
+  if(!wasChecked){     state.crackActive=true;     playDamageNote();   }else{     play("reset");   }
 
-  saveState();
-  showRecoveryCheck(scrollTop);
-}
+  saveState();   showRecoveryCheck(scrollTop); }
 
-function showDamageProtocol(restoreScroll=null){
-  if(!requirePower()) return;
-  if(todayIndex<0){
-    showMain();
-    return;
-  }
+function showDamageProtocol(restoreScroll=null){   if(!requirePower()) return;   if(todayIndex<0){     showMain();     return;   }
 
-  stopPet();
-  stopFirework();
-  document.getElementById("statusBar").innerHTML="CONTAINMENT";
+  stopPet();   stopFirework();   document.getElementById("statusBar").innerHTML="CONTAINMENT";
 
-  let html="";
-  html+="<div class='panel'>";
-  html+="<div class='panel-title'>DAMAGE PROTOCOL</div>";
-  html+="<div class='scroll' id='damageProtocolScroll'>";
-  html+="<div class='small-note'>STOP ESCALATION. REPAIR THE SYSTEM.</div>";
+  let html="";   html+="<div class='panel'>";   html+="<div class='panel-title'>DAMAGE PROTOCOL</div>";   html+="<div class='scroll' id='damageProtocolScroll'>";   html+="<div class='small-note'>STOP ESCALATION. REPAIR THE SYSTEM.</div>";
 
-  for(let i=0;i<damageProtocolVows.length;i++){
-    html+="<div class='rule'>";
-    html+="<div class='box "+(state.damageProtocolVows[todayIndex][i]?"checked":"")+"' onclick='toggleDamageProtocolVow("+i+")'></div>";
-    html+="<div>"+damageProtocolVows[i]+"</div>";
-    html+="</div>";
-  }
+  for(let i=0;i<damageProtocolVows.length;i++){     html+="<div class='rule'>";     html+="<div class='box "+(state.damageProtocolVows[todayIndex][i]?"checked":"")+"' onclick='toggleDamageProtocolVow("+i+")'></div>";     html+="<div>"+damageProtocolVows[i]+"</div>";     html+="</div>";   }
 
-  html+="</div>";
-  html+="<div class='panel-buttons'>";
-  html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
-  html+="<button class='mini-btn' onclick='lockDay()'>LOCK</button>";
-  html+="</div>";
-  html+="</div>";
+  html+="</div>";   html+="<div class='panel-buttons'>";   html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";   html+="</div>";   html+="</div>";
 
   document.getElementById("playArea").innerHTML=html;
 
-  if(restoreScroll!==null){
-    const sc=document.getElementById("damageProtocolScroll");
-    if(sc) sc.scrollTop=restoreScroll;
-  }
-}
+  if(restoreScroll!==null){     const sc=document.getElementById("damageProtocolScroll");     if(sc) sc.scrollTop=restoreScroll;   } }
 
-function getDamageProtocolScrollTop(){
-  const sc=document.getElementById("damageProtocolScroll");
-  return sc ? sc.scrollTop : 0;
-}
+function getDamageProtocolScrollTop(){   const sc=document.getElementById("damageProtocolScroll");   return sc ? sc.scrollTop : 0; }
 
-function toggleDamageProtocolVow(i){
-  if(!requirePower()) return;
+function toggleDamageProtocolVow(i){   if(!requirePower()) return;
 
-  let scrollTop=getDamageProtocolScrollTop();
-  let wasChecked=state.damageProtocolVows[todayIndex][i];
+  let scrollTop=getDamageProtocolScrollTop();   let wasChecked=state.damageProtocolVows[todayIndex][i];
 
   state.damageProtocolVows[todayIndex][i]=!wasChecked;
 
-  if(!wasChecked){
-    playVowNote(i);
-  }else{
-    play("reset");
-  }
+  if(!wasChecked){     playVowNote(i);   }else{     play("reset");   }
 
-  saveState();
-  showDamageProtocol(scrollTop);
-}
+  saveState();   showDamageProtocol(scrollTop); }
 
-function showCheckRouter(){
-  if(!requirePower()) return;
+function showCheckRouter(){   if(!requirePower()) return;
 
-  if(state.dayMode==="gate_failed"){
-    showGateFailedScreen();
-    return;
-  }
+  if(state.damageProtocolActive){     showDamageProtocol();     return;   }
 
-  if(state.dayMode==="recovery"){
-    showRecoveryCheck();
-    return;
-  }
+  if(state.dayMode==="gate_failed"){     showGateFailedScreen();     return;   }
 
-  if(state.dayMode==="damage"){
-    showDamageProtocol();
-    return;
-  }
+  if(state.dayMode==="recovery"){     showRecoveryCheck();     return;   }
 
-  showCheck();
-}
+  showCheck(); }
 
-function showCheckWithMenuSound(){
- if(!requirePower()) return;
-  play("menu");
-  showCheckRouter();
-}
-function showCode(){
-  if(!requirePower()) return;
-  play("menu");
-  stopPet();
-  stopFirework();
+function showCheckWithMenuSound(){  if(!requirePower()) return;   play("menu");   showCheckRouter(); } function showCode(){   if(!requirePower()) return;   play("menu");   stopPet();   stopFirework();
 
-  let html="";
-  html+="<div class='panel'>";
-  html+="<div class='panel-title'>FIELD CODE</div>";
-  html+="<div class='scroll'>";
+  let html="";   html+="<div class='panel'>";   html+="<div class='panel-title'>FIELD CODE</div>";   html+="<div class='scroll'>";
 
-  for(let i=0;i<codeNotes.length;i++){
-    html+="<div class='note'>"+codeNotes[i]+"</div>";
-  }
+  for(let i=0;i<codeNotes.length;i++){     html+="<div class='note'>"+codeNotes[i]+"</div>";   }
 
-html+="<div class='section-label'>INSTRUCTION MANUAL</div>";
-html+="<div class='small-note'>WIN AND FAIL CONDITIONS</div>";
+html+="<div class='section-label'>INSTRUCTION MANUAL</div>"; html+="<div class='small-note'>WIN AND FAIL CONDITIONS</div>";
 
-for(let i=0;i<manualNotes.length;i++){
-  html+="<div class='note'>";
-  html+="<div style='font-size:24px;margin-bottom:4px;'>"+manualNotes[i][0]+"</div>";
-  html+="<div style='font-size:20px;opacity:.9;'>"+manualNotes[i][1]+"</div>";
-  html+="</div>";
-}
+for(let i=0;i<manualNotes.length;i++){   html+="<div class='note'>";   html+="<div style='font-size:24px;margin-bottom:4px;'>"+manualNotes[i][0]+"</div>";   html+="<div style='font-size:20px;opacity:.9;'>"+manualNotes[i][1]+"</div>";   html+="</div>"; }
 
-html+="<div class='section-label'>SAVE DATA</div>";
-html+="<div class='small-note'>BACK UP OR RESTORE YOUR KNIGHT</div>";
+html+="<div class='section-label'>SAVE DATA</div>"; html+="<div class='small-note'>BACK UP OR RESTORE YOUR KNIGHT</div>";
 
-html+="<div class='panel-buttons' style='border-top:none;padding:4px 0 10px;'>";
-html+="<button class='mini-btn' onclick='copySaveData()'>COPY SAVE</button>";
-html+="<button class='mini-btn' onclick='showImportSave()'>RESTORE</button>";
-html+="</div>";
+html+="<div class='panel-buttons' style='border-top:none;padding:4px 0 10px;'>"; html+="<button class='mini-btn' onclick='copySaveData()'>COPY SAVE</button>"; html+="<button class='mini-btn' onclick='showImportSave()'>RESTORE</button>"; html+="</div>";
 
 html+="</div>";
 
-html+="<div class='panel-buttons'>";
-html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
-  html+="</div>";
+html+="<div class='panel-buttons'>"; html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";   html+="</div>";
 
   html+="</div>";
 
-  document.getElementById("playArea").innerHTML=html;
-}
-function showTradeGateTest(){
-  if(!requirePower()) return;
+  document.getElementById("playArea").innerHTML=html; } function showTradeGateTest(){   if(!requirePower()) return;
 
-  stopPet();
-  stopFirework();
-  renderDays();
+  stopPet();   stopFirework();   renderDays();
 
   document.getElementById("statusBar").innerHTML="STATE CHECK";
 
-  let html="";
-  html+="<div class='panel'>";
-  html+="<div class='panel-title'>TRADE CLEARANCE</div>";
-  html+="<div class='scroll' id='gateScroll'>";
-  html+="<div class='small-note'>CHECK WHAT IS TRUE BEFORE MARKET ACCESS</div>";
+  let html="";   html+="<div class='panel'>";   html+="<div class='panel-title'>TRADE CLEARANCE</div>";   html+="<div class='scroll' id='gateScroll'>";   html+="<div class='small-note'>CHECK WHAT IS TRUE BEFORE MARKET ACCESS</div>";
 
-  for(let i=0;i<gateQuestions.length;i++){
-    html+="<div class='rule'>";
-    html+="<div class='box "+(state.gateAnswers[i]?"checked":"")+"' onclick='toggleGateAnswer("+i+")'></div>";
-    html+="<div>"+gateQuestions[i]+"</div>";
-    html+="</div>";
-  }
+  for(let i=0;i<gateQuestions.length;i++){     html+="<div class='rule'>";     html+="<div class='box "+(state.gateAnswers[i]?"checked":"")+"' onclick='toggleGateAnswer("+i+")'></div>";     html+="<div>"+gateQuestions[i]+"</div>";     html+="</div>";   }
 
-  html+="</div>";
-  html+="<div class='panel-buttons'>";
-  html+="<button class='mini-btn' onclick='showMorningGate()'>BACK</button>";
-  html+="<button class='mini-btn' onclick='submitGateTest()'>SUBMIT</button>";
-  html+="</div>";
-  html+="</div>";
+  html+="</div>";   html+="<div class='panel-buttons'>";   html+="<button class='mini-btn' onclick='showMorningGate()'>BACK</button>";   html+="<button class='mini-btn' onclick='submitGateTest()'>SUBMIT</button>";   html+="</div>";   html+="</div>";
 
-  document.getElementById("playArea").innerHTML=html;
-}
+  document.getElementById("playArea").innerHTML=html; }
 
-function toggleGateAnswer(i){
-  if(!requirePower()) return;
+function toggleGateAnswer(i){   if(!requirePower()) return;
 
-  const sc=document.getElementById("gateScroll");
-  const scrollTop=sc ? sc.scrollTop : 0;
+  const sc=document.getElementById("gateScroll");   const scrollTop=sc ? sc.scrollTop : 0;
 
   state.gateAnswers[i]=!state.gateAnswers[i];
 
-  if(state.gateAnswers[i]){
-    playVowNote(i);
-  }else{
-    play("reset");
-  }
+  if(state.gateAnswers[i]){     playVowNote(i);   }else{     play("reset");   }
 
-  saveState();
-  showTradeGateTest();
+  saveState();   showTradeGateTest();
 
-  const newSc=document.getElementById("gateScroll");
-  if(newSc) newSc.scrollTop=scrollTop;
-}
+  const newSc=document.getElementById("gateScroll");   if(newSc) newSc.scrollTop=scrollTop; }
 
-function submitGateTest(){
-  if(!requirePower()) return;
+function submitGateTest(){   if(!requirePower()) return;
 
   let missed=0;
 
-  for(let i=0;i<state.gateAnswers.length;i++){
-    if(!state.gateAnswers[i]) missed++;
-  }
+  for(let i=0;i<state.gateAnswers.length;i++){     if(!state.gateAnswers[i]) missed++;   }
 
   state.gateCompleted=true;
 
-  if(missed>=GATE_FAIL_LIMIT){
-    state.dayMode="gate_failed";
-    state.gatePassed=false;
-    saveState();
-    play("fail");
-    showGateFailedScreen();
-    return;
-  }
+  if(missed>=GATE_FAIL_LIMIT){     state.dayMode="gate_failed";     state.gatePassed=false;     saveState();     play("fail");     showGateFailedScreen();     return;   }
 
-  state.dayMode="trade";
-  state.gatePassed=true;
-  saveState();
-  play("good");
-  showGatePassedScreen();
-}
+  state.dayMode="trade";   state.gatePassed=true;   saveState();   play("good");   showGatePassedScreen(); }
 
 function showGatePassedScreen(){
+
   document.getElementById("statusBar").innerHTML="CLEARED";
-  document.getElementById("playArea").innerHTML=
-    "<div class='panel'>"+
-    "<div class='panel-title'>MENTAL STATE: STABLE</div>"+
-    "<div class='scroll' style='display:flex;align-items:center;justify-content:center;text-align:center;font-size:28px;line-height:1.05;'>GOOD LUCK</div>"+
-    "</div>";
 
-  setTimeout(()=>showMain(true),1200);
-}
+  document.getElementById("playArea").innerHTML=     "<div class='panel'>"+     "<div class='panel-title'>SUBJECT: TRADER</div>"+     "<div class='scroll' style='display:flex;align-items:center;justify-content:center;text-align:center;font-size:28px;line-height:1.05;'>"+     "STATUS: STABLE"+     "<br><br>"+     "STANDING BY"+     "</div>"+     "</div>";
 
-function showGateFailedScreen(){
-  document.getElementById("statusBar").innerHTML="ACCESS DENIED";
-  document.getElementById("playArea").innerHTML=
-    "<div class='panel'>"+
-    "<div class='panel-title'>WARNING</div>"+
-    "<div class='scroll' style='display:flex;align-items:center;justify-content:center;text-align:center;font-size:28px;line-height:1.05;'>"+
-    "EMOTIONALLY COMPROMISED<br><br>DO. NOT. TRADE."+
-    "<br><br><span style='font-size:22px;'>CONVERT THIS DAY INTO RECOVERY.</span>"+
-    "</div>"+
-    "<div class='panel-buttons'>"+
-    "<button class='mini-btn' onclick='convertGateFailToRecovery()'>RECOVERY</button>"+
-    "<button class='mini-btn' onclick='showMain()'>BACK</button>"+
-    "</div>"+
-    "</div>";
-}
-function convertGateFailToRecovery(){
-  if(!requirePower()) return;
+  setTimeout(()=>showMain(true),1200); }
+
+function showGateFailedScreen(){   document.getElementById("statusBar").innerHTML="ACCESS DENIED";   document.getElementById("playArea").innerHTML=     "<div class='panel'>"+     "<div class='panel-title'>WARNING</div>"+     "<div class='scroll' style='display:flex;align-items:center;justify-content:center;text-align:center;font-size:28px;line-height:1.05;'>"+     "EMOTIONALLY COMPROMISED<br><br>DO. NOT. TRADE."+     "<br><br><span style='font-size:22px;'>CONVERT THIS DAY INTO RECOVERY.</span>"+     "</div>"+     "<div class='panel-buttons'>"+     "<button class='mini-btn' onclick='convertGateFailToRecovery()'>RECOVERY</button>"+     "<button class='mini-btn' onclick='showMain()'>BACK</button>"+     "</div>"+     "</div>"; } function convertGateFailToRecovery(){   if(!requirePower()) return;
 
   play("good");
 
-  state.dayMode="recovery";
-  state.gateCompleted=true;
-  state.gatePassed=false;
-  state.recoveryChosen=true;
+  state.dayMode="recovery";   state.gateCompleted=true;   state.gatePassed=false;   state.recoveryChosen=true;
 
-  saveState();
-  showRecoveryCheck();
-}
-function showGallery(mode="trophies"){
-  if(!requirePower()) return;
-  play("menu");
-  stopPet();
-  stopFirework();
-  ensureAchievementArchive();
-  ensureVault();
+  awardRecoveryDay();
 
-  const achievementDays=getAchievementDays();
-  let html="";
-  html+="<div class='gallery-wrap'>";
-html+="<div class='gallery-title'>";
-  html+="<span class='gallery-tab' style='opacity:"+(mode==="trophies"?"1":".45")+"' onclick=\"showGallery('trophies')\">TROPHIES</span>";
-  html+=" &nbsp;|&nbsp; ";
-  html+="<span class='gallery-tab' style='opacity:"+(mode==="records"?"1":".45")+"' onclick=\"showGallery('records')\">RECORDS</span>";
-  html+=" &nbsp;|&nbsp; ";
-  html+="<span class='gallery-tab' style='opacity:"+(mode==="vault"?"1":".45")+"' onclick=\"showGallery('vault')\">VAULT</span>";
-  html+="</div>";
+  saveState();   showRecoveryCheck(); } function showGallery(mode="trophies"){   if(!requirePower()) return;   play("menu");   stopPet();   stopFirework();   ensureAchievementArchive();   ensureVault();
 
-  if(mode==="trophies"){
-    html+="<div class='gallery-hall' id='galleryHall'>";
+  const achievementDays=getAchievementDays();   let html="";   html+="<div class='gallery-wrap'>"; html+="<div class='gallery-title'>";   html+="<span class='gallery-tab' style='opacity:"+(mode==="trophies"?"1":".45")+"' onclick=\"showGallery('trophies')\">TROPHIES</span>";   html+=" &nbsp;|&nbsp; ";   html+="<span class='gallery-tab' style='opacity:"+(mode==="records"?"1":".45")+"' onclick=\"showGallery('records')\">RECORDS</span>";   html+=" &nbsp;|&nbsp; ";   html+="<span class='gallery-tab' style='opacity:"+(mode==="vault"?"1":".45")+"' onclick=\"showGallery('vault')\">VAULT</span>";   html+="</div>";
 
-    for(let i=0;i<achievementDays.length;i++){
-      let day=achievementDays[i];
-      let earned=state.achievements && state.achievements[day];
+  if(mode==="trophies"){     html+="<div class='gallery-hall' id='galleryHall'>";
 
-      html+="<div class='gallery-room "+(earned?"":"locked")+"'>";
-      html+="<div class='trophy-display'>";
-      html+="<div class='trophy-day'>DAY "+day+"</div>";
-      html+="<div class='trophy-date'>"+(earned ? earned : "")+"</div>";
+    for(let i=0;i<achievementDays.length;i++){       let day=achievementDays[i];       let earned=state.achievements && state.achievements[day];
 
-      if(earned){
-        html+="<div class='trophy-icon'>🏆</div>";
-      }else{
-        html+="<div class='empty-trophy'>□</div>";
-      }
+      html+="<div class='gallery-room "+(earned?"":"locked")+"'>";       html+="<div class='trophy-display'>";       html+="<div class='trophy-day'>DAY "+day+"</div>";       html+="<div class='trophy-date'>"+(earned ? earned : "")+"</div>";
 
-      html+="</div>";
-      html+="</div>";
-    }
+      if(earned){         html+="<div class='trophy-icon'>🏆</div>";       }else{         html+="<div class='empty-trophy'>□</div>";       }
 
-    html+="</div>";
-  }
+      html+="</div>";       html+="</div>";     }
 
-  else if(mode==="records"){
-    html+="<div class='panel'>";
-    html+="<div class='scroll'>";
+    html+="</div>";   }
 
-    if(!state.records || state.records.length<=0){
-      html+="<div class='small-note' style='margin-top:14px;'>NO RECORDS YET</div>";
-    }else{
-      for(let i=state.records.length-1;i>=0;i--){
-        let r=state.records[i];
-        let rookText="";
-        for(let j=0;j<r.rooks;j++) rookText+="♜";
+  else if(mode==="records"){     html+="<div class='panel'>";     html+="<div class='scroll'>";
 
-        html+="<div class='record-line'>";
-        html+=r.date+" "+r.grade+" "+rookText;
-        html+="</div>";
-      }
-    }
+html+="<div class='record-line'>REST THIS WEEK: "+recoveryCountThisWeek()+"</div>"; html+="<div class='record-line'>REST THIS MONTH: "+recoveryCountThisMonth()+"</div>";
 
-    html+="</div>";
-    html+="</div>";
-  }
+if(!state.records || state.records.length<=0){   html+="<div class='small-note' style='margin-top:14px;'>NO WEEK RECORDS YET</div>"; }else{       for(let i=state.records.length-1;i>=0;i--){         let r=state.records[i];         let rookText="";         for(let j=0;j<r.rooks;j++) rookText+="♜";
 
-  else if(mode==="vault"){
-    html+="<div class='panel'>";
-    html+="<div class='scroll'>";
-    html+="<div class='small-note'>LIFETIME VOW COINS</div>";
+        html+="<div class='record-line'>";         html+=r.date+" "+r.grade+" "+rookText;         html+="</div>";       }     }
+
+    html+="</div>";     html+="</div>";   }
+
+  else if(mode==="vault"){     html+="<div class='panel'>";     html+="<div class='scroll'>";     html+="<div class='small-note'>LIFETIME VOW COINS</div>";
 
     let vows=getVaultVows();
 
-    for(let i=0;i<vows.length;i++){
-      let vow=vows[i];
-      let count=state.vault[vow] || 0;
+    for(let i=0;i<vows.length;i++){       let vow=vows[i];       let count=state.vault[vow] || 0;
 
-      html+="<div class='vault-row'>";
-      html+="<div class='vault-name'>"+(i+1)+". "+vow+"</div>";
-      html+="<div class='vault-coins'>"+vaultCoinsHTML(count)+"</div>";
-      html+="<div class='vault-total'>TOTAL: "+count+"</div>";
-      html+="</div>";
-    }
+      html+="<div class='vault-row'>";       html+="<div class='vault-name'>"+(i+1)+". "+vow+"</div>";       html+="<div class='vault-coins'>"+vaultCoinsHTML(count)+"</div>";       html+="<div class='vault-total'>TOTAL: "+count+"</div>";       html+="</div>";     }
 
-    html+="</div>";
-    html+="</div>";
-  }
+    html+="</div>";     html+="</div>";   }
 
-  html+="<div class='gallery-footer'>BEST STREAK: "+state.bestStreak+"</div>";
-  html+="<div class='panel-buttons'>";
-  html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
-  html+="</div>";
-  html+="</div>";
+  html+="<div class='gallery-footer'>BEST STREAK: "+state.bestStreak+"</div>";   html+="<div class='panel-buttons'>";   html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";   html+="</div>";   html+="</div>";
 
   document.getElementById("playArea").innerHTML=html;
 
-  if(mode==="trophies"){
-    const hall=document.getElementById("galleryHall");
+  if(mode==="trophies"){     const hall=document.getElementById("galleryHall");
 
-    if(hall){
-      let earnedCount=0;
+    if(hall){       let earnedCount=0;
 
-      for(let i=0;i<achievementDays.length;i++){
-        if(state.achievements && state.achievements[achievementDays[i]]) earnedCount++;
-      }
+      for(let i=0;i<achievementDays.length;i++){         if(state.achievements && state.achievements[achievementDays[i]]) earnedCount++;       }
 
-      hall.scrollLeft=Math.max(0,(earnedCount-1)*hall.clientWidth);
-    }
-  }
-}
+      hall.scrollLeft=Math.max(0,(earnedCount-1)*hall.clientWidth);     }   } }
 
-function getCheckScrollTop(){
-  const sc=document.getElementById("checkScroll");
-  return sc ? sc.scrollTop : 0;
-}
+function getCheckScrollTop(){   const sc=document.getElementById("checkScroll");   return sc ? sc.scrollTop : 0; }
 
-function toggleVow(i){
-  if(!requirePower()) return;
+function toggleVow(i){   if(!requirePower()) return;
 
-  let scrollTop=getCheckScrollTop();
-  let vowState=getVowStateForToday();
-  let wasChecked=vowState[i];
+  let scrollTop=getCheckScrollTop();   let vowState=getVowStateForToday();   let wasChecked=vowState[i];
 
-  vowState[i]=!vowState[i];
+  vowState[i]=!wasChecked;
 
-  if(!wasChecked){
-    playVowNote(i);
-  }else{
-    play("reset");
-  }
+  if(!wasChecked){     playVowNote(i);   }else{     play("reset");   }
 
-  saveState();
-  showCheck(scrollTop);
-}
-function toggleDamage(i){
-  if(!requirePower()) return;
+  saveState();   showCheck(scrollTop); }
 
-  let scrollTop=getCheckScrollTop();
-  let wasChecked=state.damage[todayIndex][i];
+function toggleGrowthVow(i){   if(!requirePower()) return;
+
+  let scrollTop=getCheckScrollTop();   let wasChecked=state.growthVows[todayIndex][i];
+
+  state.growthVows[todayIndex][i]=!wasChecked;
+
+  if(!wasChecked){     playVowNote(i);   }else{     play("reset");   }
+
+  saveState();   showCheck(scrollTop); }function toggleDamage(i){   if(!requirePower()) return;
+
+  let scrollTop=getCheckScrollTop();   let wasChecked=state.damage[todayIndex][i];
 
   state.damage[todayIndex][i]=!wasChecked;
 
-  if(!wasChecked){
-    state.crackActive=true;
-    playDamageNote();
-  }else{
-    play("reset");
-  }
+  if(!wasChecked){     state.crackActive=true;     playDamageNote();   }else{     play("reset");   }
 
-  saveState();
-  showCheck(scrollTop);
-}
-function mintVaultCoinsForToday(){
-  ensureVault();
+  saveState();   showCheck(scrollTop); } function mintVaultCoinsForToday(){   ensureVault();
 
-  let todaysVows=getTodaysVows();
-  let vowState=getVowStateForToday();
+  let todaysVows=getTodaysVows();   let vowState=getVowStateForToday();
 
-  for(let i=0;i<todaysVows.length;i++){
-    if(vowState[i]){
-      state.vault[todaysVows[i]]++;
-    }
-  }
-}
-function lockDay(){
-  if(!requirePower()) return;
+  for(let i=0;i<todaysVows.length;i++){     if(vowState[i]){       state.vault[todaysVows[i]]++;     }   }
 
-  if(state.statuses[todayIndex]!=="inactive"){
-    play("reset");
-    showMain();
-    return;
-  }
+  for(let i=0;i<growthVows.length;i++){     if(state.growthVows[todayIndex][i]){       state.vault[growthVows[i]]++;     }   } } function lockDay(){   if(!requirePower()) return;
 
-  stopPet();
-  stopFirework();
+if(state.statuses[todayIndex]!=="inactive"){   play("reset");   showMain();   return; }
 
-  let passed=true;
-  let vowState=getVowStateForToday();
+  stopPet();   stopFirework();
 
-  if(state.dayMode==="recovery"){
-    vowState=state.recoveryVows[todayIndex];
-  }
+  let passed=true;   let vowState=getVowStateForToday();
 
-  for(let i=0;i<vowState.length;i++){
-    if(!vowState[i]) passed=false;
-  }
+  if(state.dayMode==="recovery"){     vowState=state.recoveryVows[todayIndex];   }
 
-  if(state.dayMode==="recovery"){
-    for(let i=0;i<recoveryDamageStates.length;i++){
-      if(state.recoveryDamage[todayIndex][i]) passed=false;
-    }
-}else if(state.dayMode==="damage"){
-  passed=false;
-}else{
-    for(let i=0;i<damageStates.length;i++){
-      if(state.damage[todayIndex][i]) passed=false;
-    }
-  }
+  for(let i=0;i<vowState.length;i++){     if(!vowState[i]) passed=false;   }
 
-if(state.dayMode==="recovery" && passed){
-  state.statuses[todayIndex]="recovery";
-}else{
-  state.statuses[todayIndex]=passed ? "complete" : "failed";
-}
+  if(state.dayMode==="recovery"){     for(let i=0;i<recoveryDamageStates.length;i++){       if(state.recoveryDamage[todayIndex][i]) passed=false;     } }else if(state.dayMode==="damage"){   passed=false; }else{     for(let i=0;i<damageStates.length;i++){       if(state.damage[todayIndex][i]) passed=false;     }   }
 
-  if(state.dayMode!=="recovery" && state.dayMode!=="damage"){
-    mintVaultCoinsForToday();
-  }
+if(state.dayMode==="recovery" && passed){   state.statuses[todayIndex]="recovery"; }else{   state.statuses[todayIndex]=passed ? "complete" : "failed"; }
 
-  let newRecord=false;
-  let newAchievement=false;
+  if(state.dayMode!=="recovery" && state.dayMode!=="damage"){     mintVaultCoinsForToday();   }
 
-if(passed){
-  state.crackActive=false;
+  let newRecord=false;   let newAchievement=false;
 
-  if(state.dayMode!=="recovery"){
-    state.streak++;
+if(passed){   state.crackActive=false;
 
-    if(recordAchievement(state.streak)){
-      newAchievement=true;
-    }
+  if(state.dayMode!=="recovery"){     state.streak++;
 
-    if(state.streak>state.bestStreak && state.streak<=365){
-      state.bestStreak=state.streak;
-      newRecord=true;
-    }
-  }
-}else{
-  state.streak=0;
-}
+    if(recordAchievement(state.streak)){       newAchievement=true;     }
 
-  let shouldPlayFirework=passed && todayIndex===5 && perfectWeek();
-  let weeklyForm=null;
+    if(state.streak>state.bestStreak && state.streak<=365){       state.bestStreak=state.streak;       newRecord=true;     }   } }else{   state.streak=0;
 
-  if(todayIndex===5){
-    if(shouldPlayFirework){
-      weeklyForm="angel";
-    }else{
-      weeklyForm=formFromWeeklyPercent(weeklyVowPercent());
-    }
+  if(state.dayMode==="trade"){     state.damageProtocolActive=true;   } }
 
-    state.finalForm=weeklyForm;
-    addWeekRecord(weeklyForm);
-  }
+  let shouldPlayFirework=passed && todayIndex===5 && perfectWeek();   let weeklyForm=null;
+
+  if(todayIndex===5){     if(shouldPlayFirework){       weeklyForm="angel";     }else{       weeklyForm=formFromWeeklyPercent(weeklyVowPercent());     }
+
+    state.finalForm=weeklyForm;     addWeekRecord(weeklyForm);   }
 
   saveState();
 
-  if(shouldPlayFirework){
-    play("perfectWeek");
-  }else if(passed){
-    play("resolve");
-  }else{
-    play("fail");
-  }
+  if(shouldPlayFirework){     play("perfectWeek");   }else if(passed){     play("resolve");   }else{     play("fail");   }
 
   renderDays();
 
   let petType=passed ? "king" : "rook";
 
-  if(todayIndex===5 && weeklyForm){
-    petType=weeklyForm;
-  }
+  if(todayIndex===5 && weeklyForm){     petType=weeklyForm;   }
 
-  let sealText="DAY SEALED";
-  let resultText=passed ? "INTEGRITY PRESERVED" : "INTEGRITY DAMAGED";
+  let sealText="DAY SEALED";   let resultText=passed ? "INTEGRITY PRESERVED" : "INTEGRITY DAMAGED";
 
-  if(state.dayMode==="recovery"){
-    sealText="RECOVERY SEALED";
-    resultText=passed ? "READINESS RESTORED" : "RECOVERY DAMAGED";
-  }
+  if(state.dayMode==="recovery"){     sealText="RECOVERY SEALED";     resultText=passed ? "READINESS RESTORED" : "RECOVERY DAMAGED";   }
 
-if(state.dayMode==="damage" && state.damageProtocolActive){
-  sealText="DAMAGE CONTAINED";
-  resultText="REPAIR PROTOCOL COMPLETE";
-}
+if(state.dayMode==="damage" && state.damageProtocolActive){   sealText="DAMAGE CONTAINED";   resultText="REPAIR PROTOCOL COMPLETE"; }
 
-  if(shouldPlayFirework){
-    sealText="PERFECT WEEK!";
-    resultText="INTEGRITY PRESERVED";
-  }else if(todayIndex===5 && weeklyForm){
-    sealText="WEEK FORM";
-    resultText=weeklyVowPercent()+"% VOWS KEPT";
-  }
+  if(shouldPlayFirework){     sealText="PERFECT WEEK!";     resultText="INTEGRITY PRESERVED";   }else if(todayIndex===5 && weeklyForm){     sealText="WEEK FORM";     resultText=weeklyVowPercent()+"% VOWS KEPT";   }
 
-  document.getElementById("playArea").innerHTML=
-    achievementHTML()+
-    streakHTML()+
-    sceneBackgroundHTML()+
-    seasonalOverlayHTML()+
-    rainbowHTML()+
-    crackHTML()+
-    ufoHTML()+
-    planeHTML()+
-    petHTML(petType)+
-    "<div class='ground'></div>"+
-    "<div class='textbox'>"+
-    sealText+
-    "<br>"+resultText+
-    "</div>";
+  document.getElementById("playArea").innerHTML=     achievementHTML()+     streakHTML()+     sceneBackgroundHTML()+     seasonalOverlayHTML()+     rainbowHTML()+     crackHTML()+     ufoHTML()+     planeHTML()+     petHTML(petType)+     "<div class='ground'></div>"+     "<div class='textbox'>"+     sealText+     "<br>"+resultText+     "</div>";
 
-  startPet();
-  startSkyAnimations();
-  updateStreakMusic();
+  startPet();   startSkyAnimations();   updateStreakMusic();
 
   if(shouldPlayFirework) setTimeout(()=>startFirework(),450);
 
-  if(newRecord && newAchievement){
-    setTimeout(()=>showAchievementBanner(state.streak),650);
-  }
-}
-function makeSaveData(){
-  return JSON.stringify({
-    kaizenKnightSave:true,
-    exportedAt:new Date().toISOString(),
-    state:state
-  });
-}
+  if(newRecord && newAchievement){     setTimeout(()=>showAchievementBanner(state.streak),650);   } } function makeSaveData(){   return JSON.stringify({     kaizenKnightSave:true,     exportedAt:new Date().toISOString(),     state:state   }); }
 
-function copySaveData(){
-  if(!requirePower()) return;
+function copySaveData(){   if(!requirePower()) return;
 
   const saveText=makeSaveData();
 
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(saveText).then(()=>{
-      play("good");
-      document.getElementById("statusBar").innerHTML="SAVE COPIED";
-    }).catch(()=>{
-      showExportSave(saveText);
-    });
-  }else{
-    showExportSave(saveText);
-  }
-}
+  if(navigator.clipboard && navigator.clipboard.writeText){     navigator.clipboard.writeText(saveText).then(()=>{       play("good");       document.getElementById("statusBar").innerHTML="SAVE COPIED";     }).catch(()=>{       showExportSave(saveText);     });   }else{     showExportSave(saveText);   } }
 
-function showExportSave(saveText){
-  stopPet();
-  stopFirework();
+function showExportSave(saveText){   stopPet();   stopFirework();
 
-  document.getElementById("playArea").innerHTML=
-    "<div class='panel'>"+
-    "<div class='panel-title'>COPY SAVE</div>"+
-    "<div class='scroll'>"+
-    "<div class='save-message'>COPY THIS TEXT INTO NOTES</div>"+
-    "<textarea class='save-textarea' id='exportBox' readonly></textarea>"+
-    "</div>"+
-    "<div class='panel-buttons'>"+
-    "<button class='mini-btn' onclick='showCode()'>BACK</button>"+
-    "</div>"+
-    "</div>";
+  document.getElementById("playArea").innerHTML=     "<div class='panel'>"+     "<div class='panel-title'>COPY SAVE</div>"+     "<div class='scroll'>"+     "<div class='save-message'>COPY THIS TEXT INTO NOTES</div>"+     "<textarea class='save-textarea' id='exportBox' readonly></textarea>"+     "</div>"+     "<div class='panel-buttons'>"+     "<button class='mini-btn' onclick='showCode()'>BACK</button>"+     "</div>"+     "</div>";
 
-  const box=document.getElementById("exportBox");
-  box.value=saveText;
-  box.focus();
-  box.select();
-}
+  const box=document.getElementById("exportBox");   box.value=saveText;   box.focus();   box.select(); }
 
-function showImportSave(){
-  if(!requirePower()) return;
+function showImportSave(){   if(!requirePower()) return;
 
-  play("menu");
-  stopPet();
-  stopFirework();
+  play("menu");   stopPet();   stopFirework();
 
-  document.getElementById("playArea").innerHTML=
-    "<div class='panel'>"+
-    "<div class='panel-title'>RESTORE SAVE</div>"+
-    "<div class='scroll'>"+
-    "<div class='save-message'>PASTE SAVE TEXT BELOW</div>"+
-    "<textarea class='save-textarea' id='importBox'></textarea>"+
-    "<div class='small-note'>RESTORE WILL REPLACE CURRENT DATA</div>"+
-    "</div>"+
-    "<div class='panel-buttons'>"+
-    "<button class='mini-btn' onclick='restoreSaveData()'>RESTORE</button>"+
-    "<button class='mini-btn' onclick='showCode()'>BACK</button>"+
-    "</div>"+
-    "</div>";
-}
+  document.getElementById("playArea").innerHTML=     "<div class='panel'>"+     "<div class='panel-title'>RESTORE SAVE</div>"+     "<div class='scroll'>"+     "<div class='save-message'>PASTE SAVE TEXT BELOW</div>"+     "<textarea class='save-textarea' id='importBox'></textarea>"+     "<div class='small-note'>RESTORE WILL REPLACE CURRENT DATA</div>"+     "</div>"+     "<div class='panel-buttons'>"+     "<button class='mini-btn' onclick='restoreSaveData()'>RESTORE</button>"+     "<button class='mini-btn' onclick='showCode()'>BACK</button>"+     "</div>"+     "</div>"; }
 
-function restoreSaveData(){
-  const box=document.getElementById("importBox");
+function restoreSaveData(){   const box=document.getElementById("importBox");
 
   if(!box) return;
 
-  try{
-    const parsed=JSON.parse(box.value.trim());
-    const imported=parsed.state ? parsed.state : parsed;
+  try{     const parsed=JSON.parse(box.value.trim());     const imported=parsed.state ? parsed.state : parsed;
 
-    if(!imported.statuses || typeof imported.streak!=="number"){
-      throw new Error("Invalid save");
-    }
+    if(!imported.statuses || typeof imported.streak!=="number"){       throw new Error("Invalid save");     }
 
     state=imported;
 
-// Keep restored weekly progress attached to the current visible week.
-// Without this, loadState() may treat the imported save as an old week
-// and reset the SUN-FRI progress bar after reload.
-state.weekKey=weekKey;
+// Keep restored weekly progress attached to the current visible week. // Without this, loadState() may treat the imported save as an old week // and reset the SUN-FRI progress bar after reload. state.weekKey=weekKey;
 
-    if(!state.achievements) state.achievements={};
-    if(!state.records) state.records=[];
-    if(!state.vault) state.vault=createFreshVault();
+    if(!state.achievements) state.achievements={}; if(!state.records) state.records=[]; if(!state.recoveryLog) state.recoveryLog=[]; if(!state.vault) state.vault=createFreshVault();
 
-ensureVault();
-repairWeeklyStatusesFromChecklist();
-saveState();
+ensureVault(); repairWeeklyStatusesFromChecklist(); saveState();
 
     play("good");
 
@@ -2185,14 +652,4 @@ saveState();
 
     play("fail");
 
-    document.getElementById("statusBar").innerHTML="RESTORE FAILED";
-  }
-}
-ensureDailyModeFresh();
-rollRainbowForToday();
-buildSounds();
-ensureAchievementArchive();
-renderDays();
-</script>
-</body>
-</html>
+    document.getElementById("statusBar").innerHTML="RESTORE FAILED";   } } ensureDailyModeFresh(); rollRainbowForToday(); buildSounds(); ensureAchievementArchive(); renderDays(); </script> </body> </html>
