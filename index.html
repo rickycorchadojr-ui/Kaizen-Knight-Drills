@@ -378,7 +378,7 @@ const powerQuotes=[
     weight:15
   }
 ];
-const APP_VERSION="7.3.0";
+const APP_VERSION="7.4.0";
 const DEBUG_MODE=false;
 const days=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"];
 let todayIndex=getTradingDayIndex();
@@ -2271,22 +2271,27 @@ function toggleVow(i){
   showCheck(scrollTop);
 }
 
-function mintVaultCoinsForToday(){
+function toggleGrowthVow(i){
+  if(!requirePower()) return;
+
   ensureVault();
 
-  let todaysVows=getTodaysVows();
-  let vowState=getVowStateForToday();
+  let scrollTop=getCheckScrollTop();
+  let wasChecked=state.growthVows[todayIndex][i];
+  let vowName=growthVows[i];
 
-  if(state.dayMode==="light"){
-    todaysVows=lightSessionVows;
-    vowState=state.lightSessionVows[todayIndex];
+  state.growthVows[todayIndex][i]=!wasChecked;
+
+  if(!wasChecked){
+    state.vault[vowName]++;
+    playVowNote(i);
+  }else{
+    state.vault[vowName]=Math.max(0,(state.vault[vowName] || 0)-1);
+    play("reset");
   }
 
-  for(let i=0;i<todaysVows.length;i++){
-    if(vowState[i]){
-      state.vault[todaysVows[i]]++;
-    }
-  }
+  saveState();
+  showCheck(scrollTop);
 }
 
 function toggleDamage(i){
@@ -2321,12 +2326,6 @@ function mintVaultCoinsForToday(){
   for(let i=0;i<todaysVows.length;i++){
     if(vowState[i]){
       state.vault[todaysVows[i]]++;
-    }
-  }
-
-  for(let i=0;i<growthVows.length;i++){
-    if(state.growthVows[todayIndex][i]){
-      state.vault[growthVows[i]]++;
     }
   }
 }
