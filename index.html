@@ -382,7 +382,7 @@ const powerQuotes=[
     weight:15
   }
 ];
-const APP_VERSION="7.7.4";
+const APP_VERSION="7.7.5";
 const DEBUG_MODE=false;
 const days=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"];
 let todayIndex=getTradingDayIndex();
@@ -549,6 +549,21 @@ function rainbowHTML(){
 }
 function crackHTML(){
   return state.crackActive ? "<img class='crack-overlay' src='Crack.png'>" : "";
+}
+function anyDamageActive(){
+  for(let d=0;d<6;d++){
+    for(let i=0;i<damageStates.length;i++){
+      if(state.damage[d][i]) return true;
+    }
+
+    if(state.recoveryDamage && state.recoveryDamage[d]){
+      for(let i=0;i<recoveryDamageStates.length;i++){
+        if(state.recoveryDamage[d][i]) return true;
+      }
+    }
+  }
+
+  return false;
 }
 function randRange(min,max){
   return min+Math.random()*(max-min);
@@ -1803,6 +1818,7 @@ function toggleLightSessionDamage(i){
     state.crackActive=true;
     playDamageNote();
   }else{
+    state.crackActive=anyDamageActive();
     play("reset");
   }
 
@@ -1893,6 +1909,7 @@ function toggleRecoveryDamage(i){
     state.crackActive=true;
     playDamageNote();
   }else{
+    state.crackActive=anyDamageActive();
     play("reset");
   }
 
@@ -2434,6 +2451,7 @@ function toggleDamage(i){
     state.crackActive=true;
     playDamageNote();
   }else{
+    state.crackActive=anyDamageActive();
     play("reset");
   }
 
@@ -2725,6 +2743,8 @@ saveState();
   }
 }
 ensureDailyModeFresh();
+state.crackActive=anyDamageActive();
+saveState();
 rollRainbowForToday();
 rollPowerQuoteForToday();
 buildSounds();
