@@ -41,6 +41,19 @@ body{margin:0;height:100vh;background:#111;display:flex;justify-content:center;a
 .halloween-overlay{position:absolute;left:50%;bottom:60px;width:320px;height:auto;transform:translateX(-50%);object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;z-index:1;pointer-events:none;}
 .rainbow-overlay{position:absolute;left:50%;top:0px;width:320px;height:auto;transform:translateX(-50%);object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;z-index:2;pointer-events:none;}
 .crack-overlay{position:absolute;left:50%;top:0px;width:320px;height:auto;transform:translateX(-50%);object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;z-index:2;pointer-events:none;}
+.flag-overlay{
+  position:absolute;
+  left:50%;
+  bottom:60px;
+  width:320px;
+  height:auto;
+  transform:translateX(-50%);
+  object-fit:contain;
+  image-rendering:pixelated;
+  image-rendering:crisp-edges;
+  z-index:2;
+  pointer-events:none;
+}
 .sky-object{
 position:absolute;
 top:var(--sky-top);
@@ -520,6 +533,36 @@ const powerQuotes=[
     author:"— Steve Jobs",
     weight:15
   },
+ {
+    text:"Life was easy. You don’t have to push your body to its limits. I love that feeling because you need to have willpower for it.",
+    author:"— Alysa Liu",
+     weight:15
+  },
+ {
+    text:"The greats do things when they don’t always want to. And that’s the separation.",
+    author:"— Michael Phelps",
+     weight:15
+  },
+ {
+    text:"Pressure is a privilege. It’s not going away. And it inspires me to play my best tennis.",
+    author:"— Novak Djokovic",
+     weight:15
+  },
+ {
+    text:"I have to learn to be even more patient.",
+    author:"— Roger Federer",
+     weight:15
+  },
+ {
+    text:"Everything negative - pressure, challenges - is all an opportunity for me to rise.",
+    author:"— Kobe Bryant",
+     weight:15
+  },
+ {
+    text:"I’ve failed over and over and over again in my life. And that is why I succeed.",
+    author:"— Michael Jordan",
+     weight:15
+  },
   {
     text:"Take the position that you are to some degree wrong. Then aspire to be less wrong.",
     author:"— Elon Musk",
@@ -527,7 +570,7 @@ const powerQuotes=[
   }
 ];
 
-const APP_VERSION="8.0.4";
+const APP_VERSION="8.0.5";
 const DEBUG_MODE=false;
 const days=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"];
 let todayIndex=getTradingDayIndex();
@@ -536,6 +579,8 @@ let state=loadState();
 let moveTimer=null;
 let sleepTimer=null;
 let gateTimer=null;
+let flagTimer=null;
+let flagFrame=1;
 let sleepFrame=1;
 let petStep=0;
 let poweredOn=false;
@@ -718,6 +763,43 @@ function rainbowHTML(){
 }
 function crackHTML(){
   return state.crackActive ? "<img class='crack-overlay' src='Crack.png'>" : "";
+}
+function flagHTML(){
+  if(!state.trainingCompleteToday) return "";
+  return "<img class='flag-overlay' id='flagImg' src='flag1.png'>";
+}
+
+function stopFlagAnimation(){
+  clearInterval(flagTimer);
+  flagTimer=null;
+  flagFrame=1;
+}
+
+function startFlagAnimation(){
+  stopFlagAnimation();
+
+  const flag=document.getElementById("flagImg");
+  if(!flag) return;
+
+  flagFrame=1;
+  flag.src="flag1.png";
+
+  flagTimer=setInterval(()=>{
+    const currentFlag=document.getElementById("flagImg");
+
+    if(!currentFlag){
+      stopFlagAnimation();
+      return;
+    }
+
+    flagFrame++;
+
+    if(flagFrame>8){
+      flagFrame=1;
+    }
+
+    currentFlag.src="flag"+flagFrame+".png";
+  },1000/12);
 }
 function anyDamageActive(){
   for(let d=0;d<6;d++){
@@ -1012,6 +1094,7 @@ function buildSounds(){
 sounds.firework=new Audio("8d82b5_Super_Mario_Bros_Fireworks_Sound_Effect.mp3");
 sounds.perfectWeek=new Audio("fever-stage-clear (online-video-cutter.com).mp3");
 sounds.milestone=new Audio("myinstants.mp3");
+sounds.trainingComplete=new Audio("win31.mp3");
 }
 function play(name){
   if(!sounds[name]) return;
@@ -1454,6 +1537,7 @@ function petHTML(type="knight"){
 function stopPet(){
   clearInterval(moveTimer);
   clearInterval(sleepTimer);
+  stopFlagAnimation();
   moveTimer=null;
   sleepTimer=null;
 }
@@ -1825,8 +1909,9 @@ document.getElementById("statusBar").innerHTML=status;
     streakHTML()+
     sceneBackgroundHTML()+
 
-seasonalOverlayHTML()+
+flagHTML()+
 
+seasonalOverlayHTML()+
 rainbowHTML()+
 
 crackHTML()+
@@ -1844,6 +1929,7 @@ petHTML(petType)+
 (DEBUG_MODE ? "<button onclick='debugAddStreak()' style='position:absolute;left:8px;bottom:4px;z-index:30;font-family:VT323;font-size:14px;background:#111;color:white;border:none;'>+STREAK</button>" : "");
 startPet(fromBoot ? 650 : 0);
 startSkyAnimations();
+startFlagAnimation();
 updateStreakMusic();
 }
 function showCheck(restoreScroll=null){
@@ -2306,8 +2392,12 @@ state.trainingPromotedToday=true;
   }
 
   if(state.trainingCompleteToday && state.todayDrills===state.trainingTarget){
-    play("good");
     showTrainingComplete();
+
+    setTimeout(()=>{
+      play("trainingComplete");
+    },100);
+
     return;
   }else{
     playTrainingNote(state.todayDrills);
@@ -3057,6 +3147,7 @@ if(state.dayMode==="damage" && state.damageProtocolActive){
     achievementHTML()+
     streakHTML()+
     sceneBackgroundHTML()+
+    flagHTML()+
     seasonalOverlayHTML()+
     rainbowHTML()+
     crackHTML()+
@@ -3071,6 +3162,7 @@ if(state.dayMode==="damage" && state.damageProtocolActive){
 
   startPet();
   startSkyAnimations();
+  startFlagAnimation();
   updateStreakMusic();
 
   if(shouldPlayFirework) setTimeout(()=>startFirework(),450);
