@@ -365,7 +365,9 @@ const sundayVows=[
   "LOCK BOTH ACCOUNTS"
 ];
 const growthVows=[
-  "DRILLS"
+  "DRILLS",
+  "JOURNAL REVIEW",
+  "FILM STUDY"
 ];
 const damageStates=[
   "SPIRALED AFTER LOSS / DON'T GET EMOTIONAL",
@@ -460,6 +462,8 @@ const manualNotes=[
   ["JOURNAL BOTH ACCOUNTS","WIN: BOTH REVIEWED. FAIL: LEFT UNWRITTEN."],
   ["IF STOP HIT, NO TRADING SECOND ACCOUNT","WIN: STOP MEANS DONE. FAIL: SWITCHED ACCOUNTS."],
   ["DRILLS","WIN: PRACTICE DONE. FAIL: SKIPPED."],
+["JOURNAL REVIEW","WIN: REVIEWED PRIOR JOURNALS FOR PATTERNS OR LESSONS. FAIL: NO REVIEW."],
+["FILM STUDY","WIN: REVIEWED SCREEN RECORDING FOR LESSONS OR RULE VIOLATIONS. FAIL: NO REVIEW."],
 ["SPIRALED AFTER LOSS / DON'T GET EMOTIONAL","DAMAGE: LOSS CAUSED LOSS OF CONTROL. UNCHARACTERISTICALLY EMOTIONAL."],
   ["TRADED OUTSIDE ROUTINE","DAMAGE: TRADED WITHOUT RITUAL."],
   ["RISK SETTINGS REMOVED","DAMAGE: SAFETY WAS UNLOCKED."],
@@ -563,6 +567,116 @@ const powerQuotes=[
     author:"— Michael Jordan",
      weight:15
   },
+{
+    text:"The man on top of the mountain didn’t fall there.",
+    author:"— Vince Lombardi",
+     weight:15
+  },
+{
+    text:"There is only one way to succeed in anything, and that is to give it everything.",
+    author:"— Vince Lombardi",
+     weight:15
+  },
+{
+    text:"Perfection is not attainable. But if we chase perfection, we can catch excellence.",
+    author:"— Vince Lombardi",
+     weight:15
+  },
+{
+    text:"Winning is not a sometime thing. You don’t do things right once in a while… you do them right all the time.",
+    author:"— Vince Lombardi",
+     weight:15
+  },
+{
+    text:"Winning is habit. Watch your thoughts. Beliefs become words. Action becomes habit. Habit becomes character.",
+    author:"— Vince Lombardi",
+     weight:15
+  },
+{
+    text:"Nobody is hurt. Hurt is in the mind.",
+    author:"— Vince Lombardi",
+     weight:15
+  },
+{
+    text:"The harder you work, the harder it is to surrender.",
+    author:"— Vince Lombardi",
+     weight:15
+  },
+{
+    text:"The measure of who we are is what we do with what we have.",
+    author:"— Vince Lombardi",
+     weight:15
+  },
+{
+    text:"If you don’t think you’re a winner, you don’t belong here.",
+    author:"— Vince Lombardi",
+     weight:15
+  },
+{
+    text:"Excellence must be pursued with all of one’s might and every bit of effort that we have each day there’s a new encounter.",
+    author:"— Vince Lombardi",
+     weight:15
+  },
+{
+    text:"With freedom, books, flowers, and the moon, who could not be happy?",
+    author:"— Oscar Wilde",
+     weight:15
+  },
+{
+    text:"Life is far too important of a thing to ever talk seriously about.",
+    author:"— Oscar Wilde",
+     weight:15
+  },
+{
+    text:"I don’t want to be at the mercy of my emotions. I want to use them, to enjoy them, and to dominate them.",
+    author:"— Oscar Wilde",
+     weight:15
+  },
+{
+    text:"Have no sense of humor about losing.",
+    author:"— Rafael Nadal",
+     weight:15
+  },
+{
+    text:"I play every point like my life depends on it.",
+    author:"— Rafael Nadal",
+     weight:15
+  },
+{
+    text:"Losing is not my enemy, fear of losing is my enemy.",
+    author:"— Rafael Nadal",
+     weight:15
+  },
+{
+    text:"Is only a tennis match. At the end, that’s life. There is much more important things.",
+    author:"— Rafael Nadal",
+     weight:15
+  },
+{
+    text:"The real prize I would say is in the performance…and the journey.",
+    author:"— Alysa Liu",
+     weight:15
+  },
+{
+    text:"Winning isn't all that. And neither is losing. It’s an outcome. What matters is the input and the journey.",
+    author:"— Alysa Liu",
+     weight:15
+  },
+{
+    text:"I don’t think anything is gonna be hard. What is there to lose? Every second you are there you are gaining something.",
+    author:"— Alysa Liu",
+     weight:15
+  },
+{
+    text:"Even if I mess up and fall, that’s totally OK, too. I’m fine with any outcome, as long as I’m out there.",
+    author:"— Alysa Liu",
+     weight:15
+  },
+{
+    text:"Things done well and with a care exempt themselves from fear.",
+    author:"— William Shakespeare",
+     weight:15
+  },
   {
     text:"Take the position that you are to some degree wrong. Then aspire to be less wrong.",
     author:"— Elon Musk",
@@ -570,7 +684,7 @@ const powerQuotes=[
   }
 ];
 
-const APP_VERSION="8.0.6";
+const APP_VERSION="8.1.0";
 const DEBUG_MODE=false;
 const days=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"];
 let todayIndex=getTradingDayIndex();
@@ -1095,6 +1209,7 @@ sounds.firework=new Audio("8d82b5_Super_Mario_Bros_Fireworks_Sound_Effect.mp3");
 sounds.perfectWeek=new Audio("fever-stage-clear (online-video-cutter.com).mp3");
 sounds.milestone=new Audio("myinstants.mp3");
 sounds.trainingComplete=new Audio("win31.mp3");
+sounds.growth=new Audio("success.mp3");
 }
 function play(name){
   if(!sounds[name]) return;
@@ -1955,7 +2070,7 @@ function showCheck(restoreScroll=null){
     html+="</div>";
   }
 html+="<div class='section-label'>GROWTH</div>";
-html+="<div class='small-note'>TRACKED, BUT DOES NOT BLOCK LOCKING</div>";
+html+="<div class='small-note'>TEMPER THE BLADE</div>";
 
 for(let i=0;i<growthVows.length;i++){
   html+="<div class='rule'>";
@@ -2301,7 +2416,7 @@ function resetTrainingForNewDay(){
 state.trainingPromotedToday=false;
 }
 
-function showTrain(playSound=true){
+function showTrain(playSound=true,restoreScroll=null){
   if(!requirePower()) return;
 
   resetTrainingForNewDay();
@@ -2316,7 +2431,7 @@ function showTrain(playSound=true){
   let html="";
   html+="<div class='panel'>";
   html+="<div class='panel-title'>TRAINING GROUNDS</div>";
-  html+="<div class='scroll'>";
+  html+="<div class='scroll' id='trainingScroll'>";
 
   html+="<div class='training-stat'>";
 html+="<div>TODAY'S JOURNEY</div>";
@@ -2352,6 +2467,11 @@ html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";  html+="</d
 
   document.getElementById("playArea").innerHTML=html;
 
+  if(restoreScroll!==null){
+    const sc=document.getElementById("trainingScroll");
+    if(sc) sc.scrollTop=restoreScroll;
+  }
+
   saveState();
 }
 
@@ -2361,8 +2481,15 @@ function playTrainingNote(progress){
   playVowNote(idx);
 }
 
+function getTrainingScrollTop(){
+  const sc=document.getElementById("trainingScroll");
+  return sc ? sc.scrollTop : 0;
+}
+
 function addTrainingDrill(){
   if(!requirePower()) return;
+
+  const scrollTop=getTrainingScrollTop();
 
   resetTrainingForNewDay();
 
@@ -2392,28 +2519,30 @@ state.trainingPromotedToday=true;
   }
 
   if(state.trainingCompleteToday && state.todayDrills===state.trainingTarget){
-    showTrainingComplete();
+  showTrainingComplete();
 
-    setTimeout(()=>{
-      play("trainingComplete");
-    },100);
+  setTimeout(()=>{
+    play("trainingComplete");
+  },250);
 
-    return;
-  }else{
-    playTrainingNote(state.todayDrills);
-  }
+  return;
+}else{
+  playTrainingNote(state.todayDrills);
+}
 
-  showTrain(false);
+  showTrain(false,scrollTop);
 }
 
 function removeTrainingDrill(){
   if(!requirePower()) return;
 
+  const scrollTop=getTrainingScrollTop();
+
   resetTrainingForNewDay();
 
   if(state.todayDrills<=0){
     play("reset");
-    showTrain(false);
+    showTrain(false,scrollTop);
     return;
   }
 
@@ -2434,7 +2563,7 @@ function removeTrainingDrill(){
 
   play("reset");
   saveState();
-  showTrain(false);
+  showTrain(false,scrollTop);
 }
 
 function showTrainingComplete(){
@@ -2965,9 +3094,9 @@ function toggleGrowthVow(i){
 
   state.growthVows[todayIndex][i]=!wasChecked;
 
-  if(!wasChecked){
+if(!wasChecked){
     state.vault[vowName]++;
-    playVowNote(i);
+    play("growth");
   }else{
     state.vault[vowName]=Math.max(0,(state.vault[vowName] || 0)-1);
     play("reset");
