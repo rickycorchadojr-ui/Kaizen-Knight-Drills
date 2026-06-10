@@ -743,7 +743,7 @@ const powerQuotes=[
   }
 ];
 
-const APP_VERSION="8.2.3";
+const APP_VERSION="8.2.6";
 const DEBUG_MODE=false;
 const days=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"];
 let todayIndex=getTradingDayIndex();
@@ -1141,12 +1141,13 @@ function recoveryCountThisMonth(){
 
 function actionReportCompleted(){
   return (
-    state.actionCondition!==null ||
-    state.actionLesson!==null ||
-    state.actionState!==null ||
-    state.actionReframe!==null
+    (state.actionConditions && state.actionConditions.length>0) ||
+    (state.actionLessons && state.actionLessons.length>0) ||
+    (state.actionStates && state.actionStates.length>0) ||
+    (state.actionReframes && state.actionReframes.length>0)
   );
 }
+
 
 function actionReportCount(){
   if(!state.actionLog) return 0;
@@ -1195,28 +1196,23 @@ function logActionReport(){
 
   const dayKey=getDayKey();
 
+  const entry={
+    dayKey:dayKey,
+    date:formatToday(),
+    conditions:state.actionConditions || [],
+    lessons:state.actionLessons || [],
+    states:state.actionStates || [],
+    reframes:state.actionReframes || []
+  };
+
   for(let i=0;i<state.actionLog.length;i++){
     if(state.actionLog[i].dayKey===dayKey){
-      state.actionLog[i]={
-        dayKey:dayKey,
-        date:formatToday(),
-        condition:state.actionCondition,
-        lesson:state.actionLesson,
-        state:state.actionState,
-        reframe:state.actionReframe
-      };
+      state.actionLog[i]=entry;
       return;
     }
   }
 
-  state.actionLog.push({
-    dayKey:dayKey,
-    date:formatToday(),
-    condition:state.actionCondition,
-    lesson:state.actionLesson,
-    state:state.actionState,
-    reframe:state.actionReframe
-  });
+  state.actionLog.push(entry);
 }
 
 function formatWeekDisplay(){
@@ -1351,11 +1347,36 @@ sounds.milestone=new Audio("myinstants.mp3");
 sounds.trainingComplete=new Audio("win31.mp3");
 sounds.growth=new Audio("success.mp3");
 }
+
+let lastMenuSoundAt=0;
+
 function play(name){
   if(!sounds[name]) return;
+
+  if(name==="menu"){
+    const now=Date.now();
+    if(now-lastMenuSoundAt<90) return;
+    lastMenuSoundAt=now;
+  }
+
   let s=sounds[name].cloneNode();
   s.play().catch(()=>{});
 }
+function goMain(){
+  play("menu");
+  showMain();
+}
+
+function goCheckRouter(){
+  play("menu");
+  showCheckRouter();
+}
+
+function goReport(){
+  play("menu");
+  showAfterActionReport();
+}
+
 function playVowNote(i){
   if(!sounds.vowNotes) return;
   let note=sounds.vowNotes[i % sounds.vowNotes.length].cloneNode();
@@ -1532,10 +1553,10 @@ recoveryChosen:false,
 damageProtocolActive:false,
 damageFailure:null,
 damageRepair:null,
-actionCondition:null,
-actionLesson:null,
-actionState:null,
-actionReframe:null,
+actionConditions:[],
+actionLessons:[],
+actionStates:[],
+actionReframes:[],
 gateAnswers:Array(gateQuestions.length).fill(false),
 readinessScore:null,
 readinessWeather:null,
@@ -1645,10 +1666,10 @@ if(typeof parsed.recoveryChosen==="undefined") parsed.recoveryChosen=false;
 if(typeof parsed.damageProtocolActive==="undefined") parsed.damageProtocolActive=false;
 if(typeof parsed.damageFailure==="undefined") parsed.damageFailure=null;
 if(typeof parsed.damageRepair==="undefined") parsed.damageRepair=null;
-if(typeof parsed.actionCondition==="undefined") parsed.actionCondition=null;
-if(typeof parsed.actionLesson==="undefined") parsed.actionLesson=null;
-if(typeof parsed.actionState==="undefined") parsed.actionState=null;
-if(typeof parsed.actionReframe==="undefined") parsed.actionReframe=null;
+if(!Array.isArray(parsed.actionConditions)) parsed.actionConditions=[];
+if(!Array.isArray(parsed.actionLessons)) parsed.actionLessons=[];
+if(!Array.isArray(parsed.actionStates)) parsed.actionStates=[];
+if(!Array.isArray(parsed.actionReframes)) parsed.actionReframes=[];
 if(!parsed.gateAnswers || parsed.gateAnswers.length!==gateQuestions.length){
   parsed.gateAnswers=Array(gateQuestions.length).fill(false);
 }
@@ -1688,10 +1709,10 @@ function ensureDailyModeFresh(){
 state.damageProtocolActive=false;
 state.damageFailure=null;
 state.damageRepair=null;
-state.actionCondition=null;
-state.actionLesson=null;
-state.actionState=null;
-state.actionReframe=null;
+state.actionConditions=[];
+state.actionLessons=[];
+state.actionStates=[];
+state.actionReframes=[];
 state.gateAnswers=Array(gateQuestions.length).fill(false);
   state.readinessScore=null;
   state.readinessWeather=null;
@@ -2260,8 +2281,8 @@ for(let i=0;i<growthVows.length;i++){
   }
   html+="</div>";
 html+="<div class='panel-buttons'>";
-html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
-html+="<button class='mini-btn' onclick='showAfterActionReport()'>REPORT</button>";
+html+="<button class='mini-btn' onclick='goMain()'>BACK</button>";
+html+="<button class='mini-btn' onclick='goReport()'>REPORT</button>";
 html+="<button class='mini-btn' onclick='lockDay()'>LOCK</button>";
 html+="</div>";
  html+="</div>";
@@ -2309,8 +2330,8 @@ function showLightSessionCheck(restoreScroll=null){
 
   html+="</div>";
   html+="<div class='panel-buttons'>";
-  html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
-  html+="<button class='mini-btn' onclick='showAfterActionReport()'>REPORT</button>";
+  html+="<button class='mini-btn' onclick='goMain()'>BACK</button>";
+  html+="<button class='mini-btn' onclick='goReport()'>REPORT</button>";
   html+="<button class='mini-btn' onclick='lockDay()'>LOCK</button>";
   html+="</div>";
   html+="</div>";
@@ -2402,7 +2423,7 @@ function showRecoveryCheck(restoreScroll=null){
 
   html+="</div>";
   html+="<div class='panel-buttons'>";
-  html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
+  html+="<button class='mini-btn' onclick='goMain()'>BACK</button>";
   html+="</div>";
   html+="</div>";
 
@@ -2413,6 +2434,7 @@ function showRecoveryCheck(restoreScroll=null){
     if(sc) sc.scrollTop=restoreScroll;
   }
 }
+
 
 function getRecoveryScrollTop(){
   const sc=document.getElementById("recoveryScroll");
@@ -2456,6 +2478,7 @@ function toggleRecoveryDamage(i){
   saveState();
   showRecoveryCheck(scrollTop);
 }
+
 function showAfterActionReport(restoreScroll=null){
   if(!requirePower()) return;
   if(todayIndex<0){
@@ -2477,7 +2500,7 @@ function showAfterActionReport(restoreScroll=null){
   html+="<div class='section-label'>MARKET CONDITION</div>";
   for(let i=0;i<actionMarketConditions.length;i++){
     html+="<div class='rule'>";
-    html+="<div class='box "+(state.actionCondition===i?"checked":"")+"' onclick='chooseActionCondition("+i+")'></div>";
+    html+="<div class='box "+((state.actionConditions||[]).includes(i)?"checked":"")+"' onclick='chooseActionCondition("+i+")'></div>";
     html+="<div>"+actionMarketConditions[i]+"</div>";
     html+="</div>";
   }
@@ -2485,7 +2508,7 @@ function showAfterActionReport(restoreScroll=null){
   html+="<div class='section-label'>LESSON</div>";
   for(let i=0;i<actionLessons.length;i++){
     html+="<div class='rule'>";
-    html+="<div class='box "+(state.actionLesson===i?"checked":"")+"' onclick='chooseActionLesson("+i+")'></div>";
+    html+="<div class='box "+((state.actionLessons||[]).includes(i)?"checked":"")+"' onclick='chooseActionLesson("+i+")'></div>";
     html+="<div>"+actionLessons[i]+"</div>";
     html+="</div>";
   }
@@ -2493,7 +2516,7 @@ function showAfterActionReport(restoreScroll=null){
   html+="<div class='section-label'>STATE</div>";
   for(let i=0;i<actionStates.length;i++){
     html+="<div class='rule'>";
-    html+="<div class='box "+(state.actionState===i?"checked":"")+"' onclick='chooseActionState("+i+")'></div>";
+    html+="<div class='box "+((state.actionStates||[]).includes(i)?"checked":"")+"' onclick='chooseActionState("+i+")'></div>";
     html+="<div>"+actionStates[i]+"</div>";
     html+="</div>";
   }
@@ -2501,86 +2524,71 @@ function showAfterActionReport(restoreScroll=null){
   html+="<div class='section-label'>REFRAME</div>";
   for(let i=0;i<actionReframes.length;i++){
     html+="<div class='rule'>";
-    html+="<div class='box "+(state.actionReframe===i?"checked":"")+"' onclick='chooseActionReframe("+i+")'></div>";
+    html+="<div class='box "+((state.actionReframes||[]).includes(i)?"checked":"")+"' onclick='chooseActionReframe("+i+")'></div>";
     html+="<div>"+actionReframes[i]+"</div>";
     html+="</div>";
   }
 
   html+="</div>";
   html+="<div class='panel-buttons'>";
-  html+="<button class='mini-btn' onclick='showCheckRouter()'>CHECK</button>";
-  html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
+  html+="<button class='mini-btn' onclick='goCheckRouter()'>CHECK</button>";
+  html+="<button class='mini-btn' onclick='goMain()'>BACK</button>";
   html+="</div>";
   html+="</div>";
 
   document.getElementById("playArea").innerHTML=html;
+
   if(restoreScroll!==null){
     const sc=document.getElementById("actionScroll");
     if(sc) sc.scrollTop=restoreScroll;
   }
 }
+
 function getActionScrollTop(){
   const sc=document.getElementById("actionScroll");
   return sc ? sc.scrollTop : 0;
 }
-function chooseActionCondition(i){
+
+function toggleActionArray(field,i,soundType){
   if(!requirePower()) return;
+
   const scrollTop=getActionScrollTop();
-  if(state.actionCondition===i){
-    state.actionCondition=null;
+
+  if(!Array.isArray(state[field])) state[field]=[];
+
+  const pos=state[field].indexOf(i);
+
+  if(pos>=0){
+    state[field].splice(pos,1);
     play("reset");
   }else{
-    state.actionCondition=i;
-    playVowNote(i);
+    state[field].push(i);
+
+    if(soundType==="good"){
+      play("good");
+    }else{
+      playVowNote(i);
+    }
   }
 
   saveState();
   showAfterActionReport(scrollTop);
+}
+
+function chooseActionCondition(i){
+  toggleActionArray("actionConditions",i,"note");
 }
 
 function chooseActionLesson(i){
-  if(!requirePower()) return;
-  const scrollTop=getActionScrollTop();
-  if(state.actionLesson===i){
-    state.actionLesson=null;
-    play("reset");
-  }else{
-    state.actionLesson=i;
-    playVowNote(i+1);
-  }
-
-  saveState();
-  showAfterActionReport(scrollTop);
+  toggleActionArray("actionLessons",i,"note");
 }
 
 function chooseActionState(i){
-  if(!requirePower()) return;
-  const scrollTop=getActionScrollTop();
-  if(state.actionState===i){
-    state.actionState=null;
-    play("reset");
-  }else{
-    state.actionState=i;
-    playVowNote(i+2);
-  }
-
-  saveState();
-  showAfterActionReport(scrollTop);
+  toggleActionArray("actionStates",i,"note");
 }
 
 function chooseActionReframe(i){
-  if(!requirePower()) return;
-  const scrollTop=getActionScrollTop();
-  if(state.actionReframe===i){
-    state.actionReframe=null;
-    play("reset");
-  }else{
-    state.actionReframe=i;
-    play("good");
-  }
-
-  saveState();
-  showAfterActionReport(scrollTop);
+  toggleActionArray("actionReframes",i,"good");
 }
 
 function showDamageDiagnosis(){
@@ -2623,12 +2631,14 @@ function showDamageDiagnosis(){
   html+="</div>";
   html+="<div class='panel-buttons'>";
   html+="<button class='mini-btn' onclick='showDamageProtocol()'>PROTOCOL</button>";
-  html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
+  html+="<button class='mini-btn' onclick='goMain()'>BACK</button>";
   html+="</div>";
   html+="</div>";
 
   document.getElementById("playArea").innerHTML=html;
 }
+
+
 
 function chooseDamageFailure(i){
   if(!requirePower()) return;
@@ -2687,7 +2697,7 @@ function showDamageProtocol(restoreScroll=null){
   html+="</div>";
   html+="<div class='panel-buttons'>";
 html+="<button class='mini-btn' onclick='showDamageDiagnosis()'>DIAGNOSE</button>";
-html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
+html+="<button class='mini-btn' onclick='goMain()'>BACK</button>";
 html+="</div>";
   html+="</div>";
 
@@ -2840,7 +2850,7 @@ html+="</div>";
   html+="<div class='panel-buttons'>";
   html+="<button class='mini-btn' onclick='removeTrainingDrill()'>-1</button>";
 html+="<button class='mini-btn' onclick='addTrainingDrill()'>+1</button>";
-html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";  html+="</div>";
+html+="<button class='mini-btn' onclick='goMain()'>BACK</button>";  html+="</div>";
   html+="</div>";
 
   document.getElementById("playArea").innerHTML=html;
@@ -3323,87 +3333,113 @@ function convertGateFailToRecovery(){
   saveState();
   showRecoveryCheck();
 }
+
+function actionReportSectionHTML(title,list,field){
+  if(!state.actionLog || state.actionLog.length<=0){
+    return "";
+  }
+
+  let counts=Array(list.length).fill(0);
+
+  for(let i=0;i<state.actionLog.length;i++){
+    let arr=state.actionLog[i][field] || [];
+    for(let j=0;j<arr.length;j++){
+      if(typeof counts[arr[j]]==="number"){
+        counts[arr[j]]++;
+      }
+    }
+  }
+
+  let html="<div class='section-label'>"+title+"</div>";
+
+  for(let i=0;i<list.length;i++){
+    let count=counts[i];
+    if(count<=0) continue;
+
+    let percent=Math.round((count/actionReportCount())*100);
+    html+="<div class='record-line'>"+list[i]+": "+count+" / "+percent+"%</div>";
+  }
+
+  return html;
+}
+
 function showGallery(mode="trophies"){
   if(!requirePower()) return;
   play("menu");
   stopPet();
   stopFirework();
   document.getElementById("statusBar").innerHTML="GALLERY";
-ensureAchievementArchive();
+  ensureAchievementArchive();
   ensureVault();
 
   const achievementDays=getAchievementDays();
   let html="";
   html+="<div class='gallery-wrap'>";
-html+="<div class='gallery-title'>";
+  html+="<div class='gallery-title'>";
   html+="<span class='gallery-tab' style='opacity:"+(mode==="trophies"?"1":".45")+"' onclick=\"showGallery('trophies')\">TROPHIES</span>";
   html+=" &nbsp;|&nbsp; ";
   html+="<span class='gallery-tab' style='opacity:"+(mode==="records"?"1":".45")+"' onclick=\"showGallery('records')\">RECORDS</span>";
+  html+=" &nbsp;|&nbsp; ";
+  html+="<span class='gallery-tab' style='opacity:"+(mode==="reports"?"1":".45")+"' onclick=\"showGallery('reports')\">REPORTS</span>";
   html+=" &nbsp;|&nbsp; ";
   html+="<span class='gallery-tab' style='opacity:"+(mode==="vault"?"1":".45")+"' onclick=\"showGallery('vault')\">VAULT</span>";
   html+="</div>";
 
   if(mode==="trophies"){
     html+="<div class='gallery-hall' id='galleryHall'>";
-
     for(let i=0;i<achievementDays.length;i++){
       let day=achievementDays[i];
       let earned=state.achievements && state.achievements[day];
-
       html+="<div class='gallery-room "+(earned?"":"locked")+"'>";
       html+="<div class='trophy-display'>";
       html+="<div class='trophy-day'>DAY "+day+"</div>";
       html+="<div class='trophy-date'>"+(earned ? earned : "")+"</div>";
-
-      if(earned){
-        html+="<div class='trophy-icon'>🏆</div>";
-      }else{
-        html+="<div class='empty-trophy'>□</div>";
-      }
-
-      html+="</div>";
-      html+="</div>";
+      html+=earned ? "<div class='trophy-icon'>🏆</div>" : "<div class='empty-trophy'>□</div>";
+      html+="</div></div>";
     }
-
     html+="</div>";
   }
 
   else if(mode==="records"){
-    html+="<div class='panel'>";
-    html+="<div class='scroll'>";
+    html+="<div class='panel'><div class='scroll'>";
+    html+="<div class='record-line'>REST THIS WEEK: "+recoveryCountThisWeek()+"</div>";
+    html+="<div class='record-line'>REST THIS MONTH: "+recoveryCountThisMonth()+"</div>";
 
-html+="<div class='record-line'>REST THIS WEEK: "+recoveryCountThisWeek()+"</div>";
-html+="<div class='record-line'>REST THIS MONTH: "+recoveryCountThisMonth()+"</div>";
-
-if(!state.records || state.records.length<=0){
-  html+="<div class='small-note' style='margin-top:14px;'>NO WEEK RECORDS YET</div>";
-}else{
+    if(!state.records || state.records.length<=0){
+      html+="<div class='small-note' style='margin-top:14px;'>NO WEEK RECORDS YET</div>";
+    }else{
       for(let i=state.records.length-1;i>=0;i--){
         let r=state.records[i];
         let rookText="";
         for(let j=0;j<r.rooks;j++) rookText+="♜";
-
-        html+="<div class='record-line'>";
-        html+=r.date+" "+r.grade+" "+rookText;
-        html+="</div>";
+        html+="<div class='record-line'>"+r.date+" "+r.grade+" "+rookText+"</div>";
       }
     }
 
-    html+="</div>";
-    html+="</div>";
+    html+="</div></div>";
+  }
+
+  else if(mode==="reports"){
+    html+="<div class='panel'><div class='scroll'>";
+    html+="<div class='small-note'>AFTER ACTION PATTERNS</div>";
+    html+="<div class='record-line'>REPORTS LOGGED: "+actionReportCount()+"</div>";
+
+    html+=actionReportSectionHTML("MARKET",actionMarketConditions,"conditions");
+    html+=actionReportSectionHTML("LESSON",actionLessons,"lessons");
+    html+=actionReportSectionHTML("STATE",actionStates,"states");
+    html+=actionReportSectionHTML("REFRAME",actionReframes,"reframes");
+
+    html+="</div></div>";
   }
 
   else if(mode==="vault"){
-    html+="<div class='panel'>";
-    html+="<div class='scroll'>";
+    html+="<div class='panel'><div class='scroll'>";
     html+="<div class='small-note'>LIFETIME VOW COINS</div>";
-
     let vows=getVaultVows();
 
     for(let i=0;i<vows.length;i++){
       let vow=vows[i];
       let count=state.vault[vow] || 0;
-
       html+="<div class='vault-row'>";
       html+="<div class='vault-name'>"+(i+1)+". "+vow+"</div>";
       html+="<div class='vault-coins'>"+vaultCoinsHTML(count)+"</div>";
@@ -3411,31 +3447,34 @@ if(!state.records || state.records.length<=0){
       html+="</div>";
     }
 
-    html+="</div>";
-    html+="</div>";
+    html+="</div></div>";
   }
 
   html+="<div class='gallery-footer'>BEST STREAK: "+state.bestStreak+"</div>";
   html+="<div class='panel-buttons'>";
-  html+="<button class='mini-btn' onclick='showMain()'>BACK</button>";
-  html+="</div>";
-  html+="</div>";
+  html+="<button class='mini-btn' onclick='goMain()'>BACK</button>";
+  html+="</div></div>";
 
   document.getElementById("playArea").innerHTML=html;
 
-  if(mode==="trophies"){
-    const hall=document.getElementById("galleryHall");
+if(mode==="trophies"){
+  const hall=document.getElementById("galleryHall");
 
-    if(hall){
-      let earnedCount=0;
+  if(hall){
+    let earnedCount=0;
 
-      for(let i=0;i<achievementDays.length;i++){
-        if(state.achievements && state.achievements[achievementDays[i]]) earnedCount++;
+    for(let i=0;i<achievementDays.length;i++){
+      if(state.achievements && state.achievements[achievementDays[i]]){
+        earnedCount++;
       }
-
-      hall.scrollLeft=Math.max(0,(earnedCount-1)*hall.clientWidth);
     }
+
+    hall.scrollLeft=Math.max(
+      0,
+      (earnedCount-1)*hall.clientWidth
+    );
   }
+}
 }
 
 function getCheckScrollTop(){
@@ -3575,9 +3614,10 @@ if(state.dayMode==="recovery" && passed){
   let newRecord=false;
   let newAchievement=false;
 
+logActionReport();
+
 if(passed){
   state.crackActive=false;
-  logActionReport();
 
   if(state.dayMode!=="recovery"){
     state.streak++;
@@ -3783,11 +3823,10 @@ if(typeof state.trainingDays==="undefined") state.trainingDays=0;
 if(typeof state.trainingCompletedDays==="undefined") state.trainingCompletedDays=0;
 if(typeof state.trainingCompleteToday==="undefined") state.trainingCompleteToday=false;
 if(typeof state.trainingPromotedToday==="undefined") state.trainingPromotedToday=false;
-if(typeof state.actionCondition==="undefined") state.actionCondition=null;
-if(typeof state.actionLesson==="undefined") state.actionLesson=null;
-if(typeof state.actionState==="undefined") state.actionState=null;
-if(typeof state.actionReframe==="undefined") state.actionReframe=null;
-
+if(!Array.isArray(state.actionConditions)) state.actionConditions=[];
+if(!Array.isArray(state.actionLessons)) state.actionLessons=[];
+if(!Array.isArray(state.actionStates)) state.actionStates=[];
+if(!Array.isArray(state.actionReframes)) state.actionReframes=[];
 
 ensureVault();
 repairWeeklyStatusesFromChecklist();
