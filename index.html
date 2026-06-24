@@ -421,7 +421,7 @@ transform:scaleX(-1);
 const weekdayVows=[
   "LOCK RISK SETTINGS",
   "RECORD EVERY SESSION",
-  "MAX CONTRACTS 5",
+  "MAX CONTRACTS 3",
   "DON'T TRADE OUTSIDE ROUTINE",
   "DON'T SIZE UP AFTER A LOSS",
   "JOURNAL BOTH ACCOUNTS",
@@ -581,7 +581,7 @@ const codeNotes=[
 const manualNotes=[
   ["LOCK RISK SETTINGS","WIN: LOCKED BEFORE CHARTS. FAIL: RISK LEFT OPEN."],
   ["RECORD EVERY SESSION","WIN: SESSION RECORDED. FAIL: TRADED UNRECORDED."],
-  ["MAX CONTRACTS 5","WIN: NEVER ABOVE 5. FAIL: 6+ CONTRACTS."],
+  ["MAX CONTRACTS 3","WIN: NEVER ABOVE 3. FAIL: 4+ CONTRACTS."],
   ["DON'T TRADE OUTSIDE ROUTINE","WIN: ONLY PLANNED WINDOW. FAIL: RANDOM SESSION."],
   ["DON'T SIZE UP AFTER A LOSS","WIN: SAME OR SMALLER SIZE. FAIL: REVENGE SIZE."],
   ["JOURNAL BOTH ACCOUNTS","WIN: BOTH REVIEWED. FAIL: LEFT UNWRITTEN."],
@@ -844,6 +844,24 @@ const morningGateMotif=[
 
 const morningGateFinal="C5";
 const TRAINING_PROMOTION_DAYS=30;
+const trainingDrills=[
+ {
+  key:"exitStars",
+  name:"EXIT STARS",
+  rule:"MANUAL EXIT WHEN CONDITIONS DETERIORATE"
+ },
+ {
+  key:"breakevens",
+  name:"BREAKEVEN EXITS",
+  rule:"POSITIVE ONCE. FLATTEN NEAR ENTRY."
+ },
+ {
+  key:"controlledLosses",
+  name:"CONTROLLED LOSSES",
+  rule:"FLATTEN IMMEDIATELY AT -5 OR -10."
+ }
+];
+
 const trainingRanks=[
   "PAGE",
   "SQUIRE",
@@ -1646,9 +1664,21 @@ powerQuoteDayKey:null,
 powerQuoteIndex:0,
 trainingDate:getDayKey(),
 trainingRank:0,
-trainingTarget:15,
-todayDrills:0,
-lifetimeDrills:0,
+trainingTargets:{
+ exitStars:10,
+ breakevens:20,
+ controlledLosses:10
+},
+todayDrills:{
+ exitStars:0,
+ breakevens:0,
+ controlledLosses:0
+},
+lifetimeDrills:{
+ exitStars:0,
+ breakevens:0,
+ controlledLosses:0
+},
 trainingDays:0,
 trainingCompletedDays:0,
 trainingCompleteToday:false,
@@ -1695,13 +1725,36 @@ if(previousWeekForm){
 
 newState.trainingDate=parsed.trainingDate || getDayKey();
 newState.trainingRank=typeof parsed.trainingRank==="number" ? parsed.trainingRank : 0;
-newState.trainingTarget=typeof parsed.trainingTarget==="number" ? parsed.trainingTarget : 15;
-newState.todayDrills=typeof parsed.todayDrills==="number" ? parsed.todayDrills : 0;
-newState.lifetimeDrills=typeof parsed.lifetimeDrills==="number" ? parsed.lifetimeDrills : 0;
-newState.trainingDays=typeof parsed.trainingDays==="number" ? parsed.trainingDays : 0;
-newState.trainingCompletedDays=typeof parsed.trainingCompletedDays==="number" ? parsed.trainingCompletedDays : 0;
-newState.trainingCompleteToday=typeof parsed.trainingCompleteToday==="boolean" ? parsed.trainingCompleteToday : false;
-newState.trainingPromotedToday=typeof parsed.trainingPromotedToday==="boolean" ? parsed.trainingPromotedToday : false;
+
+newState.trainingTargets=parsed.trainingTargets || {
+ exitStars:10,
+ breakevens:20,
+ controlledLosses:10
+};
+
+newState.todayDrills=parsed.todayDrills || {
+ exitStars:0,
+ breakevens:0,
+ controlledLosses:0
+};
+
+newState.lifetimeDrills=parsed.lifetimeDrills || {
+ exitStars:0,
+ breakevens:0,
+ controlledLosses:0
+};
+
+newState.trainingDays=typeof parsed.trainingDays==="number"
+ ? parsed.trainingDays : 0;
+
+newState.trainingCompletedDays=typeof parsed.trainingCompletedDays==="number"
+ ? parsed.trainingCompletedDays : 0;
+
+newState.trainingCompleteToday=typeof parsed.trainingCompleteToday==="boolean"
+ ? parsed.trainingCompleteToday : false;
+
+newState.trainingPromotedToday=typeof parsed.trainingPromotedToday==="boolean"
+ ? parsed.trainingPromotedToday : false;
 
 return newState;
     }
@@ -1733,15 +1786,47 @@ if(typeof parsed.crackActive==="undefined") parsed.crackActive=false;
 if(typeof parsed.powerQuoteDayKey==="undefined") parsed.powerQuoteDayKey=null;
 if(typeof parsed.powerQuoteIndex==="undefined") parsed.powerQuoteIndex=0;
 // TRAINING SYSTEM MIGRATION
-if(typeof parsed.trainingDate==="undefined") parsed.trainingDate=getDayKey();
-if(typeof parsed.trainingRank==="undefined") parsed.trainingRank=0;
-if(typeof parsed.trainingTarget==="undefined") parsed.trainingTarget=15;
-if(typeof parsed.todayDrills==="undefined") parsed.todayDrills=0;
-if(typeof parsed.lifetimeDrills==="undefined") parsed.lifetimeDrills=0;
-if(typeof parsed.trainingDays==="undefined") parsed.trainingDays=0;
-if(typeof parsed.trainingCompletedDays==="undefined") parsed.trainingCompletedDays=0;
-if(typeof parsed.trainingCompleteToday==="undefined") parsed.trainingCompleteToday=false;
-if(typeof parsed.trainingPromotedToday==="undefined") parsed.trainingPromotedToday=false;
+if(typeof parsed.trainingDate==="undefined")
+ parsed.trainingDate=getDayKey();
+
+if(typeof parsed.trainingRank==="undefined")
+ parsed.trainingRank=0;
+
+if(!parsed.trainingTargets){
+ parsed.trainingTargets={
+  exitStars:10,
+  breakevens:20,
+  controlledLosses:10
+ };
+}
+
+if(!parsed.todayDrills){
+ parsed.todayDrills={
+  exitStars:0,
+  breakevens:0,
+  controlledLosses:0
+ };
+}
+
+if(!parsed.lifetimeDrills){
+ parsed.lifetimeDrills={
+  exitStars:0,
+  breakevens:0,
+  controlledLosses:0
+ };
+}
+
+if(typeof parsed.trainingDays==="undefined")
+ parsed.trainingDays=0;
+
+if(typeof parsed.trainingCompletedDays==="undefined")
+ parsed.trainingCompletedDays=0;
+
+if(typeof parsed.trainingCompleteToday==="undefined")
+ parsed.trainingCompleteToday=false;
+
+if(typeof parsed.trainingPromotedToday==="undefined")
+ parsed.trainingPromotedToday=false;
 
 // DAILY MODE SYSTEM MIGRATION
 if(typeof parsed.modeDate==="undefined") parsed.modeDate=getDayKey();
@@ -2982,28 +3067,62 @@ function getTrainingRankName(){
 }
 
 function trainingProgressBar(){
-  const total=state.trainingTarget;
-  const filled=Math.min(state.todayDrills,total);
-  let bar="";
 
-  for(let i=0;i<total;i++){
-    bar+=i<filled ? "■" : "□";
+ const drills=[
+  {
+   done:state.todayDrills.exitStars,
+   target:state.trainingTargets.exitStars
+  },
+  {
+   done:state.todayDrills.breakevens,
+   target:state.trainingTargets.breakevens
+  },
+  {
+   done:state.todayDrills.controlledLosses,
+   target:state.trainingTargets.controlledLosses
+  }
+ ];
+
+ let bar="";
+
+ drills.forEach(d=>{
+  const filled=Math.min(d.done,d.target);
+
+  for(let i=0;i<d.target;i++){
+   bar+=i<filled ? "■" : "□";
   }
 
-  return bar;
+  bar+=" ";
+ });
+
+ return bar.trim();
 }
 
 function trainingTrolleyHTML(){
-  const progress=Math.min(state.todayDrills/state.trainingTarget,1);
-  const left=12+(progress*76);
 
-  return ""+
-    "<div class='trolley-scene'>"+
-    "<div class='trolley-home'>🏠</div>"+
-    "<div class='trolley-track'></div>"+
-    "<div class='trolley-castle'>🏰</div>"+
-    "<div class='trolley-car' style='--trolley-left:"+left+"%;'><img class='trolley-img' src='trolley.png'></div>"+
-    "</div>";
+ const completed=
+  state.todayDrills.exitStars+
+  state.todayDrills.breakevens+
+  state.todayDrills.controlledLosses;
+
+ const total=
+  state.trainingTargets.exitStars+
+  state.trainingTargets.breakevens+
+  state.trainingTargets.controlledLosses;
+
+ const progress=Math.min(completed/total,1);
+
+ const left=12+(progress*76);
+
+ return ""
+ +"<div class='trolley-scene'>"
+ +"<div class='trolley-home'>🏠</div>"
+ +"<div class='trolley-track'></div>"
+ +"<div class='trolley-castle'>🏰</div>"
+ +"<div class='trolley-car' style='--trolley-left:"+left+"%;'>"
+ +"<img class='trolley-img' src='trolley.png'>"
+ +"</div>"
+ +"</div>";
 }
 
 function trainingPromotionProgress(){
@@ -3011,14 +3130,19 @@ function trainingPromotionProgress(){
 }
 
 function resetTrainingForNewDay(){
-  const todayKey=getDayKey();
+ const todayKey=getDayKey();
+ if(state.trainingDate===todayKey) return;
 
-  if(state.trainingDate===todayKey) return;
+ state.trainingDate=todayKey;
 
-  state.trainingDate=todayKey;
-  state.todayDrills=0;
-  state.trainingCompleteToday=false;
-state.trainingPromotedToday=false;
+ state.todayDrills={
+  exitStars:0,
+  breakevens:0,
+  controlledLosses:0
+ };
+
+ state.trainingCompleteToday=false;
+ state.trainingPromotedToday=false;
 }
 
 function showTrain(playSound=true,restoreScroll=null){
@@ -3042,13 +3166,38 @@ function showTrain(playSound=true,restoreScroll=null){
 html+="<div>TODAY'S JOURNEY</div>";
 html+=trainingTrolleyHTML();
 html+="<div class='training-bar'>"+trainingProgressBar()+"</div>";
-html+="<div class='training-big'>"+state.todayDrills+" / "+state.trainingTarget+"</div>";
+const todayTotal=
+ state.todayDrills.exitStars+
+ state.todayDrills.breakevens+
+ state.todayDrills.controlledLosses;
+
+const targetTotal=
+ state.trainingTargets.exitStars+
+ state.trainingTargets.breakevens+
+ state.trainingTargets.controlledLosses;
+
+html+="<div class='training-big'>"+
+ todayTotal+
+ " / "+
+ targetTotal+
+ "</div>";
+html+="<div style='font-size:20px;line-height:1.2;margin-top:10px;'>";
+html+="EXIT STARS: "+state.trainingTargets.exitStars+"<br>";
+html+="BREAKEVENS: "+state.trainingTargets.breakevens+"<br>";
+html+="CONTROLLED LOSSES: "+state.trainingTargets.controlledLosses;
 html+="</div>";
 
-  html+="<div class='training-stat'>";
-  html+="<div>LIFETIME DRILLS</div>";
-  html+="<div class='training-big'>"+state.lifetimeDrills+"</div>";
-  html+="</div>";
+html+="</div>";
+
+  const lifetimeTotal=
+ state.lifetimeDrills.exitStars+
+ state.lifetimeDrills.breakevens+
+ state.lifetimeDrills.controlledLosses;
+
+html+="<div class='training-stat'>";
+html+="<div>LIFETIME DRILLS</div>";
+html+="<div class='training-big'>"+lifetimeTotal+"</div>";
+html+="</div>";
 
   html+="<div class='training-stat'>";
   html+="<div>TRAINING DAYS</div>";
@@ -3062,12 +3211,21 @@ html+="</div>";
   html+="<div class='training-big'>"+getTrainingRankName()+"</div>";
   html+="</div>";
 
+const completionRate =
+state.trainingDays
+? Math.round(
+(state.trainingCompletedDays / state.trainingDays) * 100
+)
+: 0;
+
 
   html+="</div>";
-  html+="<div class='panel-buttons'>";
-  html+="<button class='mini-btn' onclick='removeTrainingDrill()'>-1</button>";
-html+="<button class='mini-btn' onclick='addTrainingDrill()'>+1</button>";
-html+="<button class='mini-btn' onclick='goMain()'>BACK</button>";  html+="</div>";
+html+="<div class='panel-buttons'>";
+html+="<button class='mini-btn' onclick=\"showTrainDrillMenu('remove')\">-1</button>";
+html+="<button class='mini-btn' onclick=\"showTrainDrillMenu('add')\">+1</button>";
+html+="<button class='mini-btn' onclick='showTrainingGuide()'>GUIDE</button>";
+html+="<button class='mini-btn' onclick='goMain()'>BACK</button>";
+html+="</div>";
   html+="</div>";
 
   document.getElementById("playArea").innerHTML=html;
@@ -3078,6 +3236,81 @@ html+="<button class='mini-btn' onclick='goMain()'>BACK</button>";  html+="</div
   }
 
   saveState();
+}
+
+function showTrainDrillMenu(mode){
+ if(!requirePower()) return;
+
+ const scrollTop=getTrainingScrollTop();
+
+ let html="";
+ html+="<div class='panel'>";
+ html+="<div class='panel-title'>";
+ html+=(mode==="add"?"ADD DRILL":"REMOVE DRILL");
+ html+="</div>";
+
+ html+="<div class='scroll'>";
+
+ trainingDrills.forEach(drill=>{
+   html+="<button class='mini-btn' style='margin-bottom:10px;height:56px;' ";
+   html+="onclick=\"";
+   html+=(mode==="add"
+      ? "addTrainingDrill('"+drill.key+"')"
+      : "removeTrainingDrill('"+drill.key+"')");
+   html+="\">";
+   html+=drill.name;
+   html+="</button>";
+ });
+
+ html+="</div>";
+
+ html+="<div class='panel-buttons'>";
+ html+="<button class='mini-btn' onclick='showTrain(false,"+scrollTop+")'>BACK</button>";
+ html+="</div>";
+
+ html+="</div>";
+
+ document.getElementById("playArea").innerHTML=html;
+}
+
+function showTrainingGuide(){
+ if(!requirePower()) return;
+
+ document.getElementById("statusBar").innerHTML="DRILL GUIDE";
+
+ let html="";
+ html+="<div class='panel'>";
+ html+="<div class='panel-title'>TRAINING FIELD MANUAL</div>";
+ html+="<div class='scroll'>";
+
+ html+="<div class='small-note'>THE OBJECTIVE IS NOT PNL. THE OBJECTIVE IS AGENCY.</div>";
+
+ html+="<div class='section-label'>EXIT STARS</div>";
+ html+="<div class='note'>MISSION: EARN 10 EXIT STARS.</div>";
+ html+="<div class='note'>COUNTS WHEN: YOU MANUALLY FLATTEN BECAUSE CONDITIONS DETERIORATED. EXIT MAY BE PROFIT, BREAKEVEN, OR SMALL LOSS.</div>";
+ html+="<div class='note'>DOES NOT COUNT: HARD STOP HIT. BREAK-EVEN STOP HIT. PROFIT TARGET HIT. THE EXIT MUST BE VOLUNTARY.</div>";
+
+ html+="<div class='section-label'>BREAKEVEN EXITS</div>";
+ html+="<div class='note'>MISSION: EARN 20 BREAKEVEN EXITS.</div>";
+ html+="<div class='note'>COUNTS WHEN: THE TRADE WAS POSITIVE AT SOME POINT AND YOU VOLUNTARILY EXIT NEAR ENTRY.</div>";
+ html+="<div class='note'>PURPOSE: TIME INVESTED DOES NOT MEAN THE MARKET OWES YOU A WINNER.</div>";
+
+ html+="<div class='section-label'>CONTROLLED LOSSES</div>";
+ html+="<div class='note'>MISSION: EARN 10 CONTROLLED LOSSES.</div>";
+ html+="<div class='note'>COUNTS WHEN: YOU VOLUNTARILY FLATTEN AROUND -$5 OR -$10 BEFORE THE LOSS GROWS.</div>";
+ html+="<div class='note'>DOES NOT COUNT: HARD STOP, HOPING, AVERAGING DOWN, OR WAITING FOR RESCUE.</div>";
+
+ html+="<div class='section-label'>THE PRINCIPLE</div>";
+ html+="<div class='note'>OBSERVE → DECIDE → EXIT.</div>";
+ html+="<div class='note'>A PERFECT TRAINING DAY IS NOT GREEN PNL. IT IS COMPLETING ALL THREE DRILLS WITH INTENTION.</div>";
+
+ html+="</div>";
+ html+="<div class='panel-buttons'>";
+ html+="<button class='mini-btn' onclick='showTrain(false)'>BACK</button>";
+ html+="</div>";
+ html+="</div>";
+
+ document.getElementById("playArea").innerHTML=html;
 }
 
 function playTrainingNote(progress){
@@ -3091,84 +3324,89 @@ function getTrainingScrollTop(){
   return sc ? sc.scrollTop : 0;
 }
 
-function addTrainingDrill(){
-  if(!requirePower()) return;
+function addTrainingDrill(drillKey){
+ if(!requirePower()) return;
 
-  const scrollTop=getTrainingScrollTop();
+ const scrollTop=getTrainingScrollTop();
 
-  resetTrainingForNewDay();
+ resetTrainingForNewDay();
 
-  state.todayDrills++;
-  state.lifetimeDrills++;
+ if(!state.todayDrills[drillKey]) state.todayDrills[drillKey]=0;
+ if(!state.lifetimeDrills[drillKey]) state.lifetimeDrills[drillKey]=0;
 
-  let promoted=false;
+ state.todayDrills[drillKey]++;
+ state.lifetimeDrills[drillKey]++;
 
-  if(state.todayDrills>=state.trainingTarget && !state.trainingCompleteToday){
-    state.trainingCompleteToday=true;
-    state.trainingDays++;
-    state.trainingCompletedDays++;
+ let promoted=false;
 
-    if(state.trainingCompletedDays>0 && state.trainingCompletedDays%TRAINING_PROMOTION_DAYS===0){
-      state.trainingRank++;
-      state.trainingTarget++;
-state.trainingPromotedToday=true;
-      promoted=true;
-    }
+ if(
+  !state.trainingCompleteToday &&
+  state.todayDrills.exitStars>=state.trainingTargets.exitStars &&
+  state.todayDrills.breakevens>=state.trainingTargets.breakevens &&
+  state.todayDrills.controlledLosses>=state.trainingTargets.controlledLosses
+ ){
+  state.trainingCompleteToday=true;
+  state.trainingDays++;
+  state.trainingCompletedDays++;
+
+  if(
+   state.trainingCompletedDays>0 &&
+   state.trainingCompletedDays%TRAINING_PROMOTION_DAYS===0
+  ){
+   state.trainingRank++;
+   state.trainingTargets.exitStars++;
+   state.trainingTargets.breakevens++;
+   state.trainingTargets.controlledLosses++;
+   state.trainingPromotedToday=true;
+   promoted=true;
   }
+ }
 
-  saveState();
-  if(promoted){
-    play("resolve");
-    showTrainingPromotion();
-    return;
-  }
+ saveState();
 
-  if(state.trainingCompleteToday && state.todayDrills===state.trainingTarget){
-  showTrainingComplete();
-
-  setTimeout(()=>{
-    play("trainingComplete");
-  },250);
-
+ if(promoted){
+  play("resolve");
+  showTrainingPromotion();
   return;
-}else{
-  playTrainingNote(state.todayDrills);
+ }
+
+ if(state.trainingCompleteToday){
+  showTrainingComplete();
+  setTimeout(()=>{
+   play("trainingComplete");
+  },250);
+  return;
+ }
+
+ playTrainingNote(state.todayDrills[drillKey]);
+ showTrain(false,scrollTop);
 }
 
-  showTrain(false,scrollTop);
-}
+function removeTrainingDrill(drillKey){
+ if(!requirePower()) return;
 
-function removeTrainingDrill(){
-  if(!requirePower()) return;
+ const scrollTop=getTrainingScrollTop();
 
-  const scrollTop=getTrainingScrollTop();
+ resetTrainingForNewDay();
 
-  resetTrainingForNewDay();
-
-  if(state.todayDrills<=0){
-    play("reset");
-    showTrain(false,scrollTop);
-    return;
-  }
-
-  if(state.trainingPromotedToday && state.todayDrills<=state.trainingTarget){
-    state.trainingRank=Math.max(0,state.trainingRank-1);
-    state.trainingTarget=Math.max(1,state.trainingTarget-1);
-    state.trainingPromotedToday=false;
-  }
-
-  state.todayDrills--;
-  state.lifetimeDrills=Math.max(0,state.lifetimeDrills-1);
-
-  if(state.trainingCompleteToday && state.todayDrills<state.trainingTarget){
-    state.trainingCompleteToday=false;
-    state.trainingDays=Math.max(0,state.trainingDays-1);
-    state.trainingCompletedDays=Math.max(0,state.trainingCompletedDays-1);
-  }
-
+ if(!state.todayDrills[drillKey] || state.todayDrills[drillKey]<=0){
   play("reset");
-  saveState();
   showTrain(false,scrollTop);
+  return;
+ }
+
+ state.todayDrills[drillKey]--;
+ state.lifetimeDrills[drillKey]=Math.max(0,state.lifetimeDrills[drillKey]-1);
+
+ if(state.trainingCompleteToday){
+  state.trainingCompleteToday=false;
+  state.trainingDays=Math.max(0,state.trainingDays-1);
+  state.trainingCompletedDays=Math.max(0,state.trainingCompletedDays-1);
+ }
+
+ play("reset");
+ saveState();
+ showTrain(false,scrollTop);
 }
 
 function showTrainingComplete(){
@@ -3201,8 +3439,18 @@ function showTrainingPromotion(){
     "<div class='training-stat' style='border-bottom:none;'>"+
 "<div style='font-size:24px;margin-bottom:12px;'>THE TROLLEY HAS REACHED THE CASTLE</div>"+
 "<div class='training-big'>"+getTrainingRankName()+"</div>"+
+"<div style='font-size:22px;margin-top:16px;'>TODAY</div>"+
+"<div class='training-big'>"+
+state.todayDrills.exitStars+" / "+
+state.todayDrills.breakevens+" / "+
+state.todayDrills.controlledLosses+
+"</div>"+
 "<div style='font-size:24px;margin-top:12px;'>TARGET INCREASED</div>"+
-"<div class='training-big'>"+state.trainingTarget+"</div>"+    
+"<div class='training-big'>"+
+state.trainingTargets.exitStars+" / "+
+state.trainingTargets.breakevens+" / "+
+state.trainingTargets.controlledLosses+
+"</div>"+    
     "</div>"+
     "</div>"+
     "<div class='panel-buttons'>"+
@@ -4041,15 +4289,47 @@ if(!state.records) state.records=[];
 if(!state.recoveryLog) state.recoveryLog=[];
 if(!state.actionLog) state.actionLog=[];
 if(!state.vault) state.vault=createFreshVault();
-if(typeof state.trainingDate==="undefined") state.trainingDate=getDayKey();
-if(typeof state.trainingRank==="undefined") state.trainingRank=0;
-if(typeof state.trainingTarget==="undefined") state.trainingTarget=15;
-if(typeof state.todayDrills==="undefined") state.todayDrills=0;
-if(typeof state.lifetimeDrills==="undefined") state.lifetimeDrills=0;
-if(typeof state.trainingDays==="undefined") state.trainingDays=0;
-if(typeof state.trainingCompletedDays==="undefined") state.trainingCompletedDays=0;
-if(typeof state.trainingCompleteToday==="undefined") state.trainingCompleteToday=false;
-if(typeof state.trainingPromotedToday==="undefined") state.trainingPromotedToday=false;
+if(typeof state.trainingDate==="undefined")
+ state.trainingDate=getDayKey();
+
+if(typeof state.trainingRank==="undefined")
+ state.trainingRank=0;
+
+if(!state.trainingTargets){
+ state.trainingTargets={
+  exitStars:10,
+  breakevens:20,
+  controlledLosses:10
+ };
+}
+
+if(!state.todayDrills){
+ state.todayDrills={
+  exitStars:0,
+  breakevens:0,
+  controlledLosses:0
+ };
+}
+
+if(!state.lifetimeDrills){
+ state.lifetimeDrills={
+  exitStars:0,
+  breakevens:0,
+  controlledLosses:0
+ };
+}
+
+if(typeof state.trainingDays==="undefined")
+ state.trainingDays=0;
+
+if(typeof state.trainingCompletedDays==="undefined")
+ state.trainingCompletedDays=0;
+
+if(typeof state.trainingCompleteToday==="undefined")
+ state.trainingCompleteToday=false;
+
+if(typeof state.trainingPromotedToday==="undefined")
+ state.trainingPromotedToday=false;
 if(!Array.isArray(state.actionConditions)) state.actionConditions=[];
 if(!Array.isArray(state.actionLessons)) state.actionLessons=[];
 if(!Array.isArray(state.actionStates)) state.actionStates=[];
